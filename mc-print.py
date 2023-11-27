@@ -55,7 +55,7 @@ while len(print_queue) > 0:
 
     routes = []
     if subdev:
-        routes = [r for r in subdev.get_routes() if r.active]
+        routes = [r for r in subdev.get_routes() if r.is_active]
 
     print(ent.name, ent.interface.dev_path if ent.interface else '')
 
@@ -83,7 +83,7 @@ while len(print_queue) > 0:
 
             if subdev:
                 try:
-                    fmt = subdev.get_format(pad.index, s)
+                    fmt = subdev.get_format(v4l2.V4L2_SUBDEV_FORMAT_ACTIVE, pad.index, s)
                 except Exception as e:
                     fmt = None
                     err = e
@@ -100,7 +100,7 @@ while len(print_queue) > 0:
                 print("    Stream{} {}".format(s, fmt))
 
     if subdev:
-        routes = [r for r in subdev.get_routes() if r.active]
+        routes = [r for r in subdev.get_routes() if r.is_active]
         if len(routes) > 0:
             print("  Routing:")
             for r in routes:

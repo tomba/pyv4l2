@@ -3,6 +3,20 @@ import errno
 import fcntl
 import v4l2
 
+class Route:
+    def __init__(self, route: v4l2.v4l2_subdev_route) -> None:
+        self.v4l2_route = route
+        self.sink_pad = route.sink_pad
+        self.sink_stream = route.sink_stream
+        self.source_pad = route.source_pad
+        self.source_stream = route.source_stream
+        self.flags = route.flags
+
+    @property
+    def is_active(self):
+        return (self.flags & v4l2.V4L2_SUBDEV_ROUTE_FL_ACTIVE) != 0
+
+
 class SubDevice:
     def __init__(self, entity: v4l2.MediaEntity) -> None:
         self.entity = entity
@@ -23,17 +37,24 @@ class SubDevice:
 
         try:
             fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_G_ROUTING, routing, True)
+        except OSError as e:
+            if e.errno == errno.ENOTTY:
+                return(v4l2.v4l2_subdev_route * 0)()
+            elif e.errno != errno.ENOSPC:
+                raise
 
-            routes = (v4l2.v4l2_subdev_route * routing.num_routes)()
-            routing.routes = ctypes.addressof(routes)
+        routes = (v4l2.v4l2_subdev_route * routing.num_routes)()
+        routing.routes = ctypes.addressof(routes)
 
+        try:
             fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_G_ROUTING, routing, True)
-
         except OSError as e:
             if e.errno == errno.ENOTTY:
                 routes = (v4l2.v4l2_subdev_route * 0)()
             else:
                 raise
+
+        routes = [Route(r) for r in routes]
 
         return routes
 

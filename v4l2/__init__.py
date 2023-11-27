@@ -8,6 +8,19 @@ def __v4l2_subdev_format_to_str(self: v4l2_subdev_format):
 v4l2_subdev_format.__repr__ = __v4l2_subdev_format_to_str
 
 
+def fourcc_to_str(fourcc):
+    return \
+        chr((fourcc >> 0) & 0xff) + \
+        chr((fourcc >> 8) & 0xff) + \
+        chr((fourcc >> 16) & 0xff) + \
+        chr((fourcc >> 24) & 0xff)
+
+def __v4l2_format_to_str(self: v4l2_format):
+    return f'v4l2_format({self.fmt.pix.width}x{self.fmt.pix.height}-{fourcc_to_str(self.fmt.pix.pixelformat)})'
+
+v4l2_format.__repr__ = __v4l2_format_to_str
+
+
 def filepath_for_major_minor(major, minor):
     import os
     import glob
