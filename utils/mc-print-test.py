@@ -25,7 +25,7 @@ for e in md.entities:
             subdev = v4l2.SubDevice(e)
 
             try:
-                f = subdev.get_format(v4l2.V4L2_SUBDEV_FORMAT_ACTIVE, 0, stream=0)
+                f = subdev.get_format(0, stream=0)
             except:
                 pass
             finally:

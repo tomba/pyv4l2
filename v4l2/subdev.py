@@ -24,7 +24,12 @@ class SubDevice:
         self.file = open(entity.interface.dev_path)
         self.fd = self.file.fileno()
 
-    def get_format(self, which, pad, stream=0):
+        cap = v4l2.v4l2_subdev_client_capability()
+        cap.capabilities = v4l2.V4L2_SUBDEV_CLIENT_CAP_STREAMS
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_S_CLIENT_CAP, cap, True)
+        self.has_streams = (cap.capabilities & v4l2.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0;
+
+    def get_format(self, pad, stream=0, which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
         fmt = v4l2.v4l2_subdev_format()
         fmt.pad = pad
         fmt.stream = stream
@@ -32,8 +37,22 @@ class SubDevice:
         fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_G_FMT, fmt, True)
         return fmt
 
-    def get_routes(self):
+    def set_format(self, pad, stream, w, h, code, which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
+        fmt = self.get_format(pad, stream, which)
+
+        #fmt = v4l2.v4l2_subdev_format()
+        fmt.pad = pad
+        fmt.stream = stream
+        fmt.which = which
+        fmt.format.width = w
+        fmt.format.height = h
+        fmt.format.code = code
+        fmt.format.field = v4l2.V4L2_FIELD_NONE
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_S_FMT, fmt, True)
+
+    def get_routes(self, which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
         routing = v4l2.v4l2_subdev_routing()
+        routing.which = which
 
         try:
             fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_G_ROUTING, routing, True)
@@ -58,16 +77,18 @@ class SubDevice:
 
         return routes
 
+    def set_routes(self, routes: list[v4l2.v4l2_subdev_route], which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
+        routing = v4l2.v4l2_subdev_routing()
+        routing.which = which
 
-class VideoDevice:
-    def __init__(self, entity: v4l2.MediaEntity) -> None:
-        self.entity = entity
-        assert(entity.interface.is_video)
-        self.file = open(entity.interface.dev_path)
-        self.fd = self.file.fileno()
+        _routes = (v4l2.v4l2_subdev_route * len(routes))()
+        for i in range(len(routes)):
+            _routes[i] = routes[i]
 
-    def get_format(self):
-        fmt = v4l2.v4l2_format()
-        fmt.type = v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE
-        fcntl.ioctl(self.fd, v4l2.VIDIOC_G_FMT, fmt, True)
-        return fmt
+        routing.num_routes = len(routes)
+        routing.routes = ctypes.addressof(_routes)
+
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_S_ROUTING, routing, True)
+
+        kroutes = [r for r in self.get_routes() if r.flags & v4l2.V4L2_SUBDEV_ROUTE_FL_ACTIVE]
+        assert(len(kroutes) == len(routes))

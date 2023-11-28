@@ -83,7 +83,7 @@ while len(print_queue) > 0:
 
             if subdev:
                 try:
-                    fmt = subdev.get_format(v4l2.V4L2_SUBDEV_FORMAT_ACTIVE, pad.index, s)
+                    fmt = subdev.get_format(pad.index, s)
                 except Exception as e:
                     fmt = None
                     err = e

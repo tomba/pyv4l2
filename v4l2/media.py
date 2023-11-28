@@ -130,11 +130,15 @@ class MediaLink(MediaObject):
         self.sink = next(e for e in self.md.objects if e.id == self.media_link.sink_id)
 
     def __repr__(self) -> str:
-        return f'MediaLink({self.id})'
+        return f'MediaLink({self.id}, {self.source}->{self.sink})'
 
     @property
     def is_enabled(self):
         return (self.flags & v4l2.MEDIA_LNK_FL_ENABLED) != 0
+
+    @property
+    def is_immutable(self):
+        return (self.flags & v4l2.MEDIA_LNK_FL_IMMUTABLE) != 0
 
     @property
     def source_pad(self) -> MediaPad:
@@ -206,3 +210,19 @@ class MediaDevice:
 
     def find_id(self, id) -> MediaObject | None:
         return next((o for o in self.objects if o.id == id), None)
+
+    def link_setup(self, source: MediaPad, sink: MediaPad, flags):
+        desc = v4l2.media_link_desc()
+        desc.source.entity = source.entity.id
+        desc.source.index = source.index
+        desc.sink.entity = sink.entity.id
+        desc.sink.index = sink.index
+        desc.flags = flags
+
+        fcntl.ioctl(self.fd, v4l2.MEDIA_IOC_SETUP_LINK, desc, False)
+
+    def find_entity(self, name):
+        for e in self.entities:
+            if e.name == name:
+                return e
+        return None
