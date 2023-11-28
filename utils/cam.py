@@ -166,7 +166,6 @@ for e in config.get("subdevs", []):
     ent = md.find_entity(e["entity"])
     assert ent
     subdev = v4l2.SubDevice(ent)
-    #subdev = ent.subdev
     assert subdev, "no subdev for entity %s" % ent
 
     # Configure routes

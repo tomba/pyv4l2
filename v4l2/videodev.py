@@ -59,6 +59,11 @@ class VideoDevice:
 
 
 class CaptureStreamer:
+    __fourcc_bitspp_map = {
+        v4l2.V4L2_PIX_FMT_UYVY: 16,
+        v4l2.V4L2_PIX_FMT_SRGGB12: 16,
+    }
+
     def __init__(self, vdev: VideoDevice, mem_type, buf_type) -> None:
         self.vdev = vdev
         self.mem_type = mem_type
@@ -69,12 +74,16 @@ class CaptureStreamer:
         pass
 
     def set_format(self, fourcc, width, height):
+        global __fourcc_bitspp_map
+
         v4lfmt = v4l2.v4l2_format()
 
         v4lfmt.type = self.buf_type
         fcntl.ioctl(self.fd, v4l2.VIDIOC_G_FMT, v4lfmt, True)
 
-        bitspp = 16 # XXX
+        assert(fourcc in CaptureStreamer.__fourcc_bitspp_map)
+
+        bitspp = CaptureStreamer.__fourcc_bitspp_map[fourcc]
 
         v4lfmt.fmt.pix.pixelformat = fourcc
         v4lfmt.fmt.pix.width = width
@@ -162,11 +171,12 @@ class MetaCaptureStreamer:
     pass
 
 class VideoBuffer:
-    index = -1
-    mem_type = v4l2.V4L2_MEMORY_MMAP
-    fd = -1
-    length = 0
-    offset = 0
+    def __init__(self) -> None:
+        self.index = -1
+        self.mem_type = v4l2.V4L2_MEMORY_MMAP
+        self.fd = -1
+        self.length = 0
+        self.offset = 0
 
 def create_mmapbuffer():
     buf = VideoBuffer()

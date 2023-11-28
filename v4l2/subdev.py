@@ -4,14 +4,12 @@ import fcntl
 import v4l2
 
 class Route:
-    sink_pad: int
-    sink_stream: int
-    source_pad: int
-    source_stream: int
-    flags: int
-
     def __init__(self) -> None:
-        pass
+        self.sink_pad = 0
+        self.sink_stream = 0
+        self.source_pad = 0
+        self.source_stream = 0
+        self.flags = 0
 
     @property
     def is_active(self):

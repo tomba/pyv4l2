@@ -24,15 +24,14 @@ class MediaObject:
 
 
 class MediaEntity(MediaObject):
-    pads: list['MediaPad']
-    interface: 'MediaInterface' = None # type: ignore
-
     def __init__(self, md, media_entity: v4l2.media_v2_entity) -> None:
         super().__init__(md, media_entity.id)
         self.media_entity = media_entity
         self.name = media_entity.name.decode('ascii')
         self.function = media_entity.function
         self.flags = media_entity.flags
+        self.pads: list['MediaPad'] = None # type: ignore
+        self.interface: 'MediaInterface' = None # type: ignore
 
     def _finalize(self):
         super()._finalize()
@@ -63,7 +62,6 @@ class MediaEntity(MediaObject):
         return [l for p in self.pads for l in p.links]
 
 
-
 class MediaInterface(MediaObject):
     def __init__(self, md, media_iface: v4l2.media_v2_interface) -> None:
         super().__init__(md, media_iface.id)
@@ -88,12 +86,11 @@ class MediaInterface(MediaObject):
 
 
 class MediaPad(MediaObject):
-    entity: MediaEntity
-
     def __init__(self, md, media_pad: v4l2.media_v2_pad) -> None:
         super().__init__(md, media_pad.id)
         self.media_pad = media_pad
         self.index = media_pad.index
+        self.entity: MediaEntity = None # type: ignore
 
     def _finalize(self):
         super()._finalize()
@@ -116,13 +113,12 @@ class MediaPad(MediaObject):
 
 
 class MediaLink(MediaObject):
-    source: MediaObject
-    sink: MediaObject
-
     def __init__(self, md, media_link: v4l2.media_v2_link) -> None:
         super().__init__(md, media_link.id)
         self.media_link = media_link
         self.flags = media_link.flags
+        self.source: MediaObject = None # type: ignore
+        self.sink: MediaObject = None # type: ignore
 
     def _finalize(self):
         super()._finalize()
