@@ -63,8 +63,9 @@ class VideoDevice:
             return CaptureStreamer(self, mem_type, v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE)
 
 class CaptureStreamer:
-    __fourcc_bitspp_map = {
+    _fourcc_bitspp_map = {
         v4l2.V4L2_PIX_FMT_UYVY: 16,
+        v4l2.V4L2_PIX_FMT_YUYV: 16,
         v4l2.V4L2_PIX_FMT_SRGGB12: 16,
     }
 
@@ -85,9 +86,11 @@ class CaptureStreamer:
         v4lfmt.type = self.buf_type
         fcntl.ioctl(self.fd, v4l2.VIDIOC_G_FMT, v4lfmt, True)
 
-        assert(fourcc in CaptureStreamer.__fourcc_bitspp_map)
+        if fourcc not in CaptureStreamer._fourcc_bitspp_map:
+            print("Missing support for fourcc", v4l2.fourcc_to_str(fourcc))
+        assert(fourcc in CaptureStreamer._fourcc_bitspp_map)
 
-        bitspp = CaptureStreamer.__fourcc_bitspp_map[fourcc]
+        bitspp = CaptureStreamer._fourcc_bitspp_map[fourcc]
 
         v4lfmt.fmt.pix.pixelformat = fourcc
         v4lfmt.fmt.pix.width = width
@@ -144,7 +147,7 @@ class CaptureStreamer:
         fcntl.ioctl(self.fd, v4l2.VIDIOC_DQBUF, buf, True)
 
         fb.index = buf.index
-        fb.length = buf.length
+        fb.buffer_size = buf.length
 
         if self.mem_type == v4l2.V4L2_MEMORY_DMABUF:
             fb.fd = buf.m.fd
@@ -170,9 +173,109 @@ class CaptureStreamer:
         return self.vdev.fd
 
 
-class MPlaneCaptureStreames(CaptureStreamer):
+class MPlaneCaptureStreamer(CaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type, buf_type) -> None:
         super().__init__(vdev, mem_type, buf_type)
+        self.bytesperline = 0
+
+    def set_format(self, fourcc, width, height):
+        global __fourcc_bitspp_map
+
+        v4lfmt = v4l2.v4l2_format()
+
+        v4lfmt.type = self.buf_type
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_G_FMT, v4lfmt, True)
+
+        if fourcc not in CaptureStreamer._fourcc_bitspp_map:
+            print("Missing support for fourcc", v4l2.fourcc_to_str(fourcc))
+        assert(fourcc in CaptureStreamer._fourcc_bitspp_map)
+
+        bitspp = CaptureStreamer._fourcc_bitspp_map[fourcc]
+
+        num_planes = 1 # XXX
+
+        mp = v4lfmt.fmt.pix_mp
+
+        mp.pixelformat = fourcc;
+        mp.width = width;
+        mp.height = height;
+
+        mp.num_planes = num_planes;
+
+        for i in range(num_planes):
+            p = mp.plane_fmt[i]
+
+            p.bytesperline = width * bitspp // 8;
+            p.sizeimage = p.bytesperline * height # XXX / pfpi.ysub;
+            p.field = v4l2.V4L2_FIELD_NONE
+
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_S_FMT, v4lfmt, True)
+
+        # XXX AAARGH
+        self.bytesperline = v4lfmt.fmt.pix_mp.plane_fmt[0].bytesperline
+
+    def queue(self, vbuf):
+        idx = -1
+        for _idx in range(len(self.fbs)):
+            if self.fbs[_idx] == False:
+                idx = _idx
+                break
+
+        assert(idx != -1)
+
+        vbuf.index = idx
+
+        self.fbs[idx] = True
+
+        buf = v4l2.v4l2_buffer()
+        buf.type = self.buf_type
+        buf.memory = vbuf.mem_type
+        buf.index = vbuf.index
+
+        num_planes = 1
+
+        planes = (v4l2.v4l2_plane * num_planes)()
+        buf.m.planes = planes
+
+        #bitspp = CaptureStreamer._fourcc_bitspp_map[vbuf.fourcc]
+
+        if vbuf.mem_type == v4l2.V4L2_MEMORY_DMABUF:
+            planes[0].m.fd = vbuf.fd
+
+        planes[0].bytesused = vbuf.payload_size # vbuf.width * vbuf.height * bitspp // 8
+
+        buf.length = num_planes
+
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_QBUF, buf, True)
+
+    def dequeue(self):
+        vfb = VideoBuffer(self.mem_type)
+
+        buf = v4l2.v4l2_buffer()
+        buf.type = self.buf_type
+        buf.memory = self.mem_type
+
+        num_planes = 1
+
+        planes = (v4l2.v4l2_plane * num_planes)()
+        buf.m.planes = planes
+        buf.length = num_planes
+
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_DQBUF, buf, True)
+
+        vfb.index = buf.index
+        vfb.buffer_size = buf.m.planes[0].length
+
+        if self.mem_type == v4l2.V4L2_MEMORY_DMABUF:
+            vfb.fd = buf.m.planes[0].m.fd
+        else:
+            vfb.offset = buf.m.offset
+
+        idx = buf.index
+
+        self.fbs[idx] = False
+
+        return vfb
 
 
 class MetaCaptureStreamer:
@@ -184,15 +287,29 @@ class VideoBuffer:
         self.mem_type = mem_type
         # dmabuf fd
         self.fd = -1
-        self.length = 0
         # mmap offset
         self.offset = 0
+        self.width = 0
+        self.height = 0
+        self.fourcc = 0
+        self.payload_size = 0
 
-def create_mmapbuffer():
+        # Size of the buffer (not the payload) in bytes
+        self.buffer_size = 0
+
+def create_mmapbuffer(w, h, fourcc, payload_size):
     buf = VideoBuffer(v4l2.V4L2_MEMORY_MMAP)
+    buf.width = w
+    buf.height = h
+    buf.fourcc = fourcc
+    buf.payload_size = payload_size
     return buf
 
-def create_dmabuffer(fd):
+def create_dmabuffer(fd, w, h, fourcc, payload_size):
     buf = VideoBuffer(v4l2.V4L2_MEMORY_DMABUF)
     buf.fd = fd
+    buf.width = w
+    buf.height = h
+    buf.fourcc = fourcc
+    buf.payload_size = payload_size
     return buf

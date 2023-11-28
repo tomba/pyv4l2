@@ -222,16 +222,24 @@ if args.display:
     conn = res.reserve_connector(CONNECTOR)
     crtc = res.reserve_crtc(conn)
 
+    plane = crtc.possible_planes[0]
+    #plane = res.reserve_generic_plane(crtc)
+
     card.disable_planes()
 
     mode = conn.get_default_mode()
     modeb = mode.to_blob(card)
 
+    tmpfb = pykms.DumbFramebuffer(card, mode.hdisplay, mode.vdisplay, pykms.PixelFormat.XRGB8888)
+
     req = pykms.AtomicReq(card)
     req.add(conn, "CRTC_ID", crtc.id)
     req.add(crtc, {"ACTIVE": 1,
             "MODE_ID": modeb.id})
-    req.commit_sync(allow_modeset = True)
+    #req.add(plane, "FB_ID", fb.id)
+    req.add_plane(plane, tmpfb, crtc, dst=(0, 0, mode.hdisplay, mode.vdisplay))
+    r = req.commit_sync(allow_modeset = True)
+    assert(r == 0)
 
 if args.tx:
     import socket
@@ -337,7 +345,7 @@ for stream in streams:
     assert(vid_ent)
 
     if not "dev" in stream:
-        stream["dev"] = vid_ent.dev_path
+        stream["dev"] = vid_ent.interface.dev_path
 
     vd = v4l2.VideoDevice(vid_ent)
 
@@ -400,9 +408,18 @@ for stream in streams:
     # Queue the rest to the camera
     for i in range(first_buf, NUM_BUFS):
         if args.type == "drm":
-            vbuf = v4l2.create_dmabuffer(fbs[i].fd(0))
+            payload_size = fbs[i].size(0)
+
+            vbuf = v4l2.create_dmabuffer(fbs[i].fd(0), stream["w"], stream["h"], stream["fourcc"], payload_size)
         else:
-            vbuf = v4l2.create_mmapbuffer()
+            _fourcc_bitspp_map = {
+                v4l2.V4L2_PIX_FMT_UYVY: 16,
+                v4l2.V4L2_PIX_FMT_YUYV: 16,
+                v4l2.V4L2_PIX_FMT_SRGGB12: 16,
+            }
+
+            payload_size = stream["w"] * stream["h"] * _fourcc_bitspp_map[stream["fourcc"]] // 8
+            vbuf = v4l2.create_mmapbuffer(stream["w"], stream["h"], stream["fourcc"], payload_size)
         cap.queue(vbuf)
 
 for stream in streams:
@@ -439,7 +456,7 @@ def net_tx(stream, vbuf):
     hdr = struct_fmt.pack(stream["id"],
                           stream["w"], stream["h"],
                           bytesperline,
-                          bytes(str(fmt.name), "ascii"),
+                          bytes(v4l2.fourcc_to_str(fmt), "ascii"),
                           1, *plane_sizes)
 
     sock.sendall(hdr)
@@ -543,7 +560,9 @@ def handle_pageflip():
             assert(args.type == "drm")
 
             fb = stream["kms_old_fb"]
-            vbuf = v4l2.create_dmabuffer(fb.fd(0))
+
+            payload_size = fb.size(0)
+            vbuf = v4l2.create_dmabuffer(fb.fd(0), stream["w"], stream["h"], stream["fourcc"], payload_size)
             cap.queue(vbuf)
             stream["kms_old_fb"] = None
 
@@ -562,7 +581,8 @@ def handle_pageflip():
         do_commit = True
 
     if do_commit:
-        req.commit(allow_modeset = False)
+        r = req.commit(allow_modeset = False)
+        assert(r == 0)
         kms_committed = True
 
 
