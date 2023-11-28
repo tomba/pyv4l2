@@ -334,6 +334,7 @@ def embedded_fourcc_to_bytes_per_pixel(fmt):
 
 for stream in streams:
     vid_ent = md.find_entity(stream["entity"])
+    assert(vid_ent)
 
     if not "dev" in stream:
         stream["dev"] = vid_ent.dev_path
@@ -341,8 +342,8 @@ for stream in streams:
     vd = v4l2.VideoDevice(vid_ent)
 
     if not stream.get("embedded", False):
-        cap = vd.get_capture_streamer(v4l2.V4L2_MEMORY_MMAP if args.type == "v4l2" else v4l2.V4L2_MEMORY_DMABUF,
-                                      v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE)
+        mem_type = v4l2.V4L2_MEMORY_DMABUF if args.type == "drm" else v4l2.V4L2_MEMORY_MMAP
+        cap = vd.get_capture_streamer(mem_type)
         cap.set_port(0)
         cap.set_format(stream["fourcc"], stream["w"], stream["h"])
     else:
@@ -360,7 +361,6 @@ if args.config:
 for stream in streams:
     cap = stream["cap"]
 
-    mem_type = v4l2.V4L2_MEMORY_DMABUF if args.type == "drm" else v4l2.V4L2_MEMORY_MMAP
     cap.set_queue_size(NUM_BUFS)
 
     if args.type == "drm":

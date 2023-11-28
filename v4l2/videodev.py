@@ -54,9 +54,13 @@ class VideoDevice:
         fcntl.ioctl(self.fd, v4l2.VIDIOC_G_FMT, fmt, True)
         return fmt
 
-    def get_capture_streamer(self, mem_type, buf_type):
-        return CaptureStreamer(self, mem_type, buf_type)
+    def get_capture_streamer(self, mem_type):
+        assert(self.has_capture)
 
+        if self.has_mplane_capture:
+            return MPlaneCaptureStreamer(self, mem_type, v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+        else:
+            return CaptureStreamer(self, mem_type, v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE)
 
 class CaptureStreamer:
     __fourcc_bitspp_map = {
@@ -131,8 +135,7 @@ class CaptureStreamer:
         fcntl.ioctl(self.fd, v4l2.VIDIOC_QBUF, buf, True)
 
     def dequeue(self):
-        fb = VideoBuffer()
-        fb.mem_type = self.mem_type
+        fb = VideoBuffer(self.mem_type)
 
         buf = v4l2.v4l2_buffer()
         buf.type = self.buf_type
@@ -167,24 +170,29 @@ class CaptureStreamer:
         return self.vdev.fd
 
 
+class MPlaneCaptureStreames(CaptureStreamer):
+    def __init__(self, vdev: VideoDevice, mem_type, buf_type) -> None:
+        super().__init__(vdev, mem_type, buf_type)
+
+
 class MetaCaptureStreamer:
     pass
 
 class VideoBuffer:
-    def __init__(self) -> None:
+    def __init__(self, mem_type) -> None:
         self.index = -1
-        self.mem_type = v4l2.V4L2_MEMORY_MMAP
+        self.mem_type = mem_type
+        # dmabuf fd
         self.fd = -1
         self.length = 0
+        # mmap offset
         self.offset = 0
 
 def create_mmapbuffer():
-    buf = VideoBuffer()
-    buf.mem_type = v4l2.V4L2_MEMORY_MMAP
+    buf = VideoBuffer(v4l2.V4L2_MEMORY_MMAP)
     return buf
 
 def create_dmabuffer(fd):
-    buf = VideoBuffer()
-    buf.mem_type = v4l2.V4L2_MEMORY_DMABUF
+    buf = VideoBuffer(v4l2.V4L2_MEMORY_DMABUF)
     buf.fd = fd
     return buf
