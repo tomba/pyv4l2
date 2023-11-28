@@ -99,7 +99,7 @@ struct_v4l2_edid._fields_ = [
     ('edid', POINTER(__u8)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1385
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1397
 class struct_v4l2_ctrl_h264_sps(Structure):
     pass
 
@@ -144,7 +144,7 @@ struct_v4l2_ctrl_h264_sps._fields_ = [
     ('flags', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1441
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1453
 class struct_v4l2_ctrl_h264_pps(Structure):
     pass
 
@@ -175,7 +175,7 @@ struct_v4l2_ctrl_h264_pps._fields_ = [
     ('flags', __u16),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1473
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1485
 class struct_v4l2_ctrl_h264_scaling_matrix(Structure):
     pass
 
@@ -188,7 +188,7 @@ struct_v4l2_ctrl_h264_scaling_matrix._fields_ = [
     ('scaling_list_8x8', (__u8 * int(64)) * int(6)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1478
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1490
 class struct_v4l2_h264_weight_factors(Structure):
     pass
 
@@ -205,7 +205,7 @@ struct_v4l2_h264_weight_factors._fields_ = [
     ('chroma_offset', (__s16 * int(2)) * int(32)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1503
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1515
 class struct_v4l2_ctrl_h264_pred_weights(Structure):
     pass
 
@@ -220,7 +220,7 @@ struct_v4l2_ctrl_h264_pred_weights._fields_ = [
     ('weight_factors', struct_v4l2_h264_weight_factors * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1529
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1541
 class struct_v4l2_h264_reference(Structure):
     pass
 
@@ -233,7 +233,7 @@ struct_v4l2_h264_reference._fields_ = [
     ('index', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1576
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1588
 class struct_v4l2_ctrl_h264_slice_params(Structure):
     pass
 
@@ -276,7 +276,7 @@ struct_v4l2_ctrl_h264_slice_params._fields_ = [
     ('flags', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1621
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1633
 class struct_v4l2_h264_dpb_entry(Structure):
     pass
 
@@ -301,7 +301,7 @@ struct_v4l2_h264_dpb_entry._fields_ = [
     ('flags', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1660
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1672
 class struct_v4l2_ctrl_h264_decode_params(Structure):
     pass
 
@@ -340,7 +340,7 @@ struct_v4l2_ctrl_h264_decode_params._fields_ = [
     ('flags', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1738
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1750
 class struct_v4l2_ctrl_fwht_params(Structure):
     pass
 
@@ -367,7 +367,7 @@ struct_v4l2_ctrl_fwht_params._fields_ = [
     ('quantization', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1771
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1783
 class struct_v4l2_vp8_segment(Structure):
     pass
 
@@ -386,7 +386,7 @@ struct_v4l2_vp8_segment._fields_ = [
     ('flags', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1798
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1810
 class struct_v4l2_vp8_loop_filter(Structure):
     pass
 
@@ -407,7 +407,7 @@ struct_v4l2_vp8_loop_filter._fields_ = [
     ('flags', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1823
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1835
 class struct_v4l2_vp8_quantization(Structure):
     pass
 
@@ -430,7 +430,7 @@ struct_v4l2_vp8_quantization._fields_ = [
     ('padding', __u16),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1850
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1862
 class struct_v4l2_vp8_entropy(Structure):
     pass
 
@@ -449,7 +449,7 @@ struct_v4l2_vp8_entropy._fields_ = [
     ('padding', __u8 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1869
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1881
 class struct_v4l2_vp8_entropy_coder_state(Structure):
     pass
 
@@ -466,7 +466,7 @@ struct_v4l2_vp8_entropy_coder_state._fields_ = [
     ('padding', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1915
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1927
 class struct_v4l2_ctrl_vp8_frame(Structure):
     pass
 
@@ -519,7 +519,7 @@ struct_v4l2_ctrl_vp8_frame._fields_ = [
     ('flags', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1971
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1983
 class struct_v4l2_ctrl_mpeg2_sequence(Structure):
     pass
 
@@ -540,7 +540,7 @@ struct_v4l2_ctrl_mpeg2_sequence._fields_ = [
     ('flags', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2018
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2030
 class struct_v4l2_ctrl_mpeg2_picture(Structure):
     pass
 
@@ -565,7 +565,7 @@ struct_v4l2_ctrl_mpeg2_picture._fields_ = [
     ('reserved', __u8 * int(5)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2051
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2063
 class struct_v4l2_ctrl_mpeg2_quantisation(Structure):
     pass
 
@@ -582,7 +582,7 @@ struct_v4l2_ctrl_mpeg2_quantisation._fields_ = [
     ('chroma_non_intra_quantiser_matrix', __u8 * int(64)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2153
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2165
 class struct_v4l2_ctrl_hevc_sps(Structure):
     pass
 
@@ -643,7 +643,7 @@ struct_v4l2_ctrl_hevc_sps._fields_ = [
     ('flags', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2242
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2254
 class struct_v4l2_ctrl_hevc_pps(Structure):
     pass
 
@@ -686,7 +686,7 @@ struct_v4l2_ctrl_hevc_pps._fields_ = [
     ('flags', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2289
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2301
 class struct_v4l2_hevc_dpb_entry(Structure):
     pass
 
@@ -705,7 +705,7 @@ struct_v4l2_hevc_dpb_entry._fields_ = [
     ('pic_order_cnt_val', __s32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2322
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2334
 class struct_v4l2_hevc_pred_weight_table(Structure):
     pass
 
@@ -734,7 +734,7 @@ struct_v4l2_hevc_pred_weight_table._fields_ = [
     ('delta_chroma_log2_weight_denom', __s8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2399
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2411
 class struct_v4l2_ctrl_hevc_slice_params(Structure):
     pass
 
@@ -803,7 +803,7 @@ struct_v4l2_ctrl_hevc_slice_params._fields_ = [
     ('flags', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2473
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2485
 class struct_v4l2_ctrl_hevc_decode_params(Structure):
     pass
 
@@ -840,7 +840,7 @@ struct_v4l2_ctrl_hevc_decode_params._fields_ = [
     ('flags', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2512
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2524
 class struct_v4l2_ctrl_hevc_scaling_matrix(Structure):
     pass
 
@@ -861,7 +861,41 @@ struct_v4l2_ctrl_hevc_scaling_matrix._fields_ = [
     ('scaling_list_dc_coef_32x32', __u8 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2577
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2538
+class struct_v4l2_ctrl_hdr10_cll_info(Structure):
+    pass
+
+struct_v4l2_ctrl_hdr10_cll_info.__slots__ = [
+    'max_content_light_level',
+    'max_pic_average_light_level',
+]
+struct_v4l2_ctrl_hdr10_cll_info._fields_ = [
+    ('max_content_light_level', __u16),
+    ('max_pic_average_light_level', __u16),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2558
+class struct_v4l2_ctrl_hdr10_mastering_display(Structure):
+    pass
+
+struct_v4l2_ctrl_hdr10_mastering_display.__slots__ = [
+    'display_primaries_x',
+    'display_primaries_y',
+    'white_point_x',
+    'white_point_y',
+    'max_display_mastering_luminance',
+    'min_display_mastering_luminance',
+]
+struct_v4l2_ctrl_hdr10_mastering_display._fields_ = [
+    ('display_primaries_x', __u16 * int(3)),
+    ('display_primaries_y', __u16 * int(3)),
+    ('white_point_x', __u16),
+    ('white_point_y', __u16),
+    ('max_display_mastering_luminance', __u32),
+    ('min_display_mastering_luminance', __u32),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2589
 class struct_v4l2_vp9_loop_filter(Structure):
     pass
 
@@ -882,7 +916,7 @@ struct_v4l2_vp9_loop_filter._fields_ = [
     ('reserved', __u8 * int(7)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2598
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2610
 class struct_v4l2_vp9_quantization(Structure):
     pass
 
@@ -901,7 +935,7 @@ struct_v4l2_vp9_quantization._fields_ = [
     ('reserved', __u8 * int(4)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2642
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2654
 class struct_v4l2_vp9_segmentation(Structure):
     pass
 
@@ -922,7 +956,7 @@ struct_v4l2_vp9_segmentation._fields_ = [
     ('reserved', __u8 * int(5)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2727
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2739
 class struct_v4l2_ctrl_vp9_frame(Structure):
     pass
 
@@ -977,7 +1011,7 @@ struct_v4l2_ctrl_vp9_frame._fields_ = [
     ('reserved', __u8 * int(7)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2771
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2783
 class struct_v4l2_vp9_mv_probs(Structure):
     pass
 
@@ -1004,7 +1038,7 @@ struct_v4l2_vp9_mv_probs._fields_ = [
     ('hp', __u8 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2819
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2831
 class struct_v4l2_ctrl_vp9_compressed_hdr(Structure):
     pass
 
@@ -1045,7 +1079,7 @@ struct_v4l2_ctrl_vp9_compressed_hdr._fields_ = [
     ('mv', struct_v4l2_vp9_mv_probs),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2897
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2909
 class struct_v4l2_ctrl_av1_sequence(Structure):
     pass
 
@@ -1068,7 +1102,7 @@ struct_v4l2_ctrl_av1_sequence._fields_ = [
     ('max_frame_height_minus_1', __u16),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2926
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2938
 class struct_v4l2_ctrl_av1_tile_group_entry(Structure):
     pass
 
@@ -1085,9 +1119,9 @@ struct_v4l2_ctrl_av1_tile_group_entry._fields_ = [
     ('tile_col', __u32),
 ]
 
-enum_v4l2_av1_warp_model = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2943
+enum_v4l2_av1_warp_model = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2955
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2994
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3006
 class struct_v4l2_av1_global_motion(Structure):
     pass
 
@@ -1106,9 +1140,9 @@ struct_v4l2_av1_global_motion._fields_ = [
     ('reserved', __u8 * int(3)),
 ]
 
-enum_v4l2_av1_frame_restoration_type = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3009
+enum_v4l2_av1_frame_restoration_type = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3021
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3032
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3044
 class struct_v4l2_av1_loop_restoration(Structure):
     pass
 
@@ -1129,7 +1163,7 @@ struct_v4l2_av1_loop_restoration._fields_ = [
     ('loop_restoration_size', __u32 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3053
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3065
 class struct_v4l2_av1_cdef(Structure):
     pass
 
@@ -1150,9 +1184,9 @@ struct_v4l2_av1_cdef._fields_ = [
     ('uv_sec_strength', __u8 * int(8)),
 ]
 
-V4L2_AV1_SEG_LVL_MAX = 8# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3080
+V4L2_AV1_SEG_LVL_MAX = 8# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3092
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3104
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3116
 class struct_v4l2_av1_segmentation(Structure):
     pass
 
@@ -1169,7 +1203,7 @@ struct_v4l2_av1_segmentation._fields_ = [
     ('feature_data', (__s16 * int(V4L2_AV1_SEG_LVL_MAX)) * int(8)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3139
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3151
 class struct_v4l2_av1_loop_filter(Structure):
     pass
 
@@ -1190,7 +1224,7 @@ struct_v4l2_av1_loop_filter._fields_ = [
     ('delta_lf_res', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3173
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3185
 class struct_v4l2_av1_quantization(Structure):
     pass
 
@@ -1221,7 +1255,7 @@ struct_v4l2_av1_quantization._fields_ = [
     ('delta_q_res', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3209
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3221
 class struct_v4l2_av1_tile_info(Structure):
     pass
 
@@ -1250,13 +1284,13 @@ struct_v4l2_av1_tile_info._fields_ = [
     ('reserved', __u8 * int(3)),
 ]
 
-enum_v4l2_av1_frame_type = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3230
+enum_v4l2_av1_frame_type = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3242
 
-enum_v4l2_av1_interpolation_filter = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3250
+enum_v4l2_av1_interpolation_filter = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3262
 
-enum_v4l2_av1_tx_mode = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3268
+enum_v4l2_av1_tx_mode = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3280
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3346
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3358
 class struct_v4l2_ctrl_av1_frame(Structure):
     pass
 
@@ -1319,7 +1353,7 @@ struct_v4l2_ctrl_av1_frame._fields_ = [
     ('refresh_frame_flags', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3449
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3461
 class struct_v4l2_ctrl_av1_film_grain(Structure):
     pass
 
@@ -1892,7 +1926,7 @@ struct_v4l2_requestbuffers._fields_ = [
     ('reserved', __u8 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1029
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1030
 class union_anon_9(Union):
     pass
 
@@ -1907,7 +1941,7 @@ union_anon_9._fields_ = [
     ('fd', __s32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1026
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1027
 class struct_v4l2_plane(Structure):
     pass
 
@@ -1926,7 +1960,7 @@ struct_v4l2_plane._fields_ = [
     ('reserved', __u32 * int(11)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1085
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1086
 class union_anon_10(Union):
     pass
 
@@ -1943,7 +1977,7 @@ union_anon_10._fields_ = [
     ('fd', __s32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1093
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1094
 class union_anon_11(Union):
     pass
 
@@ -1956,7 +1990,7 @@ union_anon_11._fields_ = [
     ('reserved', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1073
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1074
 class struct_v4l2_buffer(Structure):
     pass
 
@@ -1994,7 +2028,7 @@ struct_v4l2_buffer._fields_ = [
     ('unnamed_1', union_anon_11),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1170
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1171
 class struct_v4l2_exportbuffer(Structure):
     pass
 
@@ -2015,7 +2049,7 @@ struct_v4l2_exportbuffer._fields_ = [
     ('reserved', __u32 * int(11)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1188
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1189
 class struct_anon_12(Structure):
     pass
 
@@ -2040,7 +2074,7 @@ struct_anon_12._fields_ = [
     ('priv', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1182
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1183
 class struct_v4l2_framebuffer(Structure):
     pass
 
@@ -2057,7 +2091,7 @@ struct_v4l2_framebuffer._fields_ = [
     ('fmt', struct_anon_12),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1217
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1218
 class struct_v4l2_clip(Structure):
     pass
 
@@ -2070,7 +2104,7 @@ struct_v4l2_clip._fields_ = [
     ('next', POINTER(struct_v4l2_clip)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1222
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1223
 class struct_v4l2_window(Structure):
     pass
 
@@ -2093,7 +2127,7 @@ struct_v4l2_window._fields_ = [
     ('global_alpha', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1235
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1236
 class struct_v4l2_captureparm(Structure):
     pass
 
@@ -2114,7 +2148,7 @@ struct_v4l2_captureparm._fields_ = [
     ('reserved', __u32 * int(4)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1248
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1249
 class struct_v4l2_outputparm(Structure):
     pass
 
@@ -2135,7 +2169,7 @@ struct_v4l2_outputparm._fields_ = [
     ('reserved', __u32 * int(4)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1260
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1261
 class struct_v4l2_cropcap(Structure):
     pass
 
@@ -2152,7 +2186,7 @@ struct_v4l2_cropcap._fields_ = [
     ('pixelaspect', struct_v4l2_fract),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1267
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1268
 class struct_v4l2_crop(Structure):
     pass
 
@@ -2165,7 +2199,7 @@ struct_v4l2_crop._fields_ = [
     ('c', struct_v4l2_rect),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1285
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1286
 class struct_v4l2_selection(Structure):
     pass
 
@@ -2184,9 +2218,9 @@ struct_v4l2_selection._fields_ = [
     ('reserved', __u32 * int(9)),
 ]
 
-v4l2_std_id = __u64# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1298
+v4l2_std_id = __u64# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1299
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1430
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1431
 class struct_v4l2_standard(Structure):
     pass
 
@@ -2207,7 +2241,7 @@ struct_v4l2_standard._fields_ = [
     ('reserved', __u32 * int(4)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1478
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1479
 class struct_v4l2_bt_timings(Structure):
     pass
 
@@ -2256,7 +2290,7 @@ struct_v4l2_bt_timings._fields_ = [
     ('reserved', __u8 * int(46)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1604
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1605
 class union_anon_13(Union):
     pass
 
@@ -2269,7 +2303,7 @@ union_anon_13._fields_ = [
     ('reserved', __u32 * int(32)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1602
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1603
 class struct_v4l2_dv_timings(Structure):
     pass
 
@@ -2285,7 +2319,7 @@ struct_v4l2_dv_timings._fields_ = [
     ('unnamed_1', union_anon_13),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1621
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1622
 class struct_v4l2_enum_dv_timings(Structure):
     pass
 
@@ -2302,7 +2336,7 @@ struct_v4l2_enum_dv_timings._fields_ = [
     ('timings', struct_v4l2_dv_timings),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1639
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1640
 class struct_v4l2_bt_timings_cap(Structure):
     pass
 
@@ -2329,7 +2363,7 @@ struct_v4l2_bt_timings_cap._fields_ = [
     ('reserved', __u32 * int(16)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1670
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1671
 class union_anon_14(Union):
     pass
 
@@ -2342,7 +2376,7 @@ union_anon_14._fields_ = [
     ('raw_data', __u32 * int(32)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1666
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1667
 class struct_v4l2_dv_timings_cap(Structure):
     pass
 
@@ -2362,7 +2396,7 @@ struct_v4l2_dv_timings_cap._fields_ = [
     ('unnamed_1', union_anon_14),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1680
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1681
 class struct_v4l2_input(Structure):
     pass
 
@@ -2389,7 +2423,7 @@ struct_v4l2_input._fields_ = [
     ('reserved', __u32 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1732
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1733
 class struct_v4l2_output(Structure):
     pass
 
@@ -2414,7 +2448,7 @@ struct_v4l2_output._fields_ = [
     ('reserved', __u32 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1756
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1757
 class struct_v4l2_control(Structure):
     pass
 
@@ -2427,7 +2461,7 @@ struct_v4l2_control._fields_ = [
     ('value', __s32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1765
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1766
 class union_anon_15(Union):
     pass
 
@@ -2463,6 +2497,8 @@ union_anon_15.__slots__ = [
     'p_av1_tile_group_entry',
     'p_av1_frame',
     'p_av1_film_grain',
+    'p_hdr10_cll_info',
+    'p_hdr10_mastering_display',
     'ptr',
 ]
 union_anon_15._fields_ = [
@@ -2497,10 +2533,12 @@ union_anon_15._fields_ = [
     ('p_av1_tile_group_entry', POINTER(struct_v4l2_ctrl_av1_tile_group_entry)),
     ('p_av1_frame', POINTER(struct_v4l2_ctrl_av1_frame)),
     ('p_av1_film_grain', POINTER(struct_v4l2_ctrl_av1_film_grain)),
+    ('p_hdr10_cll_info', POINTER(struct_v4l2_ctrl_hdr10_cll_info)),
+    ('p_hdr10_mastering_display', POINTER(struct_v4l2_ctrl_hdr10_mastering_display)),
     ('ptr', POINTER(None)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1761
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1762
 class struct_v4l2_ext_control(Structure):
     pass
 
@@ -2520,7 +2558,7 @@ struct_v4l2_ext_control._fields_ = [
     ('unnamed_1', union_anon_15),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1802
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1805
 class union_anon_16(Union):
     pass
 
@@ -2533,7 +2571,7 @@ union_anon_16._fields_ = [
     ('which', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1801
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1804
 class struct_v4l2_ext_controls(Structure):
     pass
 
@@ -2557,85 +2595,85 @@ struct_v4l2_ext_controls._fields_ = [
     ('controls', POINTER(struct_v4l2_ext_control)),
 ]
 
-enum_v4l2_ctrl_type = c_int# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+enum_v4l2_ctrl_type = c_int# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_INTEGER = 1# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_INTEGER = 1# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_BOOLEAN = 2# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_BOOLEAN = 2# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_MENU = 3# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_MENU = 3# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_BUTTON = 4# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_BUTTON = 4# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_INTEGER64 = 5# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_INTEGER64 = 5# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_CTRL_CLASS = 6# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_CTRL_CLASS = 6# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_STRING = 7# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_STRING = 7# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_BITMASK = 8# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_BITMASK = 8# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_INTEGER_MENU = 9# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_INTEGER_MENU = 9# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_COMPOUND_TYPES = 0x0100# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_COMPOUND_TYPES = 0x0100# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_U8 = 0x0100# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_U8 = 0x0100# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_U16 = 0x0101# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_U16 = 0x0101# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_U32 = 0x0102# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_U32 = 0x0102# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_AREA = 0x0106# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_AREA = 0x0106# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HDR10_CLL_INFO = 0x0110# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HDR10_CLL_INFO = 0x0110# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HDR10_MASTERING_DISPLAY = 0x0111# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HDR10_MASTERING_DISPLAY = 0x0111# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_H264_SPS = 0x0200# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_H264_SPS = 0x0200# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_H264_PPS = 0x0201# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_H264_PPS = 0x0201# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_H264_SCALING_MATRIX = 0x0202# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_H264_SCALING_MATRIX = 0x0202# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_H264_SLICE_PARAMS = 0x0203# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_H264_SLICE_PARAMS = 0x0203# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_H264_DECODE_PARAMS = 0x0204# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_H264_DECODE_PARAMS = 0x0204# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_H264_PRED_WEIGHTS = 0x0205# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_H264_PRED_WEIGHTS = 0x0205# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_FWHT_PARAMS = 0x0220# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_FWHT_PARAMS = 0x0220# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_VP8_FRAME = 0x0240# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_VP8_FRAME = 0x0240# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_MPEG2_QUANTISATION = 0x0250# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_MPEG2_QUANTISATION = 0x0250# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_MPEG2_SEQUENCE = 0x0251# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_MPEG2_SEQUENCE = 0x0251# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_MPEG2_PICTURE = 0x0252# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_MPEG2_PICTURE = 0x0252# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_VP9_COMPRESSED_HDR = 0x0260# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_VP9_COMPRESSED_HDR = 0x0260# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_VP9_FRAME = 0x0261# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_VP9_FRAME = 0x0261# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HEVC_SPS = 0x0270# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HEVC_SPS = 0x0270# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HEVC_PPS = 0x0271# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HEVC_PPS = 0x0271# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS = 0x0272# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HEVC_SLICE_PARAMS = 0x0272# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HEVC_SCALING_MATRIX = 0x0273# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HEVC_SCALING_MATRIX = 0x0273# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_HEVC_DECODE_PARAMS = 0x0274# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_HEVC_DECODE_PARAMS = 0x0274# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_AV1_SEQUENCE = 0x280# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_AV1_SEQUENCE = 0x280# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_AV1_TILE_GROUP_ENTRY = 0x281# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_AV1_TILE_GROUP_ENTRY = 0x281# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_AV1_FRAME = 0x282# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_AV1_FRAME = 0x282# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-V4L2_CTRL_TYPE_AV1_FILM_GRAIN = 0x283# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
+V4L2_CTRL_TYPE_AV1_FILM_GRAIN = 0x283# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1825
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1874
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1877
 class struct_v4l2_queryctrl(Structure):
     pass
 
@@ -2662,7 +2700,7 @@ struct_v4l2_queryctrl._fields_ = [
     ('reserved', __u32 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1887
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1890
 class struct_v4l2_query_ext_ctrl(Structure):
     pass
 
@@ -2697,7 +2735,7 @@ struct_v4l2_query_ext_ctrl._fields_ = [
     ('reserved', __u32 * int(32)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1907
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1910
 class union_anon_17(Union):
     pass
 
@@ -2710,7 +2748,7 @@ union_anon_17._fields_ = [
     ('value', __s64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1904
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1907
 class struct_v4l2_querymenu(Structure):
     pass
 
@@ -2730,7 +2768,7 @@ struct_v4l2_querymenu._fields_ = [
     ('reserved', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1941
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1944
 class struct_v4l2_tuner(Structure):
     pass
 
@@ -2761,7 +2799,7 @@ struct_v4l2_tuner._fields_ = [
     ('reserved', __u32 * int(4)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1955
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1958
 class struct_v4l2_modulator(Structure):
     pass
 
@@ -2786,7 +2824,7 @@ struct_v4l2_modulator._fields_ = [
     ('reserved', __u32 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1998
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2001
 class struct_v4l2_frequency(Structure):
     pass
 
@@ -2803,7 +2841,7 @@ struct_v4l2_frequency._fields_ = [
     ('reserved', __u32 * int(8)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2009
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2012
 class struct_v4l2_frequency_band(Structure):
     pass
 
@@ -2828,7 +2866,7 @@ struct_v4l2_frequency_band._fields_ = [
     ('reserved', __u32 * int(9)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2020
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2023
 class struct_v4l2_hw_freq_seek(Structure):
     pass
 
@@ -2853,7 +2891,7 @@ struct_v4l2_hw_freq_seek._fields_ = [
     ('reserved', __u32 * int(5)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2035
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2038
 class struct_v4l2_rds_data(Structure):
     pass
 
@@ -2868,7 +2906,7 @@ struct_v4l2_rds_data._fields_ = [
     ('block', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2055
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2058
 class struct_v4l2_audio(Structure):
     pass
 
@@ -2887,7 +2925,7 @@ struct_v4l2_audio._fields_ = [
     ('reserved', __u32 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2070
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2073
 class struct_v4l2_audioout(Structure):
     pass
 
@@ -2906,7 +2944,7 @@ struct_v4l2_audioout._fields_ = [
     ('reserved', __u32 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2087
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2090
 class struct_v4l2_enc_idx_entry(Structure):
     pass
 
@@ -2925,7 +2963,7 @@ struct_v4l2_enc_idx_entry._fields_ = [
     ('reserved', __u32 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2096
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2099
 class struct_v4l2_enc_idx(Structure):
     pass
 
@@ -2942,7 +2980,7 @@ struct_v4l2_enc_idx._fields_ = [
     ('entry', struct_v4l2_enc_idx_entry * int(64)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2116
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2119
 class struct_anon_18(Structure):
     pass
 
@@ -2953,7 +2991,7 @@ struct_anon_18._fields_ = [
     ('data', __u32 * int(8)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2115
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2118
 class union_anon_19(Union):
     pass
 
@@ -2964,7 +3002,7 @@ union_anon_19._fields_ = [
     ('raw', struct_anon_18),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2112
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2115
 class struct_v4l2_encoder_cmd(Structure):
     pass
 
@@ -2982,7 +3020,7 @@ struct_v4l2_encoder_cmd._fields_ = [
     ('unnamed_1', union_anon_19),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2152
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2155
 class struct_anon_20(Structure):
     pass
 
@@ -2993,7 +3031,7 @@ struct_anon_20._fields_ = [
     ('pts', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2156
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2159
 class struct_anon_21(Structure):
     pass
 
@@ -3006,7 +3044,7 @@ struct_anon_21._fields_ = [
     ('format', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2166
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2169
 class struct_anon_22(Structure):
     pass
 
@@ -3017,7 +3055,7 @@ struct_anon_22._fields_ = [
     ('data', __u32 * int(16)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2151
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2154
 class union_anon_23(Union):
     pass
 
@@ -3032,7 +3070,7 @@ union_anon_23._fields_ = [
     ('raw', struct_anon_22),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2148
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2151
 class struct_v4l2_decoder_cmd(Structure):
     pass
 
@@ -3050,7 +3088,7 @@ struct_v4l2_decoder_cmd._fields_ = [
     ('unnamed_1', union_anon_23),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2181
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2184
 class struct_v4l2_vbi_format(Structure):
     pass
 
@@ -3075,7 +3113,7 @@ struct_v4l2_vbi_format._fields_ = [
     ('reserved', __u32 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2209
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2212
 class struct_v4l2_sliced_vbi_format(Structure):
     pass
 
@@ -3092,7 +3130,7 @@ struct_v4l2_sliced_vbi_format._fields_ = [
     ('reserved', __u32 * int(2)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2233
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2236
 class struct_v4l2_sliced_vbi_cap(Structure):
     pass
 
@@ -3109,7 +3147,7 @@ struct_v4l2_sliced_vbi_cap._fields_ = [
     ('reserved', __u32 * int(3)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2244
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2247
 class struct_v4l2_sliced_vbi_data(Structure):
     pass
 
@@ -3128,7 +3166,7 @@ struct_v4l2_sliced_vbi_data._fields_ = [
     ('data', __u8 * int(48)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2274
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2277
 class struct_v4l2_mpeg_vbi_itv0_line(Structure):
     pass
 
@@ -3141,7 +3179,7 @@ struct_v4l2_mpeg_vbi_itv0_line._fields_ = [
     ('data', __u8 * int(42)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2279
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2282
 class struct_v4l2_mpeg_vbi_itv0(Structure):
     pass
 
@@ -3154,7 +3192,7 @@ struct_v4l2_mpeg_vbi_itv0._fields_ = [
     ('line', struct_v4l2_mpeg_vbi_itv0_line * int(35)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2284
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2287
 class struct_v4l2_mpeg_vbi_ITV0(Structure):
     pass
 
@@ -3165,7 +3203,7 @@ struct_v4l2_mpeg_vbi_ITV0._fields_ = [
     ('line', struct_v4l2_mpeg_vbi_itv0_line * int(36)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2293
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2296
 class union_anon_24(Union):
     pass
 
@@ -3178,7 +3216,7 @@ union_anon_24._fields_ = [
     ('ITV0', struct_v4l2_mpeg_vbi_ITV0),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2291
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2294
 class struct_v4l2_mpeg_vbi_fmt_ivtv(Structure):
     pass
 
@@ -3194,7 +3232,7 @@ struct_v4l2_mpeg_vbi_fmt_ivtv._fields_ = [
     ('unnamed_1', union_anon_24),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2311
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2314
 class struct_v4l2_plane_pix_format(Structure):
     pass
 
@@ -3209,7 +3247,7 @@ struct_v4l2_plane_pix_format._fields_ = [
     ('reserved', __u16 * int(6)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2343
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2346
 class union_anon_25(Union):
     pass
 
@@ -3222,7 +3260,7 @@ union_anon_25._fields_ = [
     ('hsv_enc', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2333
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2336
 class struct_v4l2_pix_format_mplane(Structure):
     pass
 
@@ -3258,7 +3296,7 @@ struct_v4l2_pix_format_mplane._fields_ = [
     ('reserved', __u8 * int(7)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2358
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2361
 class struct_v4l2_sdr_format(Structure):
     pass
 
@@ -3273,7 +3311,7 @@ struct_v4l2_sdr_format._fields_ = [
     ('reserved', __u8 * int(24)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2375
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2378
 class struct_v4l2_meta_format(Structure):
     pass
 
@@ -3292,7 +3330,7 @@ struct_v4l2_meta_format._fields_ = [
     ('bytesperline', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2397
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2400
 class union_anon_26(Union):
     pass
 
@@ -3317,7 +3355,7 @@ union_anon_26._fields_ = [
     ('raw_data', __u8 * int(200)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2395
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2398
 class struct_v4l2_format(Structure):
     pass
 
@@ -3330,7 +3368,7 @@ struct_v4l2_format._fields_ = [
     ('fmt', union_anon_26),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2413
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2416
 class union_anon_27(Union):
     pass
 
@@ -3345,7 +3383,7 @@ union_anon_27._fields_ = [
     ('raw_data', __u8 * int(200)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2411
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2414
 class struct_v4l2_streamparm(Structure):
     pass
 
@@ -3358,7 +3396,7 @@ struct_v4l2_streamparm._fields_ = [
     ('parm', union_anon_27),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2434
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2437
 class struct_v4l2_event_vsync(Structure):
     pass
 
@@ -3369,7 +3407,7 @@ struct_v4l2_event_vsync._fields_ = [
     ('field', __u8),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2448
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2451
 class union_anon_28(Union):
     pass
 
@@ -3382,7 +3420,7 @@ union_anon_28._fields_ = [
     ('value64', __s64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2445
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2448
 class struct_v4l2_event_ctrl(Structure):
     pass
 
@@ -3410,7 +3448,7 @@ struct_v4l2_event_ctrl._fields_ = [
     ('default_value', __s32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2459
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2462
 class struct_v4l2_event_frame_sync(Structure):
     pass
 
@@ -3421,7 +3459,7 @@ struct_v4l2_event_frame_sync._fields_ = [
     ('frame_sequence', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2465
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2468
 class struct_v4l2_event_src_change(Structure):
     pass
 
@@ -3432,7 +3470,7 @@ struct_v4l2_event_src_change._fields_ = [
     ('changes', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2478
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2481
 class struct_v4l2_event_motion_det(Structure):
     pass
 
@@ -3447,7 +3485,7 @@ struct_v4l2_event_motion_det._fields_ = [
     ('region_mask', __u32),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2486
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2489
 class union_anon_29(Union):
     pass
 
@@ -3468,7 +3506,7 @@ union_anon_29._fields_ = [
     ('data', __u8 * int(64)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2484
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2487
 class struct_v4l2_event(Structure):
     pass
 
@@ -3491,7 +3529,7 @@ struct_v4l2_event._fields_ = [
     ('reserved', __u32 * int(8)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2504
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2507
 class struct_v4l2_event_subscription(Structure):
     pass
 
@@ -3508,7 +3546,7 @@ struct_v4l2_event_subscription._fields_ = [
     ('reserved', __u32 * int(5)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2531
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2534
 class union_anon_30(Union):
     pass
 
@@ -3521,7 +3559,7 @@ union_anon_30._fields_ = [
     ('name', c_char * int(32)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2529
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2532
 class struct_v4l2_dbg_match(Structure):
     pass
 
@@ -3537,7 +3575,7 @@ struct_v4l2_dbg_match._fields_ = [
     ('unnamed_1', union_anon_30),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2537
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2540
 class struct_v4l2_dbg_register(Structure):
     pass
 
@@ -3554,7 +3592,7 @@ struct_v4l2_dbg_register._fields_ = [
     ('val', __u64),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2548
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2551
 class struct_v4l2_dbg_chip_info(Structure):
     pass
 
@@ -3571,7 +3609,7 @@ struct_v4l2_dbg_chip_info._fields_ = [
     ('reserved', __u32 * int(32)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2568
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2574
 class struct_v4l2_create_buffers(Structure):
     pass
 
@@ -3582,6 +3620,7 @@ struct_v4l2_create_buffers.__slots__ = [
     'format',
     'capabilities',
     'flags',
+    'max_num_buffers',
     'reserved',
 ]
 struct_v4l2_create_buffers._fields_ = [
@@ -3591,7 +3630,8 @@ struct_v4l2_create_buffers._fields_ = [
     ('format', struct_v4l2_format),
     ('capabilities', __u32),
     ('flags', __u32),
-    ('reserved', __u32 * int(6)),
+    ('max_num_buffers', __u32),
+    ('reserved', __u32 * int(5)),
 ]
 
 # /home/tomba/tmp/khdrs/include/linux/media.h: 26
@@ -4315,24 +4355,26 @@ struct_v4l2_subdev_route._fields_ = [
     ('reserved', __u32 * int(5)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 229
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 230
 class struct_v4l2_subdev_routing(Structure):
     pass
 
 struct_v4l2_subdev_routing.__slots__ = [
     'which',
-    'num_routes',
+    'len_routes',
     'routes',
+    'num_routes',
     'reserved',
 ]
 struct_v4l2_subdev_routing._fields_ = [
     ('which', __u32),
-    ('num_routes', __u32),
+    ('len_routes', __u32),
     ('routes', __u64),
-    ('reserved', __u32 * int(6)),
+    ('num_routes', __u32),
+    ('reserved', __u32 * int(11)),
 ]
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 250
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 252
 class struct_v4l2_subdev_client_capability(Structure):
     pass
 
@@ -6029,189 +6071,189 @@ try:
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 782
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 780
 try:
-    V4L2_PIX_FMT_IPU3_SBGGR10 = (v4l2_fourcc ('i', 'p', '3', 'b'))
+    V4L2_PIX_FMT_HEXTILE = (v4l2_fourcc ('H', 'X', 'T', 'L'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 783
 try:
-    V4L2_PIX_FMT_IPU3_SGBRG10 = (v4l2_fourcc ('i', 'p', '3', 'g'))
+    V4L2_PIX_FMT_IPU3_SBGGR10 = (v4l2_fourcc ('i', 'p', '3', 'b'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 784
 try:
-    V4L2_PIX_FMT_IPU3_SGRBG10 = (v4l2_fourcc ('i', 'p', '3', 'G'))
+    V4L2_PIX_FMT_IPU3_SGBRG10 = (v4l2_fourcc ('i', 'p', '3', 'g'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 785
 try:
-    V4L2_PIX_FMT_IPU3_SRGGB10 = (v4l2_fourcc ('i', 'p', '3', 'r'))
+    V4L2_PIX_FMT_IPU3_SGRBG10 = (v4l2_fourcc ('i', 'p', '3', 'G'))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 788
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 786
 try:
-    V4L2_SDR_FMT_CU8 = (v4l2_fourcc ('C', 'U', '0', '8'))
+    V4L2_PIX_FMT_IPU3_SRGGB10 = (v4l2_fourcc ('i', 'p', '3', 'r'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 789
 try:
-    V4L2_SDR_FMT_CU16LE = (v4l2_fourcc ('C', 'U', '1', '6'))
+    V4L2_SDR_FMT_CU8 = (v4l2_fourcc ('C', 'U', '0', '8'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 790
 try:
-    V4L2_SDR_FMT_CS8 = (v4l2_fourcc ('C', 'S', '0', '8'))
+    V4L2_SDR_FMT_CU16LE = (v4l2_fourcc ('C', 'U', '1', '6'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 791
 try:
-    V4L2_SDR_FMT_CS14LE = (v4l2_fourcc ('C', 'S', '1', '4'))
+    V4L2_SDR_FMT_CS8 = (v4l2_fourcc ('C', 'S', '0', '8'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 792
 try:
-    V4L2_SDR_FMT_RU12LE = (v4l2_fourcc ('R', 'U', '1', '2'))
+    V4L2_SDR_FMT_CS14LE = (v4l2_fourcc ('C', 'S', '1', '4'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 793
 try:
-    V4L2_SDR_FMT_PCU16BE = (v4l2_fourcc ('P', 'C', '1', '6'))
+    V4L2_SDR_FMT_RU12LE = (v4l2_fourcc ('R', 'U', '1', '2'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 794
 try:
-    V4L2_SDR_FMT_PCU18BE = (v4l2_fourcc ('P', 'C', '1', '8'))
+    V4L2_SDR_FMT_PCU16BE = (v4l2_fourcc ('P', 'C', '1', '6'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 795
 try:
-    V4L2_SDR_FMT_PCU20BE = (v4l2_fourcc ('P', 'C', '2', '0'))
+    V4L2_SDR_FMT_PCU18BE = (v4l2_fourcc ('P', 'C', '1', '8'))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 798
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 796
 try:
-    V4L2_TCH_FMT_DELTA_TD16 = (v4l2_fourcc ('T', 'D', '1', '6'))
+    V4L2_SDR_FMT_PCU20BE = (v4l2_fourcc ('P', 'C', '2', '0'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 799
 try:
-    V4L2_TCH_FMT_DELTA_TD08 = (v4l2_fourcc ('T', 'D', '0', '8'))
+    V4L2_TCH_FMT_DELTA_TD16 = (v4l2_fourcc ('T', 'D', '1', '6'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 800
 try:
-    V4L2_TCH_FMT_TU16 = (v4l2_fourcc ('T', 'U', '1', '6'))
+    V4L2_TCH_FMT_DELTA_TD08 = (v4l2_fourcc ('T', 'D', '0', '8'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 801
 try:
-    V4L2_TCH_FMT_TU08 = (v4l2_fourcc ('T', 'U', '0', '8'))
+    V4L2_TCH_FMT_TU16 = (v4l2_fourcc ('T', 'U', '1', '6'))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 804
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 802
 try:
-    V4L2_META_FMT_VSP1_HGO = (v4l2_fourcc ('V', 'S', 'P', 'H'))
+    V4L2_TCH_FMT_TU08 = (v4l2_fourcc ('T', 'U', '0', '8'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 805
 try:
-    V4L2_META_FMT_VSP1_HGT = (v4l2_fourcc ('V', 'S', 'P', 'T'))
+    V4L2_META_FMT_VSP1_HGO = (v4l2_fourcc ('V', 'S', 'P', 'H'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 806
 try:
-    V4L2_META_FMT_UVC = (v4l2_fourcc ('U', 'V', 'C', 'H'))
+    V4L2_META_FMT_VSP1_HGT = (v4l2_fourcc ('V', 'S', 'P', 'T'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 807
 try:
-    V4L2_META_FMT_D4XX = (v4l2_fourcc ('D', '4', 'X', 'X'))
+    V4L2_META_FMT_UVC = (v4l2_fourcc ('U', 'V', 'C', 'H'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 808
 try:
-    V4L2_META_FMT_VIVID = (v4l2_fourcc ('V', 'I', 'V', 'D'))
+    V4L2_META_FMT_D4XX = (v4l2_fourcc ('D', '4', 'X', 'X'))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 811
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 809
 try:
-    V4L2_META_FMT_RK_ISP1_PARAMS = (v4l2_fourcc ('R', 'K', '1', 'P'))
+    V4L2_META_FMT_VIVID = (v4l2_fourcc ('V', 'I', 'V', 'D'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 812
 try:
-    V4L2_META_FMT_RK_ISP1_STAT_3A = (v4l2_fourcc ('R', 'K', '1', 'S'))
+    V4L2_META_FMT_RK_ISP1_PARAMS = (v4l2_fourcc ('R', 'K', '1', 'P'))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 814
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 813
 try:
-    V4L2_META_FMT_GENERIC_8 = (v4l2_fourcc ('M', 'E', 'T', '8'))
+    V4L2_META_FMT_RK_ISP1_STAT_3A = (v4l2_fourcc ('R', 'K', '1', 'S'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 815
 try:
-    V4L2_META_FMT_GENERIC_CSI2_10 = (v4l2_fourcc ('M', 'C', '1', 'A'))
+    V4L2_META_FMT_GENERIC_8 = (v4l2_fourcc ('M', 'E', 'T', '8'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 816
 try:
-    V4L2_META_FMT_GENERIC_CSI2_12 = (v4l2_fourcc ('M', 'C', '1', 'C'))
+    V4L2_META_FMT_GENERIC_CSI2_10 = (v4l2_fourcc ('M', 'C', '1', 'A'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 817
 try:
-    V4L2_META_FMT_GENERIC_CSI2_14 = (v4l2_fourcc ('M', 'C', '1', 'E'))
+    V4L2_META_FMT_GENERIC_CSI2_12 = (v4l2_fourcc ('M', 'C', '1', 'C'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 818
 try:
-    V4L2_META_FMT_GENERIC_CSI2_16 = (v4l2_fourcc ('M', 'C', '1', 'G'))
+    V4L2_META_FMT_GENERIC_CSI2_14 = (v4l2_fourcc ('M', 'C', '1', 'E'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 819
 try:
-    V4L2_META_FMT_GENERIC_CSI2_20 = (v4l2_fourcc ('M', 'C', '1', 'K'))
+    V4L2_META_FMT_GENERIC_CSI2_16 = (v4l2_fourcc ('M', 'C', '1', 'G'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 820
 try:
-    V4L2_META_FMT_GENERIC_CSI2_24 = (v4l2_fourcc ('M', 'C', '1', 'O'))
+    V4L2_META_FMT_GENERIC_CSI2_20 = (v4l2_fourcc ('M', 'C', '1', 'K'))
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 821
 try:
-    V4L2_META_FMT_GENERIC_CSI2_2_24 = (v4l2_fourcc ('M', 'C', '2', 'O'))
+    V4L2_META_FMT_GENERIC_CSI2_24 = (v4l2_fourcc ('M', 'C', '1', 'O'))
 except:
     pass
 
@@ -6437,2123 +6479,2129 @@ try:
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1113
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1003
+try:
+    V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS = (1 << 7)
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1114
 try:
     V4L2_BUF_FLAG_MAPPED = 0x00000001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1115
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1116
 try:
     V4L2_BUF_FLAG_QUEUED = 0x00000002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1117
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1118
 try:
     V4L2_BUF_FLAG_DONE = 0x00000004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1119
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1120
 try:
     V4L2_BUF_FLAG_KEYFRAME = 0x00000008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1121
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1122
 try:
     V4L2_BUF_FLAG_PFRAME = 0x00000010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1123
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1124
 try:
     V4L2_BUF_FLAG_BFRAME = 0x00000020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1125
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1126
 try:
     V4L2_BUF_FLAG_ERROR = 0x00000040
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1127
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1128
 try:
     V4L2_BUF_FLAG_IN_REQUEST = 0x00000080
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1129
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1130
 try:
     V4L2_BUF_FLAG_TIMECODE = 0x00000100
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1131
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1132
 try:
     V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF = 0x00000200
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1133
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1134
 try:
     V4L2_BUF_FLAG_PREPARED = 0x00000400
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1135
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1136
 try:
     V4L2_BUF_FLAG_NO_CACHE_INVALIDATE = 0x00000800
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1136
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1137
 try:
     V4L2_BUF_FLAG_NO_CACHE_CLEAN = 0x00001000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1138
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1139
 try:
     V4L2_BUF_FLAG_TIMESTAMP_MASK = 0x0000e000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1139
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1140
 try:
     V4L2_BUF_FLAG_TIMESTAMP_UNKNOWN = 0x00000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1140
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1141
 try:
     V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC = 0x00002000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1141
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1142
 try:
     V4L2_BUF_FLAG_TIMESTAMP_COPY = 0x00004000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1143
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1144
 try:
     V4L2_BUF_FLAG_TSTAMP_SRC_MASK = 0x00070000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1144
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1145
 try:
     V4L2_BUF_FLAG_TSTAMP_SRC_EOF = 0x00000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1145
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1146
 try:
     V4L2_BUF_FLAG_TSTAMP_SRC_SOE = 0x00010000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1147
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1148
 try:
     V4L2_BUF_FLAG_LAST = 0x00100000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1149
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1150
 try:
     V4L2_BUF_FLAG_REQUEST_FD = 0x00800000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1200
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1201
 try:
     V4L2_FBUF_CAP_EXTERNOVERLAY = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1201
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1202
 try:
     V4L2_FBUF_CAP_CHROMAKEY = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1202
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1203
 try:
     V4L2_FBUF_CAP_LIST_CLIPPING = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1203
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1204
 try:
     V4L2_FBUF_CAP_BITMAP_CLIPPING = 0x0008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1204
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1205
 try:
     V4L2_FBUF_CAP_LOCAL_ALPHA = 0x0010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1205
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1206
 try:
     V4L2_FBUF_CAP_GLOBAL_ALPHA = 0x0020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1206
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1207
 try:
     V4L2_FBUF_CAP_LOCAL_INV_ALPHA = 0x0040
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1207
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1208
 try:
     V4L2_FBUF_CAP_SRC_CHROMAKEY = 0x0080
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1209
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1210
 try:
     V4L2_FBUF_FLAG_PRIMARY = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1210
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1211
 try:
     V4L2_FBUF_FLAG_OVERLAY = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1211
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1212
 try:
     V4L2_FBUF_FLAG_CHROMAKEY = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1212
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1213
 try:
     V4L2_FBUF_FLAG_LOCAL_ALPHA = 0x0008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1213
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1214
 try:
     V4L2_FBUF_FLAG_GLOBAL_ALPHA = 0x0010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1214
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1215
 try:
     V4L2_FBUF_FLAG_LOCAL_INV_ALPHA = 0x0020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1215
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1216
 try:
     V4L2_FBUF_FLAG_SRC_CHROMAKEY = 0x0040
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1245
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1246
 try:
     V4L2_MODE_HIGHQUALITY = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1246
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1247
 try:
     V4L2_CAP_TIMEPERFRAME = 0x1000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1305
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1306
 try:
     V4L2_STD_PAL_B = (v4l2_std_id (ord_if_char(0x00000001))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1306
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1307
 try:
     V4L2_STD_PAL_B1 = (v4l2_std_id (ord_if_char(0x00000002))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1307
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1308
 try:
     V4L2_STD_PAL_G = (v4l2_std_id (ord_if_char(0x00000004))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1308
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1309
 try:
     V4L2_STD_PAL_H = (v4l2_std_id (ord_if_char(0x00000008))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1309
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1310
 try:
     V4L2_STD_PAL_I = (v4l2_std_id (ord_if_char(0x00000010))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1310
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1311
 try:
     V4L2_STD_PAL_D = (v4l2_std_id (ord_if_char(0x00000020))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1311
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1312
 try:
     V4L2_STD_PAL_D1 = (v4l2_std_id (ord_if_char(0x00000040))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1312
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1313
 try:
     V4L2_STD_PAL_K = (v4l2_std_id (ord_if_char(0x00000080))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1314
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1315
 try:
     V4L2_STD_PAL_M = (v4l2_std_id (ord_if_char(0x00000100))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1315
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1316
 try:
     V4L2_STD_PAL_N = (v4l2_std_id (ord_if_char(0x00000200))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1316
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1317
 try:
     V4L2_STD_PAL_Nc = (v4l2_std_id (ord_if_char(0x00000400))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1317
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1318
 try:
     V4L2_STD_PAL_60 = (v4l2_std_id (ord_if_char(0x00000800))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1319
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1320
 try:
     V4L2_STD_NTSC_M = (v4l2_std_id (ord_if_char(0x00001000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1320
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1321
 try:
     V4L2_STD_NTSC_M_JP = (v4l2_std_id (ord_if_char(0x00002000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1321
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1322
 try:
     V4L2_STD_NTSC_443 = (v4l2_std_id (ord_if_char(0x00004000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1322
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1323
 try:
     V4L2_STD_NTSC_M_KR = (v4l2_std_id (ord_if_char(0x00008000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1324
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1325
 try:
     V4L2_STD_SECAM_B = (v4l2_std_id (ord_if_char(0x00010000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1325
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1326
 try:
     V4L2_STD_SECAM_D = (v4l2_std_id (ord_if_char(0x00020000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1326
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1327
 try:
     V4L2_STD_SECAM_G = (v4l2_std_id (ord_if_char(0x00040000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1327
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1328
 try:
     V4L2_STD_SECAM_H = (v4l2_std_id (ord_if_char(0x00080000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1328
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1329
 try:
     V4L2_STD_SECAM_K = (v4l2_std_id (ord_if_char(0x00100000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1329
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1330
 try:
     V4L2_STD_SECAM_K1 = (v4l2_std_id (ord_if_char(0x00200000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1330
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1331
 try:
     V4L2_STD_SECAM_L = (v4l2_std_id (ord_if_char(0x00400000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1331
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1332
 try:
     V4L2_STD_SECAM_LC = (v4l2_std_id (ord_if_char(0x00800000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1334
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1335
 try:
     V4L2_STD_ATSC_8_VSB = (v4l2_std_id (ord_if_char(0x01000000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1335
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1336
 try:
     V4L2_STD_ATSC_16_VSB = (v4l2_std_id (ord_if_char(0x02000000))).value
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1355
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1356
 try:
     V4L2_STD_NTSC = ((V4L2_STD_NTSC_M | V4L2_STD_NTSC_M_JP) | V4L2_STD_NTSC_M_KR)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1359
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1360
 try:
     V4L2_STD_SECAM_DK = ((V4L2_STD_SECAM_D | V4L2_STD_SECAM_K) | V4L2_STD_SECAM_K1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1363
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1364
 try:
     V4L2_STD_SECAM = (((((V4L2_STD_SECAM_B | V4L2_STD_SECAM_G) | V4L2_STD_SECAM_H) | V4L2_STD_SECAM_DK) | V4L2_STD_SECAM_L) | V4L2_STD_SECAM_LC)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1370
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1371
 try:
     V4L2_STD_PAL_BG = ((V4L2_STD_PAL_B | V4L2_STD_PAL_B1) | V4L2_STD_PAL_G)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1373
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1374
 try:
     V4L2_STD_PAL_DK = ((V4L2_STD_PAL_D | V4L2_STD_PAL_D1) | V4L2_STD_PAL_K)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1381
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1382
 try:
     V4L2_STD_PAL = (((V4L2_STD_PAL_BG | V4L2_STD_PAL_DK) | V4L2_STD_PAL_H) | V4L2_STD_PAL_I)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1386
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1387
 try:
     V4L2_STD_B = ((V4L2_STD_PAL_B | V4L2_STD_PAL_B1) | V4L2_STD_SECAM_B)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1389
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1390
 try:
     V4L2_STD_G = (V4L2_STD_PAL_G | V4L2_STD_SECAM_G)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1391
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1392
 try:
     V4L2_STD_H = (V4L2_STD_PAL_H | V4L2_STD_SECAM_H)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1393
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1394
 try:
     V4L2_STD_L = (V4L2_STD_SECAM_L | V4L2_STD_SECAM_LC)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1395
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1396
 try:
     V4L2_STD_GH = (V4L2_STD_G | V4L2_STD_H)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1397
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1398
 try:
     V4L2_STD_DK = (V4L2_STD_PAL_DK | V4L2_STD_SECAM_DK)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1399
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1400
 try:
     V4L2_STD_BG = (V4L2_STD_B | V4L2_STD_G)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1401
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1402
 try:
     V4L2_STD_MN = (((V4L2_STD_PAL_M | V4L2_STD_PAL_N) | V4L2_STD_PAL_Nc) | V4L2_STD_NTSC)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1407
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1408
 try:
     V4L2_STD_MTS = (((V4L2_STD_NTSC_M | V4L2_STD_PAL_M) | V4L2_STD_PAL_N) | V4L2_STD_PAL_Nc)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1413
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1414
 try:
     V4L2_STD_525_60 = (((V4L2_STD_PAL_M | V4L2_STD_PAL_60) | V4L2_STD_NTSC) | V4L2_STD_NTSC_443)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1418
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1419
 try:
     V4L2_STD_625_50 = (((V4L2_STD_PAL | V4L2_STD_PAL_N) | V4L2_STD_PAL_Nc) | V4L2_STD_SECAM)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1423
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1424
 try:
     V4L2_STD_ATSC = (V4L2_STD_ATSC_8_VSB | V4L2_STD_ATSC_16_VSB)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1426
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1427
 try:
     V4L2_STD_UNKNOWN = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1427
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1428
 try:
     V4L2_STD_ALL = (V4L2_STD_525_60 | V4L2_STD_625_50)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1502
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1503
 try:
     V4L2_DV_PROGRESSIVE = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1503
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1504
 try:
     V4L2_DV_INTERLACED = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1506
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1507
 try:
     V4L2_DV_VSYNC_POS_POL = 0x00000001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1507
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1508
 try:
     V4L2_DV_HSYNC_POS_POL = 0x00000002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1510
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1511
 try:
     V4L2_DV_BT_STD_CEA861 = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1511
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1512
 try:
     V4L2_DV_BT_STD_DMT = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1512
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1513
 try:
     V4L2_DV_BT_STD_CVT = (1 << 2)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1513
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1514
 try:
     V4L2_DV_BT_STD_GTF = (1 << 3)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1514
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1515
 try:
     V4L2_DV_BT_STD_SDI = (1 << 4)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1524
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1525
 try:
     V4L2_DV_FL_REDUCED_BLANKING = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1530
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1531
 try:
     V4L2_DV_FL_CAN_REDUCE_FPS = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1540
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1541
 try:
     V4L2_DV_FL_REDUCED_FPS = (1 << 2)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1547
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1548
 try:
     V4L2_DV_FL_HALF_LINE = (1 << 3)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1555
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1556
 try:
     V4L2_DV_FL_IS_CE_VIDEO = (1 << 4)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1560
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1561
 try:
     V4L2_DV_FL_FIRST_FIELD_EXTRA_LINE = (1 << 5)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1566
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1567
 try:
     V4L2_DV_FL_HAS_PICTURE_ASPECT = (1 << 6)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1571
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1572
 try:
     V4L2_DV_FL_HAS_CEA861_VIC = (1 << 7)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1577
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1578
 try:
     V4L2_DV_FL_HAS_HDMI_VIC = (1 << 8)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1584
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1585
 try:
     V4L2_DV_FL_CAN_DETECT_REDUCED_FPS = (1 << 9)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1587
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1588
 def V4L2_DV_BT_BLANKING_WIDTH(bt):
     return ((((bt.contents.hfrontporch).value) + ((bt.contents.hsync).value)) + ((bt.contents.hbackporch).value))
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1589
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1590
 def V4L2_DV_BT_FRAME_WIDTH(bt):
     return (((bt.contents.width).value) + (V4L2_DV_BT_BLANKING_WIDTH (bt)))
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1591
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1592
 def V4L2_DV_BT_BLANKING_HEIGHT(bt):
     return (((((bt.contents.vfrontporch).value) + ((bt.contents.vsync).value)) + ((bt.contents.vbackporch).value)) + (bt.contents.interlaced) and ((((bt.contents.il_vfrontporch).value) + ((bt.contents.il_vsync).value)) + ((bt.contents.il_vbackporch).value)) or 0)
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1595
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1596
 def V4L2_DV_BT_FRAME_HEIGHT(bt):
     return (((bt.contents.height).value) + (V4L2_DV_BT_BLANKING_HEIGHT (bt)))
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1611
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1612
 try:
     V4L2_DV_BT_656_1120 = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1652
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1653
 try:
     V4L2_DV_BT_CAP_INTERLACED = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1654
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1655
 try:
     V4L2_DV_BT_CAP_PROGRESSIVE = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1656
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1657
 try:
     V4L2_DV_BT_CAP_REDUCED_BLANKING = (1 << 2)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1658
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1659
 try:
     V4L2_DV_BT_CAP_CUSTOM = (1 << 3)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1693
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1694
 try:
     V4L2_INPUT_TYPE_TUNER = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1694
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1695
 try:
     V4L2_INPUT_TYPE_CAMERA = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1695
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1696
 try:
     V4L2_INPUT_TYPE_TOUCH = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1698
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1699
 try:
     V4L2_IN_ST_NO_POWER = 0x00000001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1699
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1700
 try:
     V4L2_IN_ST_NO_SIGNAL = 0x00000002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1700
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1701
 try:
     V4L2_IN_ST_NO_COLOR = 0x00000004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1704
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1705
 try:
     V4L2_IN_ST_HFLIP = 0x00000010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1705
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1706
 try:
     V4L2_IN_ST_VFLIP = 0x00000020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1708
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1709
 try:
     V4L2_IN_ST_NO_H_LOCK = 0x00000100
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1709
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1710
 try:
     V4L2_IN_ST_COLOR_KILL = 0x00000200
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1710
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1711
 try:
     V4L2_IN_ST_NO_V_LOCK = 0x00000400
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1711
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1712
 try:
     V4L2_IN_ST_NO_STD_LOCK = 0x00000800
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1714
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1715
 try:
     V4L2_IN_ST_NO_SYNC = 0x00010000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1715
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1716
 try:
     V4L2_IN_ST_NO_EQU = 0x00020000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1716
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1717
 try:
     V4L2_IN_ST_NO_CARRIER = 0x00040000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1719
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1720
 try:
     V4L2_IN_ST_MACROVISION = 0x01000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1720
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1721
 try:
     V4L2_IN_ST_NO_ACCESS = 0x02000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1721
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1722
 try:
     V4L2_IN_ST_VTR = 0x04000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1724
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1725
 try:
     V4L2_IN_CAP_DV_TIMINGS = 0x00000002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1725
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1726
 try:
     V4L2_IN_CAP_CUSTOM_TIMINGS = V4L2_IN_CAP_DV_TIMINGS
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1726
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1727
 try:
     V4L2_IN_CAP_STD = 0x00000004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1727
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1728
 try:
     V4L2_IN_CAP_NATIVE_SIZE = 0x00000008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1743
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1744
 try:
     V4L2_OUTPUT_TYPE_MODULATOR = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1744
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1745
 try:
     V4L2_OUTPUT_TYPE_ANALOG = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1745
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1746
 try:
     V4L2_OUTPUT_TYPE_ANALOGVGAOVERLAY = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1748
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1749
 try:
     V4L2_OUT_CAP_DV_TIMINGS = 0x00000002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1749
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1750
 try:
     V4L2_OUT_CAP_CUSTOM_TIMINGS = V4L2_OUT_CAP_DV_TIMINGS
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1750
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1751
 try:
     V4L2_OUT_CAP_STD = 0x00000004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1751
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1752
 try:
     V4L2_OUT_CAP_NATIVE_SIZE = 0x00000008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1813
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1816
 try:
     V4L2_CTRL_ID_MASK = 0x0fffffff
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1814
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1817
 def V4L2_CTRL_ID2CLASS(id):
     return (id & 0x0fff0000)
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1815
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1818
 def V4L2_CTRL_ID2WHICH(id):
     return (id & 0x0fff0000)
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1816
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1819
 def V4L2_CTRL_DRIVER_PRIV(id):
     return ((id & 0xffff) >= 0x1000)
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1817
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1820
 try:
     V4L2_CTRL_MAX_DIMS = 4
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1818
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1821
 try:
     V4L2_CTRL_WHICH_CUR_VAL = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1819
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1822
 try:
     V4L2_CTRL_WHICH_DEF_VAL = 0x0f000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1820
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1823
 try:
     V4L2_CTRL_WHICH_REQUEST_VAL = 0x0f010000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1915
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1918
 try:
     V4L2_CTRL_FLAG_DISABLED = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1916
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1919
 try:
     V4L2_CTRL_FLAG_GRABBED = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1917
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1920
 try:
     V4L2_CTRL_FLAG_READ_ONLY = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1918
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1921
 try:
     V4L2_CTRL_FLAG_UPDATE = 0x0008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1919
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1922
 try:
     V4L2_CTRL_FLAG_INACTIVE = 0x0010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1920
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1923
 try:
     V4L2_CTRL_FLAG_SLIDER = 0x0020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1921
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1924
 try:
     V4L2_CTRL_FLAG_WRITE_ONLY = 0x0040
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1922
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1925
 try:
     V4L2_CTRL_FLAG_VOLATILE = 0x0080
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1923
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1926
 try:
     V4L2_CTRL_FLAG_HAS_PAYLOAD = 0x0100
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1924
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1927
 try:
     V4L2_CTRL_FLAG_EXECUTE_ON_WRITE = 0x0200
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1925
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1928
 try:
     V4L2_CTRL_FLAG_MODIFY_LAYOUT = 0x0400
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1926
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1929
 try:
     V4L2_CTRL_FLAG_DYNAMIC_ARRAY = 0x0800
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1929
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1932
 try:
     V4L2_CTRL_FLAG_NEXT_CTRL = 0x80000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1930
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1933
 try:
     V4L2_CTRL_FLAG_NEXT_COMPOUND = 0x40000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1933
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1936
 try:
     V4L2_CID_MAX_CTRLS = 1024
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1935
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1938
 try:
     V4L2_CID_PRIVATE_BASE = 0x08000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1967
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1970
 try:
     V4L2_TUNER_CAP_LOW = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1968
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1971
 try:
     V4L2_TUNER_CAP_NORM = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1969
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1972
 try:
     V4L2_TUNER_CAP_HWSEEK_BOUNDED = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1970
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1973
 try:
     V4L2_TUNER_CAP_HWSEEK_WRAP = 0x0008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1971
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1974
 try:
     V4L2_TUNER_CAP_STEREO = 0x0010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1972
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1975
 try:
     V4L2_TUNER_CAP_LANG2 = 0x0020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1973
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1976
 try:
     V4L2_TUNER_CAP_SAP = 0x0020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1974
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1977
 try:
     V4L2_TUNER_CAP_LANG1 = 0x0040
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1975
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1978
 try:
     V4L2_TUNER_CAP_RDS = 0x0080
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1976
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1979
 try:
     V4L2_TUNER_CAP_RDS_BLOCK_IO = 0x0100
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1977
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1980
 try:
     V4L2_TUNER_CAP_RDS_CONTROLS = 0x0200
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1978
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1981
 try:
     V4L2_TUNER_CAP_FREQ_BANDS = 0x0400
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1979
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1982
 try:
     V4L2_TUNER_CAP_HWSEEK_PROG_LIM = 0x0800
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1980
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1983
 try:
     V4L2_TUNER_CAP_1HZ = 0x1000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1983
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1986
 try:
     V4L2_TUNER_SUB_MONO = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1984
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1987
 try:
     V4L2_TUNER_SUB_STEREO = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1985
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1988
 try:
     V4L2_TUNER_SUB_LANG2 = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1986
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1989
 try:
     V4L2_TUNER_SUB_SAP = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1987
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1990
 try:
     V4L2_TUNER_SUB_LANG1 = 0x0008
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1988
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1991
 try:
     V4L2_TUNER_SUB_RDS = 0x0010
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1991
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1994
 try:
     V4L2_TUNER_MODE_MONO = 0x0000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1992
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1995
 try:
     V4L2_TUNER_MODE_STEREO = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1993
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1996
 try:
     V4L2_TUNER_MODE_LANG2 = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1994
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1997
 try:
     V4L2_TUNER_MODE_SAP = 0x0002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1995
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1998
 try:
     V4L2_TUNER_MODE_LANG1 = 0x0003
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1996
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1999
 try:
     V4L2_TUNER_MODE_LANG1_LANG2 = 0x0004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2005
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2008
 try:
     V4L2_BAND_MODULATION_VSB = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2006
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2009
 try:
     V4L2_BAND_MODULATION_FM = (1 << 2)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2007
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2010
 try:
     V4L2_BAND_MODULATION_AM = (1 << 3)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2041
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2044
 try:
     V4L2_RDS_BLOCK_MSK = 0x7
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2042
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2045
 try:
     V4L2_RDS_BLOCK_A = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2043
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2046
 try:
     V4L2_RDS_BLOCK_B = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2044
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2047
 try:
     V4L2_RDS_BLOCK_C = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2045
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2048
 try:
     V4L2_RDS_BLOCK_D = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2046
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2049
 try:
     V4L2_RDS_BLOCK_C_ALT = 4
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2047
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2050
 try:
     V4L2_RDS_BLOCK_INVALID = 7
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2049
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2052
 try:
     V4L2_RDS_BLOCK_CORRECTED = 0x40
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2050
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2053
 try:
     V4L2_RDS_BLOCK_ERROR = 0x80
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2064
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2067
 try:
     V4L2_AUDCAP_STEREO = 0x00001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2065
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2068
 try:
     V4L2_AUDCAP_AVL = 0x00002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2068
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2071
 try:
     V4L2_AUDMODE_AVL = 0x00001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2082
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2085
 try:
     V4L2_ENC_IDX_FRAME_I = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2083
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2086
 try:
     V4L2_ENC_IDX_FRAME_P = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2084
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2087
 try:
     V4L2_ENC_IDX_FRAME_B = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2085
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2088
 try:
     V4L2_ENC_IDX_FRAME_MASK = 0xf
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2095
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2098
 try:
     V4L2_ENC_IDX_ENTRIES = 64
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2104
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2107
 try:
     V4L2_ENC_CMD_START = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2105
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2108
 try:
     V4L2_ENC_CMD_STOP = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2106
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2109
 try:
     V4L2_ENC_CMD_PAUSE = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2107
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2110
 try:
     V4L2_ENC_CMD_RESUME = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2110
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2113
 try:
     V4L2_ENC_CMD_STOP_AT_GOP_END = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2123
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2126
 try:
     V4L2_DEC_CMD_START = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2124
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2127
 try:
     V4L2_DEC_CMD_STOP = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2125
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2128
 try:
     V4L2_DEC_CMD_PAUSE = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2126
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2129
 try:
     V4L2_DEC_CMD_RESUME = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2127
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2130
 try:
     V4L2_DEC_CMD_FLUSH = 4
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2130
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2133
 try:
     V4L2_DEC_CMD_START_MUTE_AUDIO = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2133
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2136
 try:
     V4L2_DEC_CMD_PAUSE_TO_BLACK = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2136
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2139
 try:
     V4L2_DEC_CMD_STOP_TO_BLACK = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2137
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2140
 try:
     V4L2_DEC_CMD_STOP_IMMEDIATELY = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2142
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2145
 try:
     V4L2_DEC_START_FMT_NONE = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2144
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2147
 try:
     V4L2_DEC_START_FMT_GOP = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2193
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2196
 try:
     V4L2_VBI_UNSYNC = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2194
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2197
 try:
     V4L2_VBI_INTERLACED = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2197
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2200
 try:
     V4L2_VBI_ITU_525_F1_START = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2198
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2201
 try:
     V4L2_VBI_ITU_525_F2_START = 264
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2199
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2202
 try:
     V4L2_VBI_ITU_625_F1_START = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2200
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2203
 try:
     V4L2_VBI_ITU_625_F2_START = 314
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2222
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2225
 try:
     V4L2_SLICED_TELETEXT_B = 0x0001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2224
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2227
 try:
     V4L2_SLICED_VPS = 0x0400
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2226
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2229
 try:
     V4L2_SLICED_CAPTION_525 = 0x1000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2228
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2231
 try:
     V4L2_SLICED_WSS_625 = 0x4000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2230
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2233
 try:
     V4L2_SLICED_VBI_525 = V4L2_SLICED_CAPTION_525
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2231
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2234
 try:
     V4L2_SLICED_VBI_625 = ((V4L2_SLICED_TELETEXT_B | V4L2_SLICED_VPS) | V4L2_SLICED_WSS_625)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2269
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2272
 try:
     V4L2_MPEG_VBI_IVTV_TELETEXT_B = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2270
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2273
 try:
     V4L2_MPEG_VBI_IVTV_CAPTION_525 = 4
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2271
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2274
 try:
     V4L2_MPEG_VBI_IVTV_WSS_625 = 5
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2272
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2275
 try:
     V4L2_MPEG_VBI_IVTV_VPS = 7
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2288
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2291
 try:
     V4L2_MPEG_VBI_IVTV_MAGIC0 = 'itv0'
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2289
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2292
 try:
     V4L2_MPEG_VBI_IVTV_MAGIC1 = 'ITV0'
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2424
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2427
 try:
     V4L2_EVENT_ALL = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2425
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2428
 try:
     V4L2_EVENT_VSYNC = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2426
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2429
 try:
     V4L2_EVENT_EOS = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2427
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2430
 try:
     V4L2_EVENT_CTRL = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2428
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2431
 try:
     V4L2_EVENT_FRAME_SYNC = 4
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2429
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2432
 try:
     V4L2_EVENT_SOURCE_CHANGE = 5
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2430
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2433
 try:
     V4L2_EVENT_MOTION_DET = 6
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2431
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2434
 try:
     V4L2_EVENT_PRIVATE_START = 0x08000000
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2440
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2443
 try:
     V4L2_EVENT_CTRL_CH_VALUE = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2441
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2444
 try:
     V4L2_EVENT_CTRL_CH_FLAGS = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2442
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2445
 try:
     V4L2_EVENT_CTRL_CH_RANGE = (1 << 2)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2443
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2446
 try:
     V4L2_EVENT_CTRL_CH_DIMENSIONS = (1 << 3)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2463
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2466
 try:
     V4L2_EVENT_SRC_CH_RESOLUTION = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2469
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2472
 try:
     V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2501
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2504
 try:
     V4L2_EVENT_SUB_FL_SEND_INITIAL = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2502
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2505
 try:
     V4L2_EVENT_SUB_FL_ALLOW_FEEDBACK = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2520
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2523
 try:
     V4L2_CHIP_MATCH_BRIDGE = 0
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2521
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2524
 try:
     V4L2_CHIP_MATCH_SUBDEV = 4
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2524
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2527
 try:
     V4L2_CHIP_MATCH_HOST = V4L2_CHIP_MATCH_BRIDGE
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2525
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2528
 try:
     V4L2_CHIP_MATCH_I2C_DRIVER = 1
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2526
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2529
 try:
     V4L2_CHIP_MATCH_I2C_ADDR = 2
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2527
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2530
 try:
     V4L2_CHIP_MATCH_AC97 = 3
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2544
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2547
 try:
     V4L2_CHIP_FL_READABLE = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2545
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2548
 try:
     V4L2_CHIP_FL_WRITABLE = (1 << 1)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2582
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2589
 try:
     VIDIOC_QUERYCAP = (_IOR ('V', 0, struct_v4l2_capability))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2583
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2590
 try:
     VIDIOC_ENUM_FMT = (_IOWR ('V', 2, struct_v4l2_fmtdesc))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2584
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2591
 try:
     VIDIOC_G_FMT = (_IOWR ('V', 4, struct_v4l2_format))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2585
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2592
 try:
     VIDIOC_S_FMT = (_IOWR ('V', 5, struct_v4l2_format))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2586
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2593
 try:
     VIDIOC_REQBUFS = (_IOWR ('V', 8, struct_v4l2_requestbuffers))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2587
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2594
 try:
     VIDIOC_QUERYBUF = (_IOWR ('V', 9, struct_v4l2_buffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2588
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2595
 try:
     VIDIOC_G_FBUF = (_IOR ('V', 10, struct_v4l2_framebuffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2589
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2596
 try:
     VIDIOC_S_FBUF = (_IOW ('V', 11, struct_v4l2_framebuffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2590
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2597
 try:
     VIDIOC_OVERLAY = (_IOW ('V', 14, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2591
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2598
 try:
     VIDIOC_QBUF = (_IOWR ('V', 15, struct_v4l2_buffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2592
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2599
 try:
     VIDIOC_EXPBUF = (_IOWR ('V', 16, struct_v4l2_exportbuffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2593
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2600
 try:
     VIDIOC_DQBUF = (_IOWR ('V', 17, struct_v4l2_buffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2594
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2601
 try:
     VIDIOC_STREAMON = (_IOW ('V', 18, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2595
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2602
 try:
     VIDIOC_STREAMOFF = (_IOW ('V', 19, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2596
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2603
 try:
     VIDIOC_G_PARM = (_IOWR ('V', 21, struct_v4l2_streamparm))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2597
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2604
 try:
     VIDIOC_S_PARM = (_IOWR ('V', 22, struct_v4l2_streamparm))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2598
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2605
 try:
     VIDIOC_G_STD = (_IOR ('V', 23, v4l2_std_id))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2599
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2606
 try:
     VIDIOC_S_STD = (_IOW ('V', 24, v4l2_std_id))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2600
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2607
 try:
     VIDIOC_ENUMSTD = (_IOWR ('V', 25, struct_v4l2_standard))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2601
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2608
 try:
     VIDIOC_ENUMINPUT = (_IOWR ('V', 26, struct_v4l2_input))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2602
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2609
 try:
     VIDIOC_G_CTRL = (_IOWR ('V', 27, struct_v4l2_control))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2603
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2610
 try:
     VIDIOC_S_CTRL = (_IOWR ('V', 28, struct_v4l2_control))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2604
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2611
 try:
     VIDIOC_G_TUNER = (_IOWR ('V', 29, struct_v4l2_tuner))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2605
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2612
 try:
     VIDIOC_S_TUNER = (_IOW ('V', 30, struct_v4l2_tuner))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2606
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2613
 try:
     VIDIOC_G_AUDIO = (_IOR ('V', 33, struct_v4l2_audio))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2607
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2614
 try:
     VIDIOC_S_AUDIO = (_IOW ('V', 34, struct_v4l2_audio))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2608
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2615
 try:
     VIDIOC_QUERYCTRL = (_IOWR ('V', 36, struct_v4l2_queryctrl))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2609
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2616
 try:
     VIDIOC_QUERYMENU = (_IOWR ('V', 37, struct_v4l2_querymenu))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2610
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2617
 try:
     VIDIOC_G_INPUT = (_IOR ('V', 38, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2611
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2618
 try:
     VIDIOC_S_INPUT = (_IOWR ('V', 39, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2612
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2619
 try:
     VIDIOC_G_EDID = (_IOWR ('V', 40, struct_v4l2_edid))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2613
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2620
 try:
     VIDIOC_S_EDID = (_IOWR ('V', 41, struct_v4l2_edid))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2614
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2621
 try:
     VIDIOC_G_OUTPUT = (_IOR ('V', 46, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2615
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2622
 try:
     VIDIOC_S_OUTPUT = (_IOWR ('V', 47, c_int))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2616
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2623
 try:
     VIDIOC_ENUMOUTPUT = (_IOWR ('V', 48, struct_v4l2_output))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2617
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2624
 try:
     VIDIOC_G_AUDOUT = (_IOR ('V', 49, struct_v4l2_audioout))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2618
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2625
 try:
     VIDIOC_S_AUDOUT = (_IOW ('V', 50, struct_v4l2_audioout))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2619
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2626
 try:
     VIDIOC_G_MODULATOR = (_IOWR ('V', 54, struct_v4l2_modulator))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2620
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2627
 try:
     VIDIOC_S_MODULATOR = (_IOW ('V', 55, struct_v4l2_modulator))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2621
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2628
 try:
     VIDIOC_G_FREQUENCY = (_IOWR ('V', 56, struct_v4l2_frequency))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2622
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2629
 try:
     VIDIOC_S_FREQUENCY = (_IOW ('V', 57, struct_v4l2_frequency))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2623
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2630
 try:
     VIDIOC_CROPCAP = (_IOWR ('V', 58, struct_v4l2_cropcap))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2624
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2631
 try:
     VIDIOC_G_CROP = (_IOWR ('V', 59, struct_v4l2_crop))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2625
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2632
 try:
     VIDIOC_S_CROP = (_IOW ('V', 60, struct_v4l2_crop))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2626
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2633
 try:
     VIDIOC_G_JPEGCOMP = (_IOR ('V', 61, struct_v4l2_jpegcompression))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2627
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2634
 try:
     VIDIOC_S_JPEGCOMP = (_IOW ('V', 62, struct_v4l2_jpegcompression))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2628
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2635
 try:
     VIDIOC_QUERYSTD = (_IOR ('V', 63, v4l2_std_id))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2629
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2636
 try:
     VIDIOC_TRY_FMT = (_IOWR ('V', 64, struct_v4l2_format))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2630
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2637
 try:
     VIDIOC_ENUMAUDIO = (_IOWR ('V', 65, struct_v4l2_audio))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2631
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2638
 try:
     VIDIOC_ENUMAUDOUT = (_IOWR ('V', 66, struct_v4l2_audioout))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2632
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2639
 try:
     VIDIOC_G_PRIORITY = (_IOR ('V', 67, __u32))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2633
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2640
 try:
     VIDIOC_S_PRIORITY = (_IOW ('V', 68, __u32))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2634
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2641
 try:
     VIDIOC_G_SLICED_VBI_CAP = (_IOWR ('V', 69, struct_v4l2_sliced_vbi_cap))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2635
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2642
 try:
     VIDIOC_LOG_STATUS = (_IO ('V', 70))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2636
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2643
 try:
     VIDIOC_G_EXT_CTRLS = (_IOWR ('V', 71, struct_v4l2_ext_controls))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2637
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2644
 try:
     VIDIOC_S_EXT_CTRLS = (_IOWR ('V', 72, struct_v4l2_ext_controls))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2638
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2645
 try:
     VIDIOC_TRY_EXT_CTRLS = (_IOWR ('V', 73, struct_v4l2_ext_controls))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2639
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2646
 try:
     VIDIOC_ENUM_FRAMESIZES = (_IOWR ('V', 74, struct_v4l2_frmsizeenum))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2640
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2647
 try:
     VIDIOC_ENUM_FRAMEINTERVALS = (_IOWR ('V', 75, struct_v4l2_frmivalenum))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2641
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2648
 try:
     VIDIOC_G_ENC_INDEX = (_IOR ('V', 76, struct_v4l2_enc_idx))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2642
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2649
 try:
     VIDIOC_ENCODER_CMD = (_IOWR ('V', 77, struct_v4l2_encoder_cmd))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2643
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2650
 try:
     VIDIOC_TRY_ENCODER_CMD = (_IOWR ('V', 78, struct_v4l2_encoder_cmd))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2650
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2657
 try:
     VIDIOC_DBG_S_REGISTER = (_IOW ('V', 79, struct_v4l2_dbg_register))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2651
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2658
 try:
     VIDIOC_DBG_G_REGISTER = (_IOWR ('V', 80, struct_v4l2_dbg_register))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2653
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2660
 try:
     VIDIOC_S_HW_FREQ_SEEK = (_IOW ('V', 82, struct_v4l2_hw_freq_seek))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2654
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2661
 try:
     VIDIOC_S_DV_TIMINGS = (_IOWR ('V', 87, struct_v4l2_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2655
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2662
 try:
     VIDIOC_G_DV_TIMINGS = (_IOWR ('V', 88, struct_v4l2_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2656
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2663
 try:
     VIDIOC_DQEVENT = (_IOR ('V', 89, struct_v4l2_event))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2657
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2664
 try:
     VIDIOC_SUBSCRIBE_EVENT = (_IOW ('V', 90, struct_v4l2_event_subscription))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2658
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2665
 try:
     VIDIOC_UNSUBSCRIBE_EVENT = (_IOW ('V', 91, struct_v4l2_event_subscription))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2659
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2666
 try:
     VIDIOC_CREATE_BUFS = (_IOWR ('V', 92, struct_v4l2_create_buffers))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2660
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2667
 try:
     VIDIOC_PREPARE_BUF = (_IOWR ('V', 93, struct_v4l2_buffer))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2661
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2668
 try:
     VIDIOC_G_SELECTION = (_IOWR ('V', 94, struct_v4l2_selection))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2662
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2669
 try:
     VIDIOC_S_SELECTION = (_IOWR ('V', 95, struct_v4l2_selection))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2663
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2670
 try:
     VIDIOC_DECODER_CMD = (_IOWR ('V', 96, struct_v4l2_decoder_cmd))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2664
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2671
 try:
     VIDIOC_TRY_DECODER_CMD = (_IOWR ('V', 97, struct_v4l2_decoder_cmd))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2665
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2672
 try:
     VIDIOC_ENUM_DV_TIMINGS = (_IOWR ('V', 98, struct_v4l2_enum_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2666
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2673
 try:
     VIDIOC_QUERY_DV_TIMINGS = (_IOR ('V', 99, struct_v4l2_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2667
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2674
 try:
     VIDIOC_DV_TIMINGS_CAP = (_IOWR ('V', 100, struct_v4l2_dv_timings_cap))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2668
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2675
 try:
     VIDIOC_ENUM_FREQ_BANDS = (_IOWR ('V', 101, struct_v4l2_frequency_band))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2674
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2681
 try:
     VIDIOC_DBG_G_CHIP_INFO = (_IOWR ('V', 102, struct_v4l2_dbg_chip_info))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2676
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2683
 try:
     VIDIOC_QUERY_EXT_CTRL = (_IOWR ('V', 103, struct_v4l2_query_ext_ctrl))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2681
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2688
 try:
     BASE_VIDIOC_PRIVATE = 192
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2684
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2691
 try:
     V4L2_PIX_FMT_HM12 = V4L2_PIX_FMT_NV12_16L16
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2685
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2692
 try:
     V4L2_PIX_FMT_SUNXI_TILED_NV12 = V4L2_PIX_FMT_NV12_32L32
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2690
+# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2697
 try:
     V4L2_CAP_ASYNCIO = 0x02000000
 except:
@@ -9235,733 +9283,705 @@ except:
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 49
 try:
-    MEDIA_BUS_FMT_BGR666_1X18 = 0x1023
+    MEDIA_BUS_FMT_RGB666_2X9_BE = 0x1025
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 50
 try:
-    MEDIA_BUS_FMT_RBG888_1X24 = 0x100e
+    MEDIA_BUS_FMT_BGR666_1X18 = 0x1023
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 51
 try:
-    MEDIA_BUS_FMT_RGB666_1X24_CPADHI = 0x1015
+    MEDIA_BUS_FMT_RBG888_1X24 = 0x100e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 52
 try:
-    MEDIA_BUS_FMT_BGR666_1X24_CPADHI = 0x1024
+    MEDIA_BUS_FMT_RGB666_1X24_CPADHI = 0x1015
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 53
 try:
-    MEDIA_BUS_FMT_RGB565_1X24_CPADHI = 0x1022
+    MEDIA_BUS_FMT_BGR666_1X24_CPADHI = 0x1024
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 54
 try:
-    MEDIA_BUS_FMT_RGB666_1X7X3_SPWG = 0x1010
+    MEDIA_BUS_FMT_RGB565_1X24_CPADHI = 0x1022
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 55
 try:
-    MEDIA_BUS_FMT_BGR888_1X24 = 0x1013
+    MEDIA_BUS_FMT_RGB666_1X7X3_SPWG = 0x1010
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 56
 try:
-    MEDIA_BUS_FMT_BGR888_3X8 = 0x101b
+    MEDIA_BUS_FMT_BGR888_1X24 = 0x1013
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 57
 try:
-    MEDIA_BUS_FMT_GBR888_1X24 = 0x1014
+    MEDIA_BUS_FMT_BGR888_3X8 = 0x101b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 58
 try:
-    MEDIA_BUS_FMT_RGB888_1X24 = 0x100a
+    MEDIA_BUS_FMT_GBR888_1X24 = 0x1014
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 59
 try:
-    MEDIA_BUS_FMT_RGB888_2X12_BE = 0x100b
+    MEDIA_BUS_FMT_RGB888_1X24 = 0x100a
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 60
 try:
-    MEDIA_BUS_FMT_RGB888_2X12_LE = 0x100c
+    MEDIA_BUS_FMT_RGB888_2X12_BE = 0x100b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 61
 try:
-    MEDIA_BUS_FMT_RGB888_3X8 = 0x101c
+    MEDIA_BUS_FMT_RGB888_2X12_LE = 0x100c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 62
 try:
-    MEDIA_BUS_FMT_RGB888_3X8_DELTA = 0x101d
+    MEDIA_BUS_FMT_RGB888_3X8 = 0x101c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 63
 try:
-    MEDIA_BUS_FMT_RGB888_1X7X4_SPWG = 0x1011
+    MEDIA_BUS_FMT_RGB888_3X8_DELTA = 0x101d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 64
 try:
-    MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA = 0x1012
+    MEDIA_BUS_FMT_RGB888_1X7X4_SPWG = 0x1011
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 65
 try:
-    MEDIA_BUS_FMT_RGB666_1X30_CPADLO = 0x101e
+    MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA = 0x1012
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 66
 try:
-    MEDIA_BUS_FMT_RGB888_1X30_CPADLO = 0x101f
+    MEDIA_BUS_FMT_RGB666_1X30_CPADLO = 0x101e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 67
 try:
-    MEDIA_BUS_FMT_ARGB8888_1X32 = 0x100d
+    MEDIA_BUS_FMT_RGB888_1X30_CPADLO = 0x101f
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 68
 try:
-    MEDIA_BUS_FMT_RGB888_1X32_PADHI = 0x100f
+    MEDIA_BUS_FMT_ARGB8888_1X32 = 0x100d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 69
 try:
-    MEDIA_BUS_FMT_RGB101010_1X30 = 0x1018
+    MEDIA_BUS_FMT_RGB888_1X32_PADHI = 0x100f
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 70
 try:
-    MEDIA_BUS_FMT_RGB666_1X36_CPADLO = 0x1020
+    MEDIA_BUS_FMT_RGB101010_1X30 = 0x1018
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 71
 try:
-    MEDIA_BUS_FMT_RGB888_1X36_CPADLO = 0x1021
+    MEDIA_BUS_FMT_RGB666_1X36_CPADLO = 0x1020
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 72
 try:
-    MEDIA_BUS_FMT_RGB121212_1X36 = 0x1019
+    MEDIA_BUS_FMT_RGB888_1X36_CPADLO = 0x1021
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 73
 try:
-    MEDIA_BUS_FMT_RGB161616_1X48 = 0x101a
+    MEDIA_BUS_FMT_RGB121212_1X36 = 0x1019
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 76
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 74
 try:
-    MEDIA_BUS_FMT_Y8_1X8 = 0x2001
+    MEDIA_BUS_FMT_RGB161616_1X48 = 0x101a
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 77
 try:
-    MEDIA_BUS_FMT_UV8_1X8 = 0x2015
+    MEDIA_BUS_FMT_Y8_1X8 = 0x2001
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 78
 try:
-    MEDIA_BUS_FMT_UYVY8_1_5X8 = 0x2002
+    MEDIA_BUS_FMT_UV8_1X8 = 0x2015
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 79
 try:
-    MEDIA_BUS_FMT_VYUY8_1_5X8 = 0x2003
+    MEDIA_BUS_FMT_UYVY8_1_5X8 = 0x2002
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 80
 try:
-    MEDIA_BUS_FMT_YUYV8_1_5X8 = 0x2004
+    MEDIA_BUS_FMT_VYUY8_1_5X8 = 0x2003
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 81
 try:
-    MEDIA_BUS_FMT_YVYU8_1_5X8 = 0x2005
+    MEDIA_BUS_FMT_YUYV8_1_5X8 = 0x2004
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 82
 try:
-    MEDIA_BUS_FMT_UYVY8_2X8 = 0x2006
+    MEDIA_BUS_FMT_YVYU8_1_5X8 = 0x2005
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 83
 try:
-    MEDIA_BUS_FMT_VYUY8_2X8 = 0x2007
+    MEDIA_BUS_FMT_UYVY8_2X8 = 0x2006
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 84
 try:
-    MEDIA_BUS_FMT_YUYV8_2X8 = 0x2008
+    MEDIA_BUS_FMT_VYUY8_2X8 = 0x2007
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 85
 try:
-    MEDIA_BUS_FMT_YVYU8_2X8 = 0x2009
+    MEDIA_BUS_FMT_YUYV8_2X8 = 0x2008
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 86
 try:
-    MEDIA_BUS_FMT_Y10_1X10 = 0x200a
+    MEDIA_BUS_FMT_YVYU8_2X8 = 0x2009
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 87
 try:
-    MEDIA_BUS_FMT_Y10_2X8_PADHI_LE = 0x202c
+    MEDIA_BUS_FMT_Y10_1X10 = 0x200a
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 88
 try:
-    MEDIA_BUS_FMT_UYVY10_2X10 = 0x2018
+    MEDIA_BUS_FMT_Y10_2X8_PADHI_LE = 0x202c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 89
 try:
-    MEDIA_BUS_FMT_VYUY10_2X10 = 0x2019
+    MEDIA_BUS_FMT_UYVY10_2X10 = 0x2018
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 90
 try:
-    MEDIA_BUS_FMT_YUYV10_2X10 = 0x200b
+    MEDIA_BUS_FMT_VYUY10_2X10 = 0x2019
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 91
 try:
-    MEDIA_BUS_FMT_YVYU10_2X10 = 0x200c
+    MEDIA_BUS_FMT_YUYV10_2X10 = 0x200b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 92
 try:
-    MEDIA_BUS_FMT_Y12_1X12 = 0x2013
+    MEDIA_BUS_FMT_YVYU10_2X10 = 0x200c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 93
 try:
-    MEDIA_BUS_FMT_UYVY12_2X12 = 0x201c
+    MEDIA_BUS_FMT_Y12_1X12 = 0x2013
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 94
 try:
-    MEDIA_BUS_FMT_VYUY12_2X12 = 0x201d
+    MEDIA_BUS_FMT_UYVY12_2X12 = 0x201c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 95
 try:
-    MEDIA_BUS_FMT_YUYV12_2X12 = 0x201e
+    MEDIA_BUS_FMT_VYUY12_2X12 = 0x201d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 96
 try:
-    MEDIA_BUS_FMT_YVYU12_2X12 = 0x201f
+    MEDIA_BUS_FMT_YUYV12_2X12 = 0x201e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 97
 try:
-    MEDIA_BUS_FMT_Y14_1X14 = 0x202d
+    MEDIA_BUS_FMT_YVYU12_2X12 = 0x201f
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 98
 try:
-    MEDIA_BUS_FMT_Y16_1X16 = 0x202e
+    MEDIA_BUS_FMT_Y14_1X14 = 0x202d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 99
 try:
-    MEDIA_BUS_FMT_UYVY8_1X16 = 0x200f
+    MEDIA_BUS_FMT_Y16_1X16 = 0x202e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 100
 try:
-    MEDIA_BUS_FMT_VYUY8_1X16 = 0x2010
+    MEDIA_BUS_FMT_UYVY8_1X16 = 0x200f
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 101
 try:
-    MEDIA_BUS_FMT_YUYV8_1X16 = 0x2011
+    MEDIA_BUS_FMT_VYUY8_1X16 = 0x2010
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 102
 try:
-    MEDIA_BUS_FMT_YVYU8_1X16 = 0x2012
+    MEDIA_BUS_FMT_YUYV8_1X16 = 0x2011
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 103
 try:
-    MEDIA_BUS_FMT_YDYUYDYV8_1X16 = 0x2014
+    MEDIA_BUS_FMT_YVYU8_1X16 = 0x2012
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 104
 try:
-    MEDIA_BUS_FMT_UYVY10_1X20 = 0x201a
+    MEDIA_BUS_FMT_YDYUYDYV8_1X16 = 0x2014
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 105
 try:
-    MEDIA_BUS_FMT_VYUY10_1X20 = 0x201b
+    MEDIA_BUS_FMT_UYVY10_1X20 = 0x201a
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 106
 try:
-    MEDIA_BUS_FMT_YUYV10_1X20 = 0x200d
+    MEDIA_BUS_FMT_VYUY10_1X20 = 0x201b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 107
 try:
-    MEDIA_BUS_FMT_YVYU10_1X20 = 0x200e
+    MEDIA_BUS_FMT_YUYV10_1X20 = 0x200d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 108
 try:
-    MEDIA_BUS_FMT_VUY8_1X24 = 0x2024
+    MEDIA_BUS_FMT_YVYU10_1X20 = 0x200e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 109
 try:
-    MEDIA_BUS_FMT_YUV8_1X24 = 0x2025
+    MEDIA_BUS_FMT_VUY8_1X24 = 0x2024
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 110
 try:
-    MEDIA_BUS_FMT_UYYVYY8_0_5X24 = 0x2026
+    MEDIA_BUS_FMT_YUV8_1X24 = 0x2025
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 111
 try:
-    MEDIA_BUS_FMT_UYVY12_1X24 = 0x2020
+    MEDIA_BUS_FMT_UYYVYY8_0_5X24 = 0x2026
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 112
 try:
-    MEDIA_BUS_FMT_VYUY12_1X24 = 0x2021
+    MEDIA_BUS_FMT_UYVY12_1X24 = 0x2020
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 113
 try:
-    MEDIA_BUS_FMT_YUYV12_1X24 = 0x2022
+    MEDIA_BUS_FMT_VYUY12_1X24 = 0x2021
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 114
 try:
-    MEDIA_BUS_FMT_YVYU12_1X24 = 0x2023
+    MEDIA_BUS_FMT_YUYV12_1X24 = 0x2022
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 115
 try:
-    MEDIA_BUS_FMT_YUV10_1X30 = 0x2016
+    MEDIA_BUS_FMT_YVYU12_1X24 = 0x2023
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 116
 try:
-    MEDIA_BUS_FMT_UYYVYY10_0_5X30 = 0x2027
+    MEDIA_BUS_FMT_YUV10_1X30 = 0x2016
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 117
 try:
-    MEDIA_BUS_FMT_AYUV8_1X32 = 0x2017
+    MEDIA_BUS_FMT_UYYVYY10_0_5X30 = 0x2027
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 118
 try:
-    MEDIA_BUS_FMT_UYYVYY12_0_5X36 = 0x2028
+    MEDIA_BUS_FMT_AYUV8_1X32 = 0x2017
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 119
 try:
-    MEDIA_BUS_FMT_YUV12_1X36 = 0x2029
+    MEDIA_BUS_FMT_UYYVYY12_0_5X36 = 0x2028
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 120
 try:
-    MEDIA_BUS_FMT_YUV16_1X48 = 0x202a
+    MEDIA_BUS_FMT_YUV12_1X36 = 0x2029
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 121
 try:
-    MEDIA_BUS_FMT_UYYVYY16_0_5X48 = 0x202b
+    MEDIA_BUS_FMT_YUV16_1X48 = 0x202a
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 124
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 122
 try:
-    MEDIA_BUS_FMT_SBGGR8_1X8 = 0x3001
+    MEDIA_BUS_FMT_UYYVYY16_0_5X48 = 0x202b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 125
 try:
-    MEDIA_BUS_FMT_SGBRG8_1X8 = 0x3013
+    MEDIA_BUS_FMT_SBGGR8_1X8 = 0x3001
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 126
 try:
-    MEDIA_BUS_FMT_SGRBG8_1X8 = 0x3002
+    MEDIA_BUS_FMT_SGBRG8_1X8 = 0x3013
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 127
 try:
-    MEDIA_BUS_FMT_SRGGB8_1X8 = 0x3014
+    MEDIA_BUS_FMT_SGRBG8_1X8 = 0x3002
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 128
 try:
-    MEDIA_BUS_FMT_SBGGR10_ALAW8_1X8 = 0x3015
+    MEDIA_BUS_FMT_SRGGB8_1X8 = 0x3014
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 129
 try:
-    MEDIA_BUS_FMT_SGBRG10_ALAW8_1X8 = 0x3016
+    MEDIA_BUS_FMT_SBGGR10_ALAW8_1X8 = 0x3015
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 130
 try:
-    MEDIA_BUS_FMT_SGRBG10_ALAW8_1X8 = 0x3017
+    MEDIA_BUS_FMT_SGBRG10_ALAW8_1X8 = 0x3016
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 131
 try:
-    MEDIA_BUS_FMT_SRGGB10_ALAW8_1X8 = 0x3018
+    MEDIA_BUS_FMT_SGRBG10_ALAW8_1X8 = 0x3017
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 132
 try:
-    MEDIA_BUS_FMT_SBGGR10_DPCM8_1X8 = 0x300b
+    MEDIA_BUS_FMT_SRGGB10_ALAW8_1X8 = 0x3018
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 133
 try:
-    MEDIA_BUS_FMT_SGBRG10_DPCM8_1X8 = 0x300c
+    MEDIA_BUS_FMT_SBGGR10_DPCM8_1X8 = 0x300b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 134
 try:
-    MEDIA_BUS_FMT_SGRBG10_DPCM8_1X8 = 0x3009
+    MEDIA_BUS_FMT_SGBRG10_DPCM8_1X8 = 0x300c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 135
 try:
-    MEDIA_BUS_FMT_SRGGB10_DPCM8_1X8 = 0x300d
+    MEDIA_BUS_FMT_SGRBG10_DPCM8_1X8 = 0x3009
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 136
 try:
-    MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE = 0x3003
+    MEDIA_BUS_FMT_SRGGB10_DPCM8_1X8 = 0x300d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 137
 try:
-    MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE = 0x3004
+    MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE = 0x3003
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 138
 try:
-    MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_BE = 0x3005
+    MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE = 0x3004
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 139
 try:
-    MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_LE = 0x3006
+    MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_BE = 0x3005
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 140
 try:
-    MEDIA_BUS_FMT_SBGGR10_1X10 = 0x3007
+    MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_LE = 0x3006
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 141
 try:
-    MEDIA_BUS_FMT_SGBRG10_1X10 = 0x300e
+    MEDIA_BUS_FMT_SBGGR10_1X10 = 0x3007
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 142
 try:
-    MEDIA_BUS_FMT_SGRBG10_1X10 = 0x300a
+    MEDIA_BUS_FMT_SGBRG10_1X10 = 0x300e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 143
 try:
-    MEDIA_BUS_FMT_SRGGB10_1X10 = 0x300f
+    MEDIA_BUS_FMT_SGRBG10_1X10 = 0x300a
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 144
 try:
-    MEDIA_BUS_FMT_SBGGR12_1X12 = 0x3008
+    MEDIA_BUS_FMT_SRGGB10_1X10 = 0x300f
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 145
 try:
-    MEDIA_BUS_FMT_SGBRG12_1X12 = 0x3010
+    MEDIA_BUS_FMT_SBGGR12_1X12 = 0x3008
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 146
 try:
-    MEDIA_BUS_FMT_SGRBG12_1X12 = 0x3011
+    MEDIA_BUS_FMT_SGBRG12_1X12 = 0x3010
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 147
 try:
-    MEDIA_BUS_FMT_SRGGB12_1X12 = 0x3012
+    MEDIA_BUS_FMT_SGRBG12_1X12 = 0x3011
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 148
 try:
-    MEDIA_BUS_FMT_SBGGR14_1X14 = 0x3019
+    MEDIA_BUS_FMT_SRGGB12_1X12 = 0x3012
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 149
 try:
-    MEDIA_BUS_FMT_SGBRG14_1X14 = 0x301a
+    MEDIA_BUS_FMT_SBGGR14_1X14 = 0x3019
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 150
 try:
-    MEDIA_BUS_FMT_SGRBG14_1X14 = 0x301b
+    MEDIA_BUS_FMT_SGBRG14_1X14 = 0x301a
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 151
 try:
-    MEDIA_BUS_FMT_SRGGB14_1X14 = 0x301c
+    MEDIA_BUS_FMT_SGRBG14_1X14 = 0x301b
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 152
 try:
-    MEDIA_BUS_FMT_SBGGR16_1X16 = 0x301d
+    MEDIA_BUS_FMT_SRGGB14_1X14 = 0x301c
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 153
 try:
-    MEDIA_BUS_FMT_SGBRG16_1X16 = 0x301e
+    MEDIA_BUS_FMT_SBGGR16_1X16 = 0x301d
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 154
 try:
-    MEDIA_BUS_FMT_SGRBG16_1X16 = 0x301f
+    MEDIA_BUS_FMT_SGBRG16_1X16 = 0x301e
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 155
 try:
+    MEDIA_BUS_FMT_SGRBG16_1X16 = 0x301f
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 156
+try:
     MEDIA_BUS_FMT_SRGGB16_1X16 = 0x3020
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 158
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 159
 try:
     MEDIA_BUS_FMT_JPEG_1X8 = 0x4001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 163
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 164
 try:
     MEDIA_BUS_FMT_S5C_UYVY_JPEG_1X8 = 0x5001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 166
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 167
 try:
     MEDIA_BUS_FMT_AHSV8888_1X32 = 0x6001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 174
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 175
 try:
     MEDIA_BUS_FMT_METADATA_FIXED = 0x7001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 177
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 178
 try:
     MEDIA_BUS_FMT_META_8 = 0x8001
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 178
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 179
 try:
     MEDIA_BUS_FMT_META_10 = 0x8002
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 179
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 180
 try:
     MEDIA_BUS_FMT_META_12 = 0x8003
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 180
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 181
 try:
     MEDIA_BUS_FMT_META_14 = 0x8004
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 181
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 182
 try:
     MEDIA_BUS_FMT_META_16 = 0x8005
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 182
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 183
 try:
     MEDIA_BUS_FMT_META_20 = 0x8006
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 183
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 184
 try:
     MEDIA_BUS_FMT_META_24 = 0x8007
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 186
-try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_8 = 0x9001
-except:
-    pass
-
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 187
 try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_10 = 0x9002
+    MEDIA_BUS_FMT_CCS_EMBEDDED = 0x9001
 except:
     pass
 
 # /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 188
 try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_12 = 0x9003
+    MEDIA_BUS_FMT_OV2740_EMBEDDED = 0x9002
 except:
     pass
-
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 189
-try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_14 = 0x9004
-except:
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 190
-try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_16 = 0x9005
-except:
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 191
-try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_20 = 0x9006
-except:
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 192
-try:
-    MEDIA_BUS_FMT_CCS_EMBEDDED_24 = 0x9007
-except:
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 194
-def MEDIA_BUS_FMT_IS_META(code):
-    return ((code & (0xf000 == 0x7000)) or (code & (0xf000 == 0x8000)))
 
 # /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 15
 try:
@@ -10017,169 +10037,169 @@ try:
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 242
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 244
 try:
     V4L2_SUBDEV_CLIENT_CAP_STREAMS = (1 << 0)
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 257
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 259
 try:
     VIDIOC_SUBDEV_QUERYCAP = (_IOR ('V', 0, struct_v4l2_subdev_capability))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 258
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 260
 try:
     VIDIOC_SUBDEV_G_FMT = (_IOWR ('V', 4, struct_v4l2_subdev_format))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 259
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 261
 try:
     VIDIOC_SUBDEV_S_FMT = (_IOWR ('V', 5, struct_v4l2_subdev_format))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 260
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 262
 try:
     VIDIOC_SUBDEV_G_FRAME_INTERVAL = (_IOWR ('V', 21, struct_v4l2_subdev_frame_interval))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 261
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 263
 try:
     VIDIOC_SUBDEV_S_FRAME_INTERVAL = (_IOWR ('V', 22, struct_v4l2_subdev_frame_interval))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 262
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 264
 try:
     VIDIOC_SUBDEV_ENUM_MBUS_CODE = (_IOWR ('V', 2, struct_v4l2_subdev_mbus_code_enum))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 263
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 265
 try:
     VIDIOC_SUBDEV_ENUM_FRAME_SIZE = (_IOWR ('V', 74, struct_v4l2_subdev_frame_size_enum))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 264
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 266
 try:
     VIDIOC_SUBDEV_ENUM_FRAME_INTERVAL = (_IOWR ('V', 75, struct_v4l2_subdev_frame_interval_enum))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 265
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 267
 try:
     VIDIOC_SUBDEV_G_CROP = (_IOWR ('V', 59, struct_v4l2_subdev_crop))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 266
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 268
 try:
     VIDIOC_SUBDEV_S_CROP = (_IOWR ('V', 60, struct_v4l2_subdev_crop))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 267
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 269
 try:
     VIDIOC_SUBDEV_G_SELECTION = (_IOWR ('V', 61, struct_v4l2_subdev_selection))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 268
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 270
 try:
     VIDIOC_SUBDEV_S_SELECTION = (_IOWR ('V', 62, struct_v4l2_subdev_selection))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 269
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 271
 try:
     VIDIOC_SUBDEV_G_ROUTING = (_IOWR ('V', 38, struct_v4l2_subdev_routing))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 270
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 272
 try:
     VIDIOC_SUBDEV_S_ROUTING = (_IOWR ('V', 39, struct_v4l2_subdev_routing))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 271
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 273
 try:
     VIDIOC_SUBDEV_G_CLIENT_CAP = (_IOR ('V', 101, struct_v4l2_subdev_client_capability))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 272
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 274
 try:
     VIDIOC_SUBDEV_S_CLIENT_CAP = (_IOWR ('V', 102, struct_v4l2_subdev_client_capability))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 275
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 277
 try:
     VIDIOC_SUBDEV_G_STD = (_IOR ('V', 23, v4l2_std_id))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 276
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 278
 try:
     VIDIOC_SUBDEV_S_STD = (_IOW ('V', 24, v4l2_std_id))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 277
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 279
 try:
     VIDIOC_SUBDEV_ENUMSTD = (_IOWR ('V', 25, struct_v4l2_standard))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 278
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 280
 try:
     VIDIOC_SUBDEV_G_EDID = (_IOWR ('V', 40, struct_v4l2_edid))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 279
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 281
 try:
     VIDIOC_SUBDEV_S_EDID = (_IOWR ('V', 41, struct_v4l2_edid))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 280
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 282
 try:
     VIDIOC_SUBDEV_QUERYSTD = (_IOR ('V', 63, v4l2_std_id))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 281
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 283
 try:
     VIDIOC_SUBDEV_S_DV_TIMINGS = (_IOWR ('V', 87, struct_v4l2_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 282
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 284
 try:
     VIDIOC_SUBDEV_G_DV_TIMINGS = (_IOWR ('V', 88, struct_v4l2_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 283
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 285
 try:
     VIDIOC_SUBDEV_ENUM_DV_TIMINGS = (_IOWR ('V', 98, struct_v4l2_enum_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 284
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 286
 try:
     VIDIOC_SUBDEV_QUERY_DV_TIMINGS = (_IOR ('V', 99, struct_v4l2_dv_timings))
 except:
     pass
 
-# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 285
+# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 287
 try:
     VIDIOC_SUBDEV_DV_TIMINGS_CAP = (_IOWR ('V', 100, struct_v4l2_dv_timings_cap))
 except:
@@ -10213,129 +10233,129 @@ v4l2_jpegcompression = struct_v4l2_jpegcompression# /home/tomba/tmp/khdrs/includ
 
 v4l2_requestbuffers = struct_v4l2_requestbuffers# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 984
 
-v4l2_plane = struct_v4l2_plane# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1026
+v4l2_plane = struct_v4l2_plane# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1027
 
-v4l2_buffer = struct_v4l2_buffer# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1073
+v4l2_buffer = struct_v4l2_buffer# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1074
 
-v4l2_exportbuffer = struct_v4l2_exportbuffer# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1170
+v4l2_exportbuffer = struct_v4l2_exportbuffer# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1171
 
-v4l2_framebuffer = struct_v4l2_framebuffer# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1182
+v4l2_framebuffer = struct_v4l2_framebuffer# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1183
 
-v4l2_clip = struct_v4l2_clip# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1217
+v4l2_clip = struct_v4l2_clip# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1218
 
-v4l2_window = struct_v4l2_window# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1222
+v4l2_window = struct_v4l2_window# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1223
 
-v4l2_captureparm = struct_v4l2_captureparm# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1235
+v4l2_captureparm = struct_v4l2_captureparm# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1236
 
-v4l2_outputparm = struct_v4l2_outputparm# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1248
+v4l2_outputparm = struct_v4l2_outputparm# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1249
 
-v4l2_cropcap = struct_v4l2_cropcap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1260
+v4l2_cropcap = struct_v4l2_cropcap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1261
 
-v4l2_crop = struct_v4l2_crop# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1267
+v4l2_crop = struct_v4l2_crop# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1268
 
-v4l2_selection = struct_v4l2_selection# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1285
+v4l2_selection = struct_v4l2_selection# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1286
 
-v4l2_standard = struct_v4l2_standard# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1430
+v4l2_standard = struct_v4l2_standard# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1431
 
-v4l2_bt_timings = struct_v4l2_bt_timings# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1478
+v4l2_bt_timings = struct_v4l2_bt_timings# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1479
 
-v4l2_dv_timings = struct_v4l2_dv_timings# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1602
+v4l2_dv_timings = struct_v4l2_dv_timings# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1603
 
-v4l2_enum_dv_timings = struct_v4l2_enum_dv_timings# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1621
+v4l2_enum_dv_timings = struct_v4l2_enum_dv_timings# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1622
 
-v4l2_bt_timings_cap = struct_v4l2_bt_timings_cap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1639
+v4l2_bt_timings_cap = struct_v4l2_bt_timings_cap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1640
 
-v4l2_dv_timings_cap = struct_v4l2_dv_timings_cap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1666
+v4l2_dv_timings_cap = struct_v4l2_dv_timings_cap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1667
 
-v4l2_input = struct_v4l2_input# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1680
+v4l2_input = struct_v4l2_input# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1681
 
-v4l2_output = struct_v4l2_output# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1732
+v4l2_output = struct_v4l2_output# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1733
 
-v4l2_control = struct_v4l2_control# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1756
+v4l2_control = struct_v4l2_control# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1757
 
-v4l2_ext_control = struct_v4l2_ext_control# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1761
+v4l2_ext_control = struct_v4l2_ext_control# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1762
 
-v4l2_ext_controls = struct_v4l2_ext_controls# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1801
+v4l2_ext_controls = struct_v4l2_ext_controls# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1804
 
-v4l2_queryctrl = struct_v4l2_queryctrl# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1874
+v4l2_queryctrl = struct_v4l2_queryctrl# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1877
 
-v4l2_query_ext_ctrl = struct_v4l2_query_ext_ctrl# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1887
+v4l2_query_ext_ctrl = struct_v4l2_query_ext_ctrl# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1890
 
-v4l2_querymenu = struct_v4l2_querymenu# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1904
+v4l2_querymenu = struct_v4l2_querymenu# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1907
 
-v4l2_tuner = struct_v4l2_tuner# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1941
+v4l2_tuner = struct_v4l2_tuner# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1944
 
-v4l2_modulator = struct_v4l2_modulator# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1955
+v4l2_modulator = struct_v4l2_modulator# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1958
 
-v4l2_frequency = struct_v4l2_frequency# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1998
+v4l2_frequency = struct_v4l2_frequency# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2001
 
-v4l2_frequency_band = struct_v4l2_frequency_band# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2009
+v4l2_frequency_band = struct_v4l2_frequency_band# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2012
 
-v4l2_hw_freq_seek = struct_v4l2_hw_freq_seek# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2020
+v4l2_hw_freq_seek = struct_v4l2_hw_freq_seek# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2023
 
-v4l2_rds_data = struct_v4l2_rds_data# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2035
+v4l2_rds_data = struct_v4l2_rds_data# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2038
 
-v4l2_audio = struct_v4l2_audio# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2055
+v4l2_audio = struct_v4l2_audio# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2058
 
-v4l2_audioout = struct_v4l2_audioout# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2070
+v4l2_audioout = struct_v4l2_audioout# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2073
 
-v4l2_enc_idx_entry = struct_v4l2_enc_idx_entry# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2087
+v4l2_enc_idx_entry = struct_v4l2_enc_idx_entry# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2090
 
-v4l2_enc_idx = struct_v4l2_enc_idx# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2096
+v4l2_enc_idx = struct_v4l2_enc_idx# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2099
 
-v4l2_encoder_cmd = struct_v4l2_encoder_cmd# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2112
+v4l2_encoder_cmd = struct_v4l2_encoder_cmd# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2115
 
-v4l2_decoder_cmd = struct_v4l2_decoder_cmd# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2148
+v4l2_decoder_cmd = struct_v4l2_decoder_cmd# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2151
 
-v4l2_vbi_format = struct_v4l2_vbi_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2181
+v4l2_vbi_format = struct_v4l2_vbi_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2184
 
-v4l2_sliced_vbi_format = struct_v4l2_sliced_vbi_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2209
+v4l2_sliced_vbi_format = struct_v4l2_sliced_vbi_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2212
 
-v4l2_sliced_vbi_cap = struct_v4l2_sliced_vbi_cap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2233
+v4l2_sliced_vbi_cap = struct_v4l2_sliced_vbi_cap# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2236
 
-v4l2_sliced_vbi_data = struct_v4l2_sliced_vbi_data# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2244
+v4l2_sliced_vbi_data = struct_v4l2_sliced_vbi_data# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2247
 
-v4l2_mpeg_vbi_itv0_line = struct_v4l2_mpeg_vbi_itv0_line# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2274
+v4l2_mpeg_vbi_itv0_line = struct_v4l2_mpeg_vbi_itv0_line# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2277
 
-v4l2_mpeg_vbi_itv0 = struct_v4l2_mpeg_vbi_itv0# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2279
+v4l2_mpeg_vbi_itv0 = struct_v4l2_mpeg_vbi_itv0# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2282
 
-v4l2_mpeg_vbi_ITV0 = struct_v4l2_mpeg_vbi_ITV0# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2284
+v4l2_mpeg_vbi_ITV0 = struct_v4l2_mpeg_vbi_ITV0# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2287
 
-v4l2_mpeg_vbi_fmt_ivtv = struct_v4l2_mpeg_vbi_fmt_ivtv# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2291
+v4l2_mpeg_vbi_fmt_ivtv = struct_v4l2_mpeg_vbi_fmt_ivtv# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2294
 
-v4l2_plane_pix_format = struct_v4l2_plane_pix_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2311
+v4l2_plane_pix_format = struct_v4l2_plane_pix_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2314
 
-v4l2_pix_format_mplane = struct_v4l2_pix_format_mplane# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2333
+v4l2_pix_format_mplane = struct_v4l2_pix_format_mplane# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2336
 
-v4l2_sdr_format = struct_v4l2_sdr_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2358
+v4l2_sdr_format = struct_v4l2_sdr_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2361
 
-v4l2_meta_format = struct_v4l2_meta_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2375
+v4l2_meta_format = struct_v4l2_meta_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2378
 
-v4l2_format = struct_v4l2_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2395
+v4l2_format = struct_v4l2_format# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2398
 
-v4l2_streamparm = struct_v4l2_streamparm# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2411
+v4l2_streamparm = struct_v4l2_streamparm# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2414
 
-v4l2_event_vsync = struct_v4l2_event_vsync# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2434
+v4l2_event_vsync = struct_v4l2_event_vsync# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2437
 
-v4l2_event_ctrl = struct_v4l2_event_ctrl# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2445
+v4l2_event_ctrl = struct_v4l2_event_ctrl# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2448
 
-v4l2_event_frame_sync = struct_v4l2_event_frame_sync# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2459
+v4l2_event_frame_sync = struct_v4l2_event_frame_sync# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2462
 
-v4l2_event_src_change = struct_v4l2_event_src_change# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2465
+v4l2_event_src_change = struct_v4l2_event_src_change# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2468
 
-v4l2_event_motion_det = struct_v4l2_event_motion_det# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2478
+v4l2_event_motion_det = struct_v4l2_event_motion_det# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2481
 
-v4l2_event = struct_v4l2_event# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2484
+v4l2_event = struct_v4l2_event# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2487
 
-v4l2_event_subscription = struct_v4l2_event_subscription# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2504
+v4l2_event_subscription = struct_v4l2_event_subscription# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2507
 
-v4l2_dbg_match = struct_v4l2_dbg_match# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2529
+v4l2_dbg_match = struct_v4l2_dbg_match# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2532
 
-v4l2_dbg_register = struct_v4l2_dbg_register# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2537
+v4l2_dbg_register = struct_v4l2_dbg_register# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2540
 
-v4l2_dbg_chip_info = struct_v4l2_dbg_chip_info# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2548
+v4l2_dbg_chip_info = struct_v4l2_dbg_chip_info# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2551
 
-v4l2_create_buffers = struct_v4l2_create_buffers# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2568
+v4l2_create_buffers = struct_v4l2_create_buffers# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 2574
 
 media_device_info = struct_media_device_info# /home/tomba/tmp/khdrs/include/linux/media.h: 26
 
@@ -10379,9 +10399,9 @@ v4l2_subdev_capability = struct_v4l2_subdev_capability# /home/tomba/tmp/khdrs/in
 
 v4l2_subdev_route = struct_v4l2_subdev_route# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 212
 
-v4l2_subdev_routing = struct_v4l2_subdev_routing# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 229
+v4l2_subdev_routing = struct_v4l2_subdev_routing# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 230
 
-v4l2_subdev_client_capability = struct_v4l2_subdev_client_capability# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 250
+v4l2_subdev_client_capability = struct_v4l2_subdev_client_capability# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 252
 
 # No inserted files
 
