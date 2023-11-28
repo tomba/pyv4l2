@@ -1,7 +1,7 @@
 r"""Wrapper for videodev2.h
 
 Generated with:
-/home/tomba/.local/bin/ctypesgen -D__signed__= --allow-gnu-c -o v4l2/v4l2_kernel.py --no-embed-preamble /home/tomba/tmp/khdrs/include/linux/videodev2.h /home/tomba/tmp/khdrs/include/linux/media.h /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h /home/tomba/tmp/khdrs/include/linux/media-bus-format.h /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h
+/home/tomba/.local/bin/ctypesgen -I/home/tomba/tmp/khdrs/include -D__signed__= -U__SIZEOF_INT128__ -o v4l2/v4l2_kernel.py --no-embed-preamble /home/tomba/tmp/khdrs/include/linux/videodev2.h /home/tomba/tmp/khdrs/include/linux/media.h /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h /home/tomba/tmp/khdrs/include/linux/media-bus-format.h /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h
 
 Do not modify this file.
 """
@@ -62,25 +62,25 @@ struct_timespec._fields_ = [
     ('tv_nsec', __syscall_slong_t),
 ]
 
-__s8 = c_char# /usr/include/asm-generic/int-ll64.h: 20
+__s8 = c_char# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 20
 
-__u8 = c_ubyte# /usr/include/asm-generic/int-ll64.h: 21
+__u8 = c_ubyte# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 21
 
-__s16 = c_short# /usr/include/asm-generic/int-ll64.h: 23
+__s16 = c_short# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 23
 
-__u16 = c_ushort# /usr/include/asm-generic/int-ll64.h: 24
+__u16 = c_ushort# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 24
 
-__s32 = c_int# /usr/include/asm-generic/int-ll64.h: 26
+__s32 = c_int# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 26
 
-__u32 = c_uint# /usr/include/asm-generic/int-ll64.h: 27
+__u32 = c_uint# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 27
 
-__s64 = c_longlong# /usr/include/asm-generic/int-ll64.h: 30
+__s64 = c_longlong# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 33
 
-__u64 = c_ulonglong# /usr/include/asm-generic/int-ll64.h: 31
+__u64 = c_ulonglong# /home/tomba/tmp/khdrs/include/asm-generic/int-ll64.h: 34
 
-__le32 = __u32# /usr/include/linux/types.h: 26
+__le32 = __u32# /home/tomba/tmp/khdrs/include/linux/types.h: 33
 
-# /usr/include/linux/v4l2-common.h: 87
+# /home/tomba/tmp/khdrs/include/linux/v4l2-common.h: 48
 class struct_v4l2_edid(Structure):
     pass
 
@@ -99,7 +99,7 @@ struct_v4l2_edid._fields_ = [
     ('edid', POINTER(__u8)),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1306
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1385
 class struct_v4l2_ctrl_h264_sps(Structure):
     pass
 
@@ -144,7 +144,7 @@ struct_v4l2_ctrl_h264_sps._fields_ = [
     ('flags', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1362
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1441
 class struct_v4l2_ctrl_h264_pps(Structure):
     pass
 
@@ -175,7 +175,7 @@ struct_v4l2_ctrl_h264_pps._fields_ = [
     ('flags', __u16),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1394
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1473
 class struct_v4l2_ctrl_h264_scaling_matrix(Structure):
     pass
 
@@ -188,7 +188,7 @@ struct_v4l2_ctrl_h264_scaling_matrix._fields_ = [
     ('scaling_list_8x8', (__u8 * int(64)) * int(6)),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1399
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1478
 class struct_v4l2_h264_weight_factors(Structure):
     pass
 
@@ -205,7 +205,7 @@ struct_v4l2_h264_weight_factors._fields_ = [
     ('chroma_offset', (__s16 * int(2)) * int(32)),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1424
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1503
 class struct_v4l2_ctrl_h264_pred_weights(Structure):
     pass
 
@@ -220,7 +220,7 @@ struct_v4l2_ctrl_h264_pred_weights._fields_ = [
     ('weight_factors', struct_v4l2_h264_weight_factors * int(2)),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1450
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1529
 class struct_v4l2_h264_reference(Structure):
     pass
 
@@ -233,7 +233,7 @@ struct_v4l2_h264_reference._fields_ = [
     ('index', __u8),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1497
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1576
 class struct_v4l2_ctrl_h264_slice_params(Structure):
     pass
 
@@ -276,7 +276,7 @@ struct_v4l2_ctrl_h264_slice_params._fields_ = [
     ('flags', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1542
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1621
 class struct_v4l2_h264_dpb_entry(Structure):
     pass
 
@@ -301,7 +301,7 @@ struct_v4l2_h264_dpb_entry._fields_ = [
     ('flags', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1579
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1660
 class struct_v4l2_ctrl_h264_decode_params(Structure):
     pass
 
@@ -340,7 +340,7 @@ struct_v4l2_ctrl_h264_decode_params._fields_ = [
     ('flags', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1657
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1738
 class struct_v4l2_ctrl_fwht_params(Structure):
     pass
 
@@ -367,7 +367,7 @@ struct_v4l2_ctrl_fwht_params._fields_ = [
     ('quantization', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1690
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1771
 class struct_v4l2_vp8_segment(Structure):
     pass
 
@@ -386,7 +386,7 @@ struct_v4l2_vp8_segment._fields_ = [
     ('flags', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1717
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1798
 class struct_v4l2_vp8_loop_filter(Structure):
     pass
 
@@ -407,7 +407,7 @@ struct_v4l2_vp8_loop_filter._fields_ = [
     ('flags', __u32),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1742
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1823
 class struct_v4l2_vp8_quantization(Structure):
     pass
 
@@ -430,7 +430,7 @@ struct_v4l2_vp8_quantization._fields_ = [
     ('padding', __u16),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1769
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1850
 class struct_v4l2_vp8_entropy(Structure):
     pass
 
@@ -449,7 +449,7 @@ struct_v4l2_vp8_entropy._fields_ = [
     ('padding', __u8 * int(3)),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1788
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1869
 class struct_v4l2_vp8_entropy_coder_state(Structure):
     pass
 
@@ -466,7 +466,7 @@ struct_v4l2_vp8_entropy_coder_state._fields_ = [
     ('padding', __u8),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1834
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1915
 class struct_v4l2_ctrl_vp8_frame(Structure):
     pass
 
@@ -519,7 +519,7 @@ struct_v4l2_ctrl_vp8_frame._fields_ = [
     ('flags', __u64),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1890
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 1971
 class struct_v4l2_ctrl_mpeg2_sequence(Structure):
     pass
 
@@ -540,7 +540,7 @@ struct_v4l2_ctrl_mpeg2_sequence._fields_ = [
     ('flags', __u8),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1937
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2018
 class struct_v4l2_ctrl_mpeg2_picture(Structure):
     pass
 
@@ -565,7 +565,7 @@ struct_v4l2_ctrl_mpeg2_picture._fields_ = [
     ('reserved', __u8 * int(5)),
 ]
 
-# /usr/include/linux/v4l2-controls.h: 1970
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2051
 class struct_v4l2_ctrl_mpeg2_quantisation(Structure):
     pass
 
@@ -580,6 +580,804 @@ struct_v4l2_ctrl_mpeg2_quantisation._fields_ = [
     ('non_intra_quantiser_matrix', __u8 * int(64)),
     ('chroma_intra_quantiser_matrix', __u8 * int(64)),
     ('chroma_non_intra_quantiser_matrix', __u8 * int(64)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2153
+class struct_v4l2_ctrl_hevc_sps(Structure):
+    pass
+
+struct_v4l2_ctrl_hevc_sps.__slots__ = [
+    'video_parameter_set_id',
+    'seq_parameter_set_id',
+    'pic_width_in_luma_samples',
+    'pic_height_in_luma_samples',
+    'bit_depth_luma_minus8',
+    'bit_depth_chroma_minus8',
+    'log2_max_pic_order_cnt_lsb_minus4',
+    'sps_max_dec_pic_buffering_minus1',
+    'sps_max_num_reorder_pics',
+    'sps_max_latency_increase_plus1',
+    'log2_min_luma_coding_block_size_minus3',
+    'log2_diff_max_min_luma_coding_block_size',
+    'log2_min_luma_transform_block_size_minus2',
+    'log2_diff_max_min_luma_transform_block_size',
+    'max_transform_hierarchy_depth_inter',
+    'max_transform_hierarchy_depth_intra',
+    'pcm_sample_bit_depth_luma_minus1',
+    'pcm_sample_bit_depth_chroma_minus1',
+    'log2_min_pcm_luma_coding_block_size_minus3',
+    'log2_diff_max_min_pcm_luma_coding_block_size',
+    'num_short_term_ref_pic_sets',
+    'num_long_term_ref_pics_sps',
+    'chroma_format_idc',
+    'sps_max_sub_layers_minus1',
+    'reserved',
+    'flags',
+]
+struct_v4l2_ctrl_hevc_sps._fields_ = [
+    ('video_parameter_set_id', __u8),
+    ('seq_parameter_set_id', __u8),
+    ('pic_width_in_luma_samples', __u16),
+    ('pic_height_in_luma_samples', __u16),
+    ('bit_depth_luma_minus8', __u8),
+    ('bit_depth_chroma_minus8', __u8),
+    ('log2_max_pic_order_cnt_lsb_minus4', __u8),
+    ('sps_max_dec_pic_buffering_minus1', __u8),
+    ('sps_max_num_reorder_pics', __u8),
+    ('sps_max_latency_increase_plus1', __u8),
+    ('log2_min_luma_coding_block_size_minus3', __u8),
+    ('log2_diff_max_min_luma_coding_block_size', __u8),
+    ('log2_min_luma_transform_block_size_minus2', __u8),
+    ('log2_diff_max_min_luma_transform_block_size', __u8),
+    ('max_transform_hierarchy_depth_inter', __u8),
+    ('max_transform_hierarchy_depth_intra', __u8),
+    ('pcm_sample_bit_depth_luma_minus1', __u8),
+    ('pcm_sample_bit_depth_chroma_minus1', __u8),
+    ('log2_min_pcm_luma_coding_block_size_minus3', __u8),
+    ('log2_diff_max_min_pcm_luma_coding_block_size', __u8),
+    ('num_short_term_ref_pic_sets', __u8),
+    ('num_long_term_ref_pics_sps', __u8),
+    ('chroma_format_idc', __u8),
+    ('sps_max_sub_layers_minus1', __u8),
+    ('reserved', __u8 * int(6)),
+    ('flags', __u64),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2242
+class struct_v4l2_ctrl_hevc_pps(Structure):
+    pass
+
+struct_v4l2_ctrl_hevc_pps.__slots__ = [
+    'pic_parameter_set_id',
+    'num_extra_slice_header_bits',
+    'num_ref_idx_l0_default_active_minus1',
+    'num_ref_idx_l1_default_active_minus1',
+    'init_qp_minus26',
+    'diff_cu_qp_delta_depth',
+    'pps_cb_qp_offset',
+    'pps_cr_qp_offset',
+    'num_tile_columns_minus1',
+    'num_tile_rows_minus1',
+    'column_width_minus1',
+    'row_height_minus1',
+    'pps_beta_offset_div2',
+    'pps_tc_offset_div2',
+    'log2_parallel_merge_level_minus2',
+    'reserved',
+    'flags',
+]
+struct_v4l2_ctrl_hevc_pps._fields_ = [
+    ('pic_parameter_set_id', __u8),
+    ('num_extra_slice_header_bits', __u8),
+    ('num_ref_idx_l0_default_active_minus1', __u8),
+    ('num_ref_idx_l1_default_active_minus1', __u8),
+    ('init_qp_minus26', __s8),
+    ('diff_cu_qp_delta_depth', __u8),
+    ('pps_cb_qp_offset', __s8),
+    ('pps_cr_qp_offset', __s8),
+    ('num_tile_columns_minus1', __u8),
+    ('num_tile_rows_minus1', __u8),
+    ('column_width_minus1', __u8 * int(20)),
+    ('row_height_minus1', __u8 * int(22)),
+    ('pps_beta_offset_div2', __s8),
+    ('pps_tc_offset_div2', __s8),
+    ('log2_parallel_merge_level_minus2', __u8),
+    ('reserved', __u8),
+    ('flags', __u64),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2289
+class struct_v4l2_hevc_dpb_entry(Structure):
+    pass
+
+struct_v4l2_hevc_dpb_entry.__slots__ = [
+    'timestamp',
+    'flags',
+    'field_pic',
+    'reserved',
+    'pic_order_cnt_val',
+]
+struct_v4l2_hevc_dpb_entry._fields_ = [
+    ('timestamp', __u64),
+    ('flags', __u8),
+    ('field_pic', __u8),
+    ('reserved', __u16),
+    ('pic_order_cnt_val', __s32),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2322
+class struct_v4l2_hevc_pred_weight_table(Structure):
+    pass
+
+struct_v4l2_hevc_pred_weight_table.__slots__ = [
+    'delta_luma_weight_l0',
+    'luma_offset_l0',
+    'delta_chroma_weight_l0',
+    'chroma_offset_l0',
+    'delta_luma_weight_l1',
+    'luma_offset_l1',
+    'delta_chroma_weight_l1',
+    'chroma_offset_l1',
+    'luma_log2_weight_denom',
+    'delta_chroma_log2_weight_denom',
+]
+struct_v4l2_hevc_pred_weight_table._fields_ = [
+    ('delta_luma_weight_l0', __s8 * int(16)),
+    ('luma_offset_l0', __s8 * int(16)),
+    ('delta_chroma_weight_l0', (__s8 * int(2)) * int(16)),
+    ('chroma_offset_l0', (__s8 * int(2)) * int(16)),
+    ('delta_luma_weight_l1', __s8 * int(16)),
+    ('luma_offset_l1', __s8 * int(16)),
+    ('delta_chroma_weight_l1', (__s8 * int(2)) * int(16)),
+    ('chroma_offset_l1', (__s8 * int(2)) * int(16)),
+    ('luma_log2_weight_denom', __u8),
+    ('delta_chroma_log2_weight_denom', __s8),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2399
+class struct_v4l2_ctrl_hevc_slice_params(Structure):
+    pass
+
+struct_v4l2_ctrl_hevc_slice_params.__slots__ = [
+    'bit_size',
+    'data_byte_offset',
+    'num_entry_point_offsets',
+    'nal_unit_type',
+    'nuh_temporal_id_plus1',
+    'slice_type',
+    'colour_plane_id',
+    'slice_pic_order_cnt',
+    'num_ref_idx_l0_active_minus1',
+    'num_ref_idx_l1_active_minus1',
+    'collocated_ref_idx',
+    'five_minus_max_num_merge_cand',
+    'slice_qp_delta',
+    'slice_cb_qp_offset',
+    'slice_cr_qp_offset',
+    'slice_act_y_qp_offset',
+    'slice_act_cb_qp_offset',
+    'slice_act_cr_qp_offset',
+    'slice_beta_offset_div2',
+    'slice_tc_offset_div2',
+    'pic_struct',
+    'reserved0',
+    'slice_segment_addr',
+    'ref_idx_l0',
+    'ref_idx_l1',
+    'short_term_ref_pic_set_size',
+    'long_term_ref_pic_set_size',
+    'pred_weight_table',
+    'reserved1',
+    'flags',
+]
+struct_v4l2_ctrl_hevc_slice_params._fields_ = [
+    ('bit_size', __u32),
+    ('data_byte_offset', __u32),
+    ('num_entry_point_offsets', __u32),
+    ('nal_unit_type', __u8),
+    ('nuh_temporal_id_plus1', __u8),
+    ('slice_type', __u8),
+    ('colour_plane_id', __u8),
+    ('slice_pic_order_cnt', __s32),
+    ('num_ref_idx_l0_active_minus1', __u8),
+    ('num_ref_idx_l1_active_minus1', __u8),
+    ('collocated_ref_idx', __u8),
+    ('five_minus_max_num_merge_cand', __u8),
+    ('slice_qp_delta', __s8),
+    ('slice_cb_qp_offset', __s8),
+    ('slice_cr_qp_offset', __s8),
+    ('slice_act_y_qp_offset', __s8),
+    ('slice_act_cb_qp_offset', __s8),
+    ('slice_act_cr_qp_offset', __s8),
+    ('slice_beta_offset_div2', __s8),
+    ('slice_tc_offset_div2', __s8),
+    ('pic_struct', __u8),
+    ('reserved0', __u8 * int(3)),
+    ('slice_segment_addr', __u32),
+    ('ref_idx_l0', __u8 * int(16)),
+    ('ref_idx_l1', __u8 * int(16)),
+    ('short_term_ref_pic_set_size', __u16),
+    ('long_term_ref_pic_set_size', __u16),
+    ('pred_weight_table', struct_v4l2_hevc_pred_weight_table),
+    ('reserved1', __u8 * int(2)),
+    ('flags', __u64),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2473
+class struct_v4l2_ctrl_hevc_decode_params(Structure):
+    pass
+
+struct_v4l2_ctrl_hevc_decode_params.__slots__ = [
+    'pic_order_cnt_val',
+    'short_term_ref_pic_set_size',
+    'long_term_ref_pic_set_size',
+    'num_active_dpb_entries',
+    'num_poc_st_curr_before',
+    'num_poc_st_curr_after',
+    'num_poc_lt_curr',
+    'poc_st_curr_before',
+    'poc_st_curr_after',
+    'poc_lt_curr',
+    'num_delta_pocs_of_ref_rps_idx',
+    'reserved',
+    'dpb',
+    'flags',
+]
+struct_v4l2_ctrl_hevc_decode_params._fields_ = [
+    ('pic_order_cnt_val', __s32),
+    ('short_term_ref_pic_set_size', __u16),
+    ('long_term_ref_pic_set_size', __u16),
+    ('num_active_dpb_entries', __u8),
+    ('num_poc_st_curr_before', __u8),
+    ('num_poc_st_curr_after', __u8),
+    ('num_poc_lt_curr', __u8),
+    ('poc_st_curr_before', __u8 * int(16)),
+    ('poc_st_curr_after', __u8 * int(16)),
+    ('poc_lt_curr', __u8 * int(16)),
+    ('num_delta_pocs_of_ref_rps_idx', __u8),
+    ('reserved', __u8 * int(3)),
+    ('dpb', struct_v4l2_hevc_dpb_entry * int(16)),
+    ('flags', __u64),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2512
+class struct_v4l2_ctrl_hevc_scaling_matrix(Structure):
+    pass
+
+struct_v4l2_ctrl_hevc_scaling_matrix.__slots__ = [
+    'scaling_list_4x4',
+    'scaling_list_8x8',
+    'scaling_list_16x16',
+    'scaling_list_32x32',
+    'scaling_list_dc_coef_16x16',
+    'scaling_list_dc_coef_32x32',
+]
+struct_v4l2_ctrl_hevc_scaling_matrix._fields_ = [
+    ('scaling_list_4x4', (__u8 * int(16)) * int(6)),
+    ('scaling_list_8x8', (__u8 * int(64)) * int(6)),
+    ('scaling_list_16x16', (__u8 * int(64)) * int(6)),
+    ('scaling_list_32x32', (__u8 * int(64)) * int(2)),
+    ('scaling_list_dc_coef_16x16', __u8 * int(6)),
+    ('scaling_list_dc_coef_32x32', __u8 * int(2)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2577
+class struct_v4l2_vp9_loop_filter(Structure):
+    pass
+
+struct_v4l2_vp9_loop_filter.__slots__ = [
+    'ref_deltas',
+    'mode_deltas',
+    'level',
+    'sharpness',
+    'flags',
+    'reserved',
+]
+struct_v4l2_vp9_loop_filter._fields_ = [
+    ('ref_deltas', __s8 * int(4)),
+    ('mode_deltas', __s8 * int(2)),
+    ('level', __u8),
+    ('sharpness', __u8),
+    ('flags', __u8),
+    ('reserved', __u8 * int(7)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2598
+class struct_v4l2_vp9_quantization(Structure):
+    pass
+
+struct_v4l2_vp9_quantization.__slots__ = [
+    'base_q_idx',
+    'delta_q_y_dc',
+    'delta_q_uv_dc',
+    'delta_q_uv_ac',
+    'reserved',
+]
+struct_v4l2_vp9_quantization._fields_ = [
+    ('base_q_idx', __u8),
+    ('delta_q_y_dc', __s8),
+    ('delta_q_uv_dc', __s8),
+    ('delta_q_uv_ac', __s8),
+    ('reserved', __u8 * int(4)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2642
+class struct_v4l2_vp9_segmentation(Structure):
+    pass
+
+struct_v4l2_vp9_segmentation.__slots__ = [
+    'feature_data',
+    'feature_enabled',
+    'tree_probs',
+    'pred_probs',
+    'flags',
+    'reserved',
+]
+struct_v4l2_vp9_segmentation._fields_ = [
+    ('feature_data', (__s16 * int(4)) * int(8)),
+    ('feature_enabled', __u8 * int(8)),
+    ('tree_probs', __u8 * int(7)),
+    ('pred_probs', __u8 * int(3)),
+    ('flags', __u8),
+    ('reserved', __u8 * int(5)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2727
+class struct_v4l2_ctrl_vp9_frame(Structure):
+    pass
+
+struct_v4l2_ctrl_vp9_frame.__slots__ = [
+    'lf',
+    'quant',
+    'seg',
+    'flags',
+    'compressed_header_size',
+    'uncompressed_header_size',
+    'frame_width_minus_1',
+    'frame_height_minus_1',
+    'render_width_minus_1',
+    'render_height_minus_1',
+    'last_frame_ts',
+    'golden_frame_ts',
+    'alt_frame_ts',
+    'ref_frame_sign_bias',
+    'reset_frame_context',
+    'frame_context_idx',
+    'profile',
+    'bit_depth',
+    'interpolation_filter',
+    'tile_cols_log2',
+    'tile_rows_log2',
+    'reference_mode',
+    'reserved',
+]
+struct_v4l2_ctrl_vp9_frame._fields_ = [
+    ('lf', struct_v4l2_vp9_loop_filter),
+    ('quant', struct_v4l2_vp9_quantization),
+    ('seg', struct_v4l2_vp9_segmentation),
+    ('flags', __u32),
+    ('compressed_header_size', __u16),
+    ('uncompressed_header_size', __u16),
+    ('frame_width_minus_1', __u16),
+    ('frame_height_minus_1', __u16),
+    ('render_width_minus_1', __u16),
+    ('render_height_minus_1', __u16),
+    ('last_frame_ts', __u64),
+    ('golden_frame_ts', __u64),
+    ('alt_frame_ts', __u64),
+    ('ref_frame_sign_bias', __u8),
+    ('reset_frame_context', __u8),
+    ('frame_context_idx', __u8),
+    ('profile', __u8),
+    ('bit_depth', __u8),
+    ('interpolation_filter', __u8),
+    ('tile_cols_log2', __u8),
+    ('tile_rows_log2', __u8),
+    ('reference_mode', __u8),
+    ('reserved', __u8 * int(7)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2771
+class struct_v4l2_vp9_mv_probs(Structure):
+    pass
+
+struct_v4l2_vp9_mv_probs.__slots__ = [
+    'joint',
+    'sign',
+    'classes',
+    'class0_bit',
+    'bits',
+    'class0_fr',
+    'fr',
+    'class0_hp',
+    'hp',
+]
+struct_v4l2_vp9_mv_probs._fields_ = [
+    ('joint', __u8 * int(3)),
+    ('sign', __u8 * int(2)),
+    ('classes', (__u8 * int(10)) * int(2)),
+    ('class0_bit', __u8 * int(2)),
+    ('bits', (__u8 * int(10)) * int(2)),
+    ('class0_fr', ((__u8 * int(3)) * int(2)) * int(2)),
+    ('fr', (__u8 * int(3)) * int(2)),
+    ('class0_hp', __u8 * int(2)),
+    ('hp', __u8 * int(2)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2819
+class struct_v4l2_ctrl_vp9_compressed_hdr(Structure):
+    pass
+
+struct_v4l2_ctrl_vp9_compressed_hdr.__slots__ = [
+    'tx_mode',
+    'tx8',
+    'tx16',
+    'tx32',
+    'coef',
+    'skip',
+    'inter_mode',
+    'interp_filter',
+    'is_inter',
+    'comp_mode',
+    'single_ref',
+    'comp_ref',
+    'y_mode',
+    'uv_mode',
+    'partition',
+    'mv',
+]
+struct_v4l2_ctrl_vp9_compressed_hdr._fields_ = [
+    ('tx_mode', __u8),
+    ('tx8', (__u8 * int(1)) * int(2)),
+    ('tx16', (__u8 * int(2)) * int(2)),
+    ('tx32', (__u8 * int(3)) * int(2)),
+    ('coef', (((((__u8 * int(3)) * int(6)) * int(6)) * int(2)) * int(2)) * int(4)),
+    ('skip', __u8 * int(3)),
+    ('inter_mode', (__u8 * int(3)) * int(7)),
+    ('interp_filter', (__u8 * int(2)) * int(4)),
+    ('is_inter', __u8 * int(4)),
+    ('comp_mode', __u8 * int(5)),
+    ('single_ref', (__u8 * int(2)) * int(5)),
+    ('comp_ref', __u8 * int(5)),
+    ('y_mode', (__u8 * int(9)) * int(4)),
+    ('uv_mode', (__u8 * int(9)) * int(10)),
+    ('partition', (__u8 * int(3)) * int(16)),
+    ('mv', struct_v4l2_vp9_mv_probs),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2897
+class struct_v4l2_ctrl_av1_sequence(Structure):
+    pass
+
+struct_v4l2_ctrl_av1_sequence.__slots__ = [
+    'flags',
+    'seq_profile',
+    'order_hint_bits',
+    'bit_depth',
+    'reserved',
+    'max_frame_width_minus_1',
+    'max_frame_height_minus_1',
+]
+struct_v4l2_ctrl_av1_sequence._fields_ = [
+    ('flags', __u32),
+    ('seq_profile', __u8),
+    ('order_hint_bits', __u8),
+    ('bit_depth', __u8),
+    ('reserved', __u8),
+    ('max_frame_width_minus_1', __u16),
+    ('max_frame_height_minus_1', __u16),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2926
+class struct_v4l2_ctrl_av1_tile_group_entry(Structure):
+    pass
+
+struct_v4l2_ctrl_av1_tile_group_entry.__slots__ = [
+    'tile_offset',
+    'tile_size',
+    'tile_row',
+    'tile_col',
+]
+struct_v4l2_ctrl_av1_tile_group_entry._fields_ = [
+    ('tile_offset', __u32),
+    ('tile_size', __u32),
+    ('tile_row', __u32),
+    ('tile_col', __u32),
+]
+
+enum_v4l2_av1_warp_model = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2943
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 2994
+class struct_v4l2_av1_global_motion(Structure):
+    pass
+
+struct_v4l2_av1_global_motion.__slots__ = [
+    'flags',
+    'type',
+    'params',
+    'invalid',
+    'reserved',
+]
+struct_v4l2_av1_global_motion._fields_ = [
+    ('flags', __u8 * int(8)),
+    ('type', enum_v4l2_av1_warp_model * int(8)),
+    ('params', (__s32 * int(6)) * int(8)),
+    ('invalid', __u8),
+    ('reserved', __u8 * int(3)),
+]
+
+enum_v4l2_av1_frame_restoration_type = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3009
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3032
+class struct_v4l2_av1_loop_restoration(Structure):
+    pass
+
+struct_v4l2_av1_loop_restoration.__slots__ = [
+    'flags',
+    'lr_unit_shift',
+    'lr_uv_shift',
+    'reserved',
+    'frame_restoration_type',
+    'loop_restoration_size',
+]
+struct_v4l2_av1_loop_restoration._fields_ = [
+    ('flags', __u8),
+    ('lr_unit_shift', __u8),
+    ('lr_uv_shift', __u8),
+    ('reserved', __u8),
+    ('frame_restoration_type', enum_v4l2_av1_frame_restoration_type * int(3)),
+    ('loop_restoration_size', __u32 * int(3)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3053
+class struct_v4l2_av1_cdef(Structure):
+    pass
+
+struct_v4l2_av1_cdef.__slots__ = [
+    'damping_minus_3',
+    'bits',
+    'y_pri_strength',
+    'y_sec_strength',
+    'uv_pri_strength',
+    'uv_sec_strength',
+]
+struct_v4l2_av1_cdef._fields_ = [
+    ('damping_minus_3', __u8),
+    ('bits', __u8),
+    ('y_pri_strength', __u8 * int(8)),
+    ('y_sec_strength', __u8 * int(8)),
+    ('uv_pri_strength', __u8 * int(8)),
+    ('uv_sec_strength', __u8 * int(8)),
+]
+
+V4L2_AV1_SEG_LVL_MAX = 8# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3080
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3104
+class struct_v4l2_av1_segmentation(Structure):
+    pass
+
+struct_v4l2_av1_segmentation.__slots__ = [
+    'flags',
+    'last_active_seg_id',
+    'feature_enabled',
+    'feature_data',
+]
+struct_v4l2_av1_segmentation._fields_ = [
+    ('flags', __u8),
+    ('last_active_seg_id', __u8),
+    ('feature_enabled', __u8 * int(8)),
+    ('feature_data', (__s16 * int(V4L2_AV1_SEG_LVL_MAX)) * int(8)),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3139
+class struct_v4l2_av1_loop_filter(Structure):
+    pass
+
+struct_v4l2_av1_loop_filter.__slots__ = [
+    'flags',
+    'level',
+    'sharpness',
+    'ref_deltas',
+    'mode_deltas',
+    'delta_lf_res',
+]
+struct_v4l2_av1_loop_filter._fields_ = [
+    ('flags', __u8),
+    ('level', __u8 * int(4)),
+    ('sharpness', __u8),
+    ('ref_deltas', __s8 * int(8)),
+    ('mode_deltas', __s8 * int(2)),
+    ('delta_lf_res', __u8),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3173
+class struct_v4l2_av1_quantization(Structure):
+    pass
+
+struct_v4l2_av1_quantization.__slots__ = [
+    'flags',
+    'base_q_idx',
+    'delta_q_y_dc',
+    'delta_q_u_dc',
+    'delta_q_u_ac',
+    'delta_q_v_dc',
+    'delta_q_v_ac',
+    'qm_y',
+    'qm_u',
+    'qm_v',
+    'delta_q_res',
+]
+struct_v4l2_av1_quantization._fields_ = [
+    ('flags', __u8),
+    ('base_q_idx', __u8),
+    ('delta_q_y_dc', __s8),
+    ('delta_q_u_dc', __s8),
+    ('delta_q_u_ac', __s8),
+    ('delta_q_v_dc', __s8),
+    ('delta_q_v_ac', __s8),
+    ('qm_y', __u8),
+    ('qm_u', __u8),
+    ('qm_v', __u8),
+    ('delta_q_res', __u8),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3209
+class struct_v4l2_av1_tile_info(Structure):
+    pass
+
+struct_v4l2_av1_tile_info.__slots__ = [
+    'flags',
+    'context_update_tile_id',
+    'tile_cols',
+    'tile_rows',
+    'mi_col_starts',
+    'mi_row_starts',
+    'width_in_sbs_minus_1',
+    'height_in_sbs_minus_1',
+    'tile_size_bytes',
+    'reserved',
+]
+struct_v4l2_av1_tile_info._fields_ = [
+    ('flags', __u8),
+    ('context_update_tile_id', __u8),
+    ('tile_cols', __u8),
+    ('tile_rows', __u8),
+    ('mi_col_starts', __u32 * int((64 + 1))),
+    ('mi_row_starts', __u32 * int((64 + 1))),
+    ('width_in_sbs_minus_1', __u32 * int(64)),
+    ('height_in_sbs_minus_1', __u32 * int(64)),
+    ('tile_size_bytes', __u8),
+    ('reserved', __u8 * int(3)),
+]
+
+enum_v4l2_av1_frame_type = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3230
+
+enum_v4l2_av1_interpolation_filter = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3250
+
+enum_v4l2_av1_tx_mode = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3268
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3346
+class struct_v4l2_ctrl_av1_frame(Structure):
+    pass
+
+struct_v4l2_ctrl_av1_frame.__slots__ = [
+    'tile_info',
+    'quantization',
+    'superres_denom',
+    'segmentation',
+    'loop_filter',
+    'cdef',
+    'skip_mode_frame',
+    'primary_ref_frame',
+    'loop_restoration',
+    'global_motion',
+    'flags',
+    'frame_type',
+    'order_hint',
+    'upscaled_width',
+    'interpolation_filter',
+    'tx_mode',
+    'frame_width_minus_1',
+    'frame_height_minus_1',
+    'render_width_minus_1',
+    'render_height_minus_1',
+    'current_frame_id',
+    'buffer_removal_time',
+    'reserved',
+    'order_hints',
+    'reference_frame_ts',
+    'ref_frame_idx',
+    'refresh_frame_flags',
+]
+struct_v4l2_ctrl_av1_frame._fields_ = [
+    ('tile_info', struct_v4l2_av1_tile_info),
+    ('quantization', struct_v4l2_av1_quantization),
+    ('superres_denom', __u8),
+    ('segmentation', struct_v4l2_av1_segmentation),
+    ('loop_filter', struct_v4l2_av1_loop_filter),
+    ('cdef', struct_v4l2_av1_cdef),
+    ('skip_mode_frame', __u8 * int(2)),
+    ('primary_ref_frame', __u8),
+    ('loop_restoration', struct_v4l2_av1_loop_restoration),
+    ('global_motion', struct_v4l2_av1_global_motion),
+    ('flags', __u32),
+    ('frame_type', enum_v4l2_av1_frame_type),
+    ('order_hint', __u32),
+    ('upscaled_width', __u32),
+    ('interpolation_filter', enum_v4l2_av1_interpolation_filter),
+    ('tx_mode', enum_v4l2_av1_tx_mode),
+    ('frame_width_minus_1', __u32),
+    ('frame_height_minus_1', __u32),
+    ('render_width_minus_1', __u16),
+    ('render_height_minus_1', __u16),
+    ('current_frame_id', __u32),
+    ('buffer_removal_time', __u32 * int((1 << 5))),
+    ('reserved', __u8 * int(4)),
+    ('order_hints', __u32 * int(8)),
+    ('reference_frame_ts', __u64 * int(8)),
+    ('ref_frame_idx', __s8 * int(7)),
+    ('refresh_frame_flags', __u8),
+]
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-controls.h: 3449
+class struct_v4l2_ctrl_av1_film_grain(Structure):
+    pass
+
+struct_v4l2_ctrl_av1_film_grain.__slots__ = [
+    'flags',
+    'cr_mult',
+    'grain_seed',
+    'film_grain_params_ref_idx',
+    'num_y_points',
+    'point_y_value',
+    'point_y_scaling',
+    'num_cb_points',
+    'point_cb_value',
+    'point_cb_scaling',
+    'num_cr_points',
+    'point_cr_value',
+    'point_cr_scaling',
+    'grain_scaling_minus_8',
+    'ar_coeff_lag',
+    'ar_coeffs_y_plus_128',
+    'ar_coeffs_cb_plus_128',
+    'ar_coeffs_cr_plus_128',
+    'ar_coeff_shift_minus_6',
+    'grain_scale_shift',
+    'cb_mult',
+    'cb_luma_mult',
+    'cr_luma_mult',
+    'cb_offset',
+    'cr_offset',
+    'reserved',
+]
+struct_v4l2_ctrl_av1_film_grain._fields_ = [
+    ('flags', __u8),
+    ('cr_mult', __u8),
+    ('grain_seed', __u16),
+    ('film_grain_params_ref_idx', __u8),
+    ('num_y_points', __u8),
+    ('point_y_value', __u8 * int((1 << 4))),
+    ('point_y_scaling', __u8 * int((1 << 4))),
+    ('num_cb_points', __u8),
+    ('point_cb_value', __u8 * int((1 << 4))),
+    ('point_cb_scaling', __u8 * int((1 << 4))),
+    ('num_cr_points', __u8),
+    ('point_cr_value', __u8 * int((1 << 4))),
+    ('point_cr_scaling', __u8 * int((1 << 4))),
+    ('grain_scaling_minus_8', __u8),
+    ('ar_coeff_lag', __u8),
+    ('ar_coeffs_y_plus_128', __u8 * int(25)),
+    ('ar_coeffs_cb_plus_128', __u8 * int(25)),
+    ('ar_coeffs_cr_plus_128', __u8 * int(25)),
+    ('ar_coeff_shift_minus_6', __u8),
+    ('grain_scale_shift', __u8),
+    ('cb_mult', __u8),
+    ('cb_luma_mult', __u8),
+    ('cr_luma_mult', __u8),
+    ('cb_offset', __u16),
+    ('cr_offset', __u16),
+    ('reserved', __u8 * int(4)),
 ]
 
 enum_v4l2_field = c_int# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 86
@@ -1628,50 +2426,6 @@ struct_v4l2_control._fields_ = [
     ('id', __u32),
     ('value', __s32),
 ]
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1786
-class struct_v4l2_ctrl_vp9_compressed_hdr(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1787
-class struct_v4l2_ctrl_vp9_frame(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1788
-class struct_v4l2_ctrl_hevc_sps(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1789
-class struct_v4l2_ctrl_hevc_pps(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1790
-class struct_v4l2_ctrl_hevc_slice_params(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1791
-class struct_v4l2_ctrl_hevc_scaling_matrix(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1792
-class struct_v4l2_ctrl_hevc_decode_params(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1793
-class struct_v4l2_ctrl_av1_sequence(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1794
-class struct_v4l2_ctrl_av1_tile_group_entry(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1795
-class struct_v4l2_ctrl_av1_frame(Structure):
-    pass
-
-# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1796
-class struct_v4l2_ctrl_av1_film_grain(Structure):
-    pass
 
 # /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1765
 class union_anon_15(Union):
@@ -3163,7 +3917,7 @@ struct_media_v2_topology._fields_ = [
     ('ptr_links', __u64),
 ]
 
-# /usr/include/linux/v4l2-mediabus.h: 41
+# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 43
 class union_anon_37(Union):
     pass
 
@@ -3176,7 +3930,7 @@ union_anon_37._fields_ = [
     ('hsv_enc', __u16),
 ]
 
-# /usr/include/linux/v4l2-mediabus.h: 35
+# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 37
 class struct_v4l2_mbus_framefmt(Structure):
     pass
 
@@ -3208,159 +3962,159 @@ struct_v4l2_mbus_framefmt._fields_ = [
     ('reserved', __u16 * int(10)),
 ]
 
-enum_v4l2_mbus_pixelcode = c_int# /usr/include/linux/v4l2-mediabus.h: 65
+enum_v4l2_mbus_pixelcode = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_FIXED = 0x0001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_FIXED = 0x0001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB444_2X8_PADHI_BE = 0x1001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB444_2X8_PADHI_BE = 0x1001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB444_2X8_PADHI_LE = 0x1002# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB444_2X8_PADHI_LE = 0x1002# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB555_2X8_PADHI_BE = 0x1003# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB555_2X8_PADHI_BE = 0x1003# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB555_2X8_PADHI_LE = 0x1004# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB555_2X8_PADHI_LE = 0x1004# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_BGR565_2X8_BE = 0x1005# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_BGR565_2X8_BE = 0x1005# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_BGR565_2X8_LE = 0x1006# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_BGR565_2X8_LE = 0x1006# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB565_2X8_BE = 0x1007# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB565_2X8_BE = 0x1007# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB565_2X8_LE = 0x1008# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB565_2X8_LE = 0x1008# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB666_1X18 = 0x1009# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB666_1X18 = 0x1009# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB888_1X24 = 0x100a# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB888_1X24 = 0x100a# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB888_2X12_BE = 0x100b# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB888_2X12_BE = 0x100b# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_RGB888_2X12_LE = 0x100c# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_RGB888_2X12_LE = 0x100c# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_ARGB8888_1X32 = 0x100d# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_ARGB8888_1X32 = 0x100d# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_Y8_1X8 = 0x2001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_Y8_1X8 = 0x2001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UV8_1X8 = 0x2015# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UV8_1X8 = 0x2015# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY8_1_5X8 = 0x2002# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY8_1_5X8 = 0x2002# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY8_1_5X8 = 0x2003# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY8_1_5X8 = 0x2003# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV8_1_5X8 = 0x2004# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV8_1_5X8 = 0x2004# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU8_1_5X8 = 0x2005# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU8_1_5X8 = 0x2005# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY8_2X8 = 0x2006# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY8_2X8 = 0x2006# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY8_2X8 = 0x2007# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY8_2X8 = 0x2007# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV8_2X8 = 0x2008# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV8_2X8 = 0x2008# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU8_2X8 = 0x2009# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU8_2X8 = 0x2009# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_Y10_1X10 = 0x200a# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_Y10_1X10 = 0x200a# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY10_2X10 = 0x2018# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY10_2X10 = 0x2018# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY10_2X10 = 0x2019# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY10_2X10 = 0x2019# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV10_2X10 = 0x200b# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV10_2X10 = 0x200b# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU10_2X10 = 0x200c# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU10_2X10 = 0x200c# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_Y12_1X12 = 0x2013# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_Y12_1X12 = 0x2013# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY8_1X16 = 0x200f# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY8_1X16 = 0x200f# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY8_1X16 = 0x2010# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY8_1X16 = 0x2010# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV8_1X16 = 0x2011# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV8_1X16 = 0x2011# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU8_1X16 = 0x2012# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU8_1X16 = 0x2012# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YDYUYDYV8_1X16 = 0x2014# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YDYUYDYV8_1X16 = 0x2014# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY10_1X20 = 0x201a# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY10_1X20 = 0x201a# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY10_1X20 = 0x201b# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY10_1X20 = 0x201b# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV10_1X20 = 0x200d# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV10_1X20 = 0x200d# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU10_1X20 = 0x200e# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU10_1X20 = 0x200e# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUV10_1X30 = 0x2016# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUV10_1X30 = 0x2016# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_AYUV8_1X32 = 0x2017# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_AYUV8_1X32 = 0x2017# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY12_2X12 = 0x201c# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY12_2X12 = 0x201c# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY12_2X12 = 0x201d# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY12_2X12 = 0x201d# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV12_2X12 = 0x201e# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV12_2X12 = 0x201e# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU12_2X12 = 0x201f# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU12_2X12 = 0x201f# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_UYVY12_1X24 = 0x2020# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_UYVY12_1X24 = 0x2020# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_VYUY12_1X24 = 0x2021# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_VYUY12_1X24 = 0x2021# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YUYV12_1X24 = 0x2022# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YUYV12_1X24 = 0x2022# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_YVYU12_1X24 = 0x2023# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_YVYU12_1X24 = 0x2023# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR8_1X8 = 0x3001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR8_1X8 = 0x3001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGBRG8_1X8 = 0x3013# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGBRG8_1X8 = 0x3013# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGRBG8_1X8 = 0x3002# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGRBG8_1X8 = 0x3002# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SRGGB8_1X8 = 0x3014# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SRGGB8_1X8 = 0x3014# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_ALAW8_1X8 = 0x3015# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_ALAW8_1X8 = 0x3015# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGBRG10_ALAW8_1X8 = 0x3016# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGBRG10_ALAW8_1X8 = 0x3016# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGRBG10_ALAW8_1X8 = 0x3017# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGRBG10_ALAW8_1X8 = 0x3017# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SRGGB10_ALAW8_1X8 = 0x3018# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SRGGB10_ALAW8_1X8 = 0x3018# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_DPCM8_1X8 = 0x300b# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_DPCM8_1X8 = 0x300b# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGBRG10_DPCM8_1X8 = 0x300c# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGBRG10_DPCM8_1X8 = 0x300c# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGRBG10_DPCM8_1X8 = 0x3009# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGRBG10_DPCM8_1X8 = 0x3009# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SRGGB10_DPCM8_1X8 = 0x300d# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SRGGB10_DPCM8_1X8 = 0x300d# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_2X8_PADHI_BE = 0x3003# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_2X8_PADHI_BE = 0x3003# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_2X8_PADHI_LE = 0x3004# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_2X8_PADHI_LE = 0x3004# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_2X8_PADLO_BE = 0x3005# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_2X8_PADLO_BE = 0x3005# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_2X8_PADLO_LE = 0x3006# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_2X8_PADLO_LE = 0x3006# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR10_1X10 = 0x3007# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR10_1X10 = 0x3007# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGBRG10_1X10 = 0x300e# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGBRG10_1X10 = 0x300e# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGRBG10_1X10 = 0x300a# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGRBG10_1X10 = 0x300a# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SRGGB10_1X10 = 0x300f# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SRGGB10_1X10 = 0x300f# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SBGGR12_1X12 = 0x3008# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SBGGR12_1X12 = 0x3008# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGBRG12_1X12 = 0x3010# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGBRG12_1X12 = 0x3010# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SGRBG12_1X12 = 0x3011# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SGRBG12_1X12 = 0x3011# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_SRGGB12_1X12 = 0x3012# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_SRGGB12_1X12 = 0x3012# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_JPEG_1X8 = 0x4001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_JPEG_1X8 = 0x4001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_S5C_UYVY_JPEG_1X8 = 0x5001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_S5C_UYVY_JPEG_1X8 = 0x5001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
-V4L2_MBUS_FMT_AHSV8888_1X32 = 0x6001# /usr/include/linux/v4l2-mediabus.h: 65
+V4L2_MBUS_FMT_AHSV8888_1X32 = 0x6001# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 67
 
 enum_v4l2_subdev_format_whence = c_int# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 25
 
@@ -3589,87 +4343,87 @@ struct_v4l2_subdev_client_capability._fields_ = [
     ('capabilities', __u64),
 ]
 
-# /usr/include/asm-generic/ioctl.h: 23
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 23
 try:
     _IOC_NRBITS = 8
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 24
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 24
 try:
     _IOC_TYPEBITS = 8
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 32
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 32
 try:
     _IOC_SIZEBITS = 14
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 44
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 44
 try:
     _IOC_NRSHIFT = 0
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 45
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 45
 try:
     _IOC_TYPESHIFT = (_IOC_NRSHIFT + _IOC_NRBITS)
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 46
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 46
 try:
     _IOC_SIZESHIFT = (_IOC_TYPESHIFT + _IOC_TYPEBITS)
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 47
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 47
 try:
     _IOC_DIRSHIFT = (_IOC_SIZESHIFT + _IOC_SIZEBITS)
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 58
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 58
 try:
     _IOC_NONE = 0
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 62
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 62
 try:
     _IOC_WRITE = 1
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 66
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 66
 try:
     _IOC_READ = 2
 except:
     pass
 
-# /usr/include/asm-generic/ioctl.h: 69
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 69
 def _IOC(dir, type, nr, size):
     return ((((dir << _IOC_DIRSHIFT) | (ord(type) << _IOC_TYPESHIFT)) | (nr << _IOC_NRSHIFT)) | (size << _IOC_SIZESHIFT))
 
-# /usr/include/asm-generic/ioctl.h: 75
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 75
 def _IOC_TYPECHECK(t):
     return sizeof(t)
 
-# /usr/include/asm-generic/ioctl.h: 83
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 83
 def _IO(type, nr):
     return (_IOC (_IOC_NONE, type, nr, 0))
 
-# /usr/include/asm-generic/ioctl.h: 84
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 84
 def _IOR(type, nr, size):
     return (_IOC (_IOC_READ, type, nr, (_IOC_TYPECHECK (size))))
 
-# /usr/include/asm-generic/ioctl.h: 85
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 85
 def _IOW(type, nr, size):
     return (_IOC (_IOC_WRITE, type, nr, (_IOC_TYPECHECK (size))))
 
-# /usr/include/asm-generic/ioctl.h: 86
+# /home/tomba/tmp/khdrs/include/asm-generic/ioctl.h: 86
 def _IOWR(type, nr, size):
     return (_IOC ((_IOC_READ | _IOC_WRITE), type, nr, (_IOC_TYPECHECK (size))))
 
@@ -8407,673 +9161,809 @@ try:
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 35
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 35
 try:
     MEDIA_BUS_FMT_FIXED = 0x0001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 38
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 38
 try:
     MEDIA_BUS_FMT_RGB444_1X12 = 0x1016
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 39
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 39
 try:
     MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE = 0x1001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 40
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 40
 try:
     MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE = 0x1002
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 41
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 41
 try:
     MEDIA_BUS_FMT_RGB555_2X8_PADHI_BE = 0x1003
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 42
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 42
 try:
     MEDIA_BUS_FMT_RGB555_2X8_PADHI_LE = 0x1004
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 43
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 43
 try:
     MEDIA_BUS_FMT_RGB565_1X16 = 0x1017
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 44
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 44
 try:
     MEDIA_BUS_FMT_BGR565_2X8_BE = 0x1005
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 45
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 45
 try:
     MEDIA_BUS_FMT_BGR565_2X8_LE = 0x1006
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 46
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 46
 try:
     MEDIA_BUS_FMT_RGB565_2X8_BE = 0x1007
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 47
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 47
 try:
     MEDIA_BUS_FMT_RGB565_2X8_LE = 0x1008
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 48
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 48
 try:
     MEDIA_BUS_FMT_RGB666_1X18 = 0x1009
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 49
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 49
+try:
+    MEDIA_BUS_FMT_BGR666_1X18 = 0x1023
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 50
 try:
     MEDIA_BUS_FMT_RBG888_1X24 = 0x100e
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 50
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 51
 try:
     MEDIA_BUS_FMT_RGB666_1X24_CPADHI = 0x1015
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 51
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 52
+try:
+    MEDIA_BUS_FMT_BGR666_1X24_CPADHI = 0x1024
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 53
+try:
+    MEDIA_BUS_FMT_RGB565_1X24_CPADHI = 0x1022
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 54
 try:
     MEDIA_BUS_FMT_RGB666_1X7X3_SPWG = 0x1010
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 52
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 55
 try:
     MEDIA_BUS_FMT_BGR888_1X24 = 0x1013
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 53
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 56
 try:
     MEDIA_BUS_FMT_BGR888_3X8 = 0x101b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 54
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 57
 try:
     MEDIA_BUS_FMT_GBR888_1X24 = 0x1014
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 55
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 58
 try:
     MEDIA_BUS_FMT_RGB888_1X24 = 0x100a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 56
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 59
 try:
     MEDIA_BUS_FMT_RGB888_2X12_BE = 0x100b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 57
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 60
 try:
     MEDIA_BUS_FMT_RGB888_2X12_LE = 0x100c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 58
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 61
 try:
     MEDIA_BUS_FMT_RGB888_3X8 = 0x101c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 59
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 62
 try:
     MEDIA_BUS_FMT_RGB888_3X8_DELTA = 0x101d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 60
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 63
 try:
     MEDIA_BUS_FMT_RGB888_1X7X4_SPWG = 0x1011
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 61
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 64
 try:
     MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA = 0x1012
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 62
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 65
+try:
+    MEDIA_BUS_FMT_RGB666_1X30_CPADLO = 0x101e
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 66
+try:
+    MEDIA_BUS_FMT_RGB888_1X30_CPADLO = 0x101f
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 67
 try:
     MEDIA_BUS_FMT_ARGB8888_1X32 = 0x100d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 63
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 68
 try:
     MEDIA_BUS_FMT_RGB888_1X32_PADHI = 0x100f
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 64
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 69
 try:
     MEDIA_BUS_FMT_RGB101010_1X30 = 0x1018
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 65
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 70
+try:
+    MEDIA_BUS_FMT_RGB666_1X36_CPADLO = 0x1020
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 71
+try:
+    MEDIA_BUS_FMT_RGB888_1X36_CPADLO = 0x1021
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 72
 try:
     MEDIA_BUS_FMT_RGB121212_1X36 = 0x1019
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 66
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 73
 try:
     MEDIA_BUS_FMT_RGB161616_1X48 = 0x101a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 69
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 76
 try:
     MEDIA_BUS_FMT_Y8_1X8 = 0x2001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 70
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 77
 try:
     MEDIA_BUS_FMT_UV8_1X8 = 0x2015
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 71
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 78
 try:
     MEDIA_BUS_FMT_UYVY8_1_5X8 = 0x2002
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 72
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 79
 try:
     MEDIA_BUS_FMT_VYUY8_1_5X8 = 0x2003
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 73
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 80
 try:
     MEDIA_BUS_FMT_YUYV8_1_5X8 = 0x2004
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 74
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 81
 try:
     MEDIA_BUS_FMT_YVYU8_1_5X8 = 0x2005
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 75
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 82
 try:
     MEDIA_BUS_FMT_UYVY8_2X8 = 0x2006
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 76
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 83
 try:
     MEDIA_BUS_FMT_VYUY8_2X8 = 0x2007
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 77
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 84
 try:
     MEDIA_BUS_FMT_YUYV8_2X8 = 0x2008
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 78
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 85
 try:
     MEDIA_BUS_FMT_YVYU8_2X8 = 0x2009
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 79
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 86
 try:
     MEDIA_BUS_FMT_Y10_1X10 = 0x200a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 80
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 87
 try:
     MEDIA_BUS_FMT_Y10_2X8_PADHI_LE = 0x202c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 81
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 88
 try:
     MEDIA_BUS_FMT_UYVY10_2X10 = 0x2018
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 82
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 89
 try:
     MEDIA_BUS_FMT_VYUY10_2X10 = 0x2019
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 83
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 90
 try:
     MEDIA_BUS_FMT_YUYV10_2X10 = 0x200b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 84
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 91
 try:
     MEDIA_BUS_FMT_YVYU10_2X10 = 0x200c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 85
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 92
 try:
     MEDIA_BUS_FMT_Y12_1X12 = 0x2013
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 86
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 93
 try:
     MEDIA_BUS_FMT_UYVY12_2X12 = 0x201c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 87
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 94
 try:
     MEDIA_BUS_FMT_VYUY12_2X12 = 0x201d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 88
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 95
 try:
     MEDIA_BUS_FMT_YUYV12_2X12 = 0x201e
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 89
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 96
 try:
     MEDIA_BUS_FMT_YVYU12_2X12 = 0x201f
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 90
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 97
 try:
     MEDIA_BUS_FMT_Y14_1X14 = 0x202d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 91
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 98
+try:
+    MEDIA_BUS_FMT_Y16_1X16 = 0x202e
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 99
 try:
     MEDIA_BUS_FMT_UYVY8_1X16 = 0x200f
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 92
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 100
 try:
     MEDIA_BUS_FMT_VYUY8_1X16 = 0x2010
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 93
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 101
 try:
     MEDIA_BUS_FMT_YUYV8_1X16 = 0x2011
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 94
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 102
 try:
     MEDIA_BUS_FMT_YVYU8_1X16 = 0x2012
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 95
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 103
 try:
     MEDIA_BUS_FMT_YDYUYDYV8_1X16 = 0x2014
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 96
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 104
 try:
     MEDIA_BUS_FMT_UYVY10_1X20 = 0x201a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 97
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 105
 try:
     MEDIA_BUS_FMT_VYUY10_1X20 = 0x201b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 98
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 106
 try:
     MEDIA_BUS_FMT_YUYV10_1X20 = 0x200d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 99
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 107
 try:
     MEDIA_BUS_FMT_YVYU10_1X20 = 0x200e
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 100
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 108
 try:
     MEDIA_BUS_FMT_VUY8_1X24 = 0x2024
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 101
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 109
 try:
     MEDIA_BUS_FMT_YUV8_1X24 = 0x2025
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 102
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 110
 try:
     MEDIA_BUS_FMT_UYYVYY8_0_5X24 = 0x2026
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 103
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 111
 try:
     MEDIA_BUS_FMT_UYVY12_1X24 = 0x2020
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 104
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 112
 try:
     MEDIA_BUS_FMT_VYUY12_1X24 = 0x2021
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 105
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 113
 try:
     MEDIA_BUS_FMT_YUYV12_1X24 = 0x2022
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 106
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 114
 try:
     MEDIA_BUS_FMT_YVYU12_1X24 = 0x2023
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 107
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 115
 try:
     MEDIA_BUS_FMT_YUV10_1X30 = 0x2016
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 108
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 116
 try:
     MEDIA_BUS_FMT_UYYVYY10_0_5X30 = 0x2027
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 109
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 117
 try:
     MEDIA_BUS_FMT_AYUV8_1X32 = 0x2017
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 110
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 118
 try:
     MEDIA_BUS_FMT_UYYVYY12_0_5X36 = 0x2028
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 111
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 119
 try:
     MEDIA_BUS_FMT_YUV12_1X36 = 0x2029
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 112
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 120
 try:
     MEDIA_BUS_FMT_YUV16_1X48 = 0x202a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 113
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 121
 try:
     MEDIA_BUS_FMT_UYYVYY16_0_5X48 = 0x202b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 116
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 124
 try:
     MEDIA_BUS_FMT_SBGGR8_1X8 = 0x3001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 117
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 125
 try:
     MEDIA_BUS_FMT_SGBRG8_1X8 = 0x3013
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 118
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 126
 try:
     MEDIA_BUS_FMT_SGRBG8_1X8 = 0x3002
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 119
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 127
 try:
     MEDIA_BUS_FMT_SRGGB8_1X8 = 0x3014
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 120
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 128
 try:
     MEDIA_BUS_FMT_SBGGR10_ALAW8_1X8 = 0x3015
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 121
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 129
 try:
     MEDIA_BUS_FMT_SGBRG10_ALAW8_1X8 = 0x3016
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 122
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 130
 try:
     MEDIA_BUS_FMT_SGRBG10_ALAW8_1X8 = 0x3017
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 123
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 131
 try:
     MEDIA_BUS_FMT_SRGGB10_ALAW8_1X8 = 0x3018
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 124
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 132
 try:
     MEDIA_BUS_FMT_SBGGR10_DPCM8_1X8 = 0x300b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 125
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 133
 try:
     MEDIA_BUS_FMT_SGBRG10_DPCM8_1X8 = 0x300c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 126
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 134
 try:
     MEDIA_BUS_FMT_SGRBG10_DPCM8_1X8 = 0x3009
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 127
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 135
 try:
     MEDIA_BUS_FMT_SRGGB10_DPCM8_1X8 = 0x300d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 128
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 136
 try:
     MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE = 0x3003
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 129
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 137
 try:
     MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE = 0x3004
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 130
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 138
 try:
     MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_BE = 0x3005
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 131
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 139
 try:
     MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_LE = 0x3006
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 132
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 140
 try:
     MEDIA_BUS_FMT_SBGGR10_1X10 = 0x3007
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 133
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 141
 try:
     MEDIA_BUS_FMT_SGBRG10_1X10 = 0x300e
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 134
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 142
 try:
     MEDIA_BUS_FMT_SGRBG10_1X10 = 0x300a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 135
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 143
 try:
     MEDIA_BUS_FMT_SRGGB10_1X10 = 0x300f
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 136
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 144
 try:
     MEDIA_BUS_FMT_SBGGR12_1X12 = 0x3008
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 137
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 145
 try:
     MEDIA_BUS_FMT_SGBRG12_1X12 = 0x3010
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 138
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 146
 try:
     MEDIA_BUS_FMT_SGRBG12_1X12 = 0x3011
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 139
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 147
 try:
     MEDIA_BUS_FMT_SRGGB12_1X12 = 0x3012
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 140
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 148
 try:
     MEDIA_BUS_FMT_SBGGR14_1X14 = 0x3019
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 141
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 149
 try:
     MEDIA_BUS_FMT_SGBRG14_1X14 = 0x301a
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 142
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 150
 try:
     MEDIA_BUS_FMT_SGRBG14_1X14 = 0x301b
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 143
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 151
 try:
     MEDIA_BUS_FMT_SRGGB14_1X14 = 0x301c
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 144
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 152
 try:
     MEDIA_BUS_FMT_SBGGR16_1X16 = 0x301d
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 145
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 153
 try:
     MEDIA_BUS_FMT_SGBRG16_1X16 = 0x301e
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 146
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 154
 try:
     MEDIA_BUS_FMT_SGRBG16_1X16 = 0x301f
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 147
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 155
 try:
     MEDIA_BUS_FMT_SRGGB16_1X16 = 0x3020
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 150
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 158
 try:
     MEDIA_BUS_FMT_JPEG_1X8 = 0x4001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 155
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 163
 try:
     MEDIA_BUS_FMT_S5C_UYVY_JPEG_1X8 = 0x5001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 158
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 166
 try:
     MEDIA_BUS_FMT_AHSV8888_1X32 = 0x6001
 except:
     pass
 
-# /usr/include/linux/media-bus-format.h: 166
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 174
 try:
     MEDIA_BUS_FMT_METADATA_FIXED = 0x7001
 except:
     pass
 
-# /usr/include/linux/v4l2-mediabus.h: 19
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 177
+try:
+    MEDIA_BUS_FMT_META_8 = 0x8001
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 178
+try:
+    MEDIA_BUS_FMT_META_10 = 0x8002
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 179
+try:
+    MEDIA_BUS_FMT_META_12 = 0x8003
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 180
+try:
+    MEDIA_BUS_FMT_META_14 = 0x8004
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 181
+try:
+    MEDIA_BUS_FMT_META_16 = 0x8005
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 182
+try:
+    MEDIA_BUS_FMT_META_20 = 0x8006
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 183
+try:
+    MEDIA_BUS_FMT_META_24 = 0x8007
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 186
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_8 = 0x9001
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 187
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_10 = 0x9002
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 188
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_12 = 0x9003
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 189
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_14 = 0x9004
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 190
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_16 = 0x9005
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 191
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_20 = 0x9006
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 192
+try:
+    MEDIA_BUS_FMT_CCS_EMBEDDED_24 = 0x9007
+except:
+    pass
+
+# /home/tomba/tmp/khdrs/include/linux/media-bus-format.h: 194
+def MEDIA_BUS_FMT_IS_META(code):
+    return ((code & (0xf000 == 0x7000)) or (code & (0xf000 == 0x8000)))
+
+# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 15
 try:
     V4L2_MBUS_FRAMEFMT_SET_CSC = 0x0001
 except:
@@ -9363,28 +10253,6 @@ v4l2_output = struct_v4l2_output# /home/tomba/tmp/khdrs/include/linux/videodev2.
 
 v4l2_control = struct_v4l2_control# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1756
 
-v4l2_ctrl_vp9_compressed_hdr = struct_v4l2_ctrl_vp9_compressed_hdr# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1786
-
-v4l2_ctrl_vp9_frame = struct_v4l2_ctrl_vp9_frame# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1787
-
-v4l2_ctrl_hevc_sps = struct_v4l2_ctrl_hevc_sps# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1788
-
-v4l2_ctrl_hevc_pps = struct_v4l2_ctrl_hevc_pps# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1789
-
-v4l2_ctrl_hevc_slice_params = struct_v4l2_ctrl_hevc_slice_params# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1790
-
-v4l2_ctrl_hevc_scaling_matrix = struct_v4l2_ctrl_hevc_scaling_matrix# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1791
-
-v4l2_ctrl_hevc_decode_params = struct_v4l2_ctrl_hevc_decode_params# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1792
-
-v4l2_ctrl_av1_sequence = struct_v4l2_ctrl_av1_sequence# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1793
-
-v4l2_ctrl_av1_tile_group_entry = struct_v4l2_ctrl_av1_tile_group_entry# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1794
-
-v4l2_ctrl_av1_frame = struct_v4l2_ctrl_av1_frame# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1795
-
-v4l2_ctrl_av1_film_grain = struct_v4l2_ctrl_av1_film_grain# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1796
-
 v4l2_ext_control = struct_v4l2_ext_control# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1761
 
 v4l2_ext_controls = struct_v4l2_ext_controls# /home/tomba/tmp/khdrs/include/linux/videodev2.h: 1801
@@ -9491,7 +10359,7 @@ media_v2_link = struct_media_v2_link# /home/tomba/tmp/khdrs/include/linux/media.
 
 media_v2_topology = struct_media_v2_topology# /home/tomba/tmp/khdrs/include/linux/media.h: 333
 
-v4l2_mbus_framefmt = struct_v4l2_mbus_framefmt# /usr/include/linux/v4l2-mediabus.h: 35
+v4l2_mbus_framefmt = struct_v4l2_mbus_framefmt# /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h: 37
 
 v4l2_subdev_format = struct_v4l2_subdev_format# /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h: 38
 
