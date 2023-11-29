@@ -441,9 +441,9 @@ for stream in streams:
     stream["cap"].stream_on()
 
 for stream in streams:
-    stream["num_frames"] = 0
     stream["total_num_frames"] = 0
-    stream["time"] = time.perf_counter()
+    stream["last_framenum"] = 0
+    stream["last_timestamp"] = time.perf_counter()
 
 kms_committed = False
 
@@ -485,23 +485,25 @@ def net_tx(stream, vbuf):
 
 
 def readvid(stream):
-    stream["num_frames"] += 1
     stream["total_num_frames"] += 1
 
-    t = time.perf_counter()
-    diff = time.perf_counter() - stream["time"]
+    # With IPython we have separate fps tracking
+    if not USE_IPYTHON:
+        ts = time.perf_counter()
 
-    if stream["total_num_frames"] == 1:
-        print("{}: first frame in {:.2f} s"
-              .format(stream["dev"], diff))
+        diff = ts - stream["last_timestamp"]
+        num_frames = stream["total_num_frames"] - stream["last_framenum"]
 
-    if diff >= 5:
-        if not USE_IPYTHON:
+        if stream["total_num_frames"] == 1:
+            print("{}: first frame in {:.2f} s"
+                  .format(stream["dev"], diff))
+
+        if diff >= 5:
             print("{}: {} frames in {:.2f} s, {:.2f} fps"
-                  .format(stream["dev"],stream["num_frames"], diff, stream["num_frames"] / diff))
+                  .format(stream["dev"], num_frames, diff, num_frames / diff))
 
-        stream["num_frames"] = 0
-        stream["time"] = t
+            stream["last_timestamp"] = ts
+            stream["last_framenum"] = stream["total_num_frames"]
 
     cap = stream["cap"]
     vbuf = cap.dequeue()
@@ -646,6 +648,33 @@ def inputhook2(context):
 
 IPython.terminal.pt_inputhooks.register("mygui", inputhook2)
 
+from pygments.token import Token
+
+class MyPrompt(IPython.terminal.prompts.Prompts):
+    def in_prompt_tokens(self, cli=None):
+        global streams
+
+        # TODO: handle all streams
+
+        stream = streams[0]
+
+        ts = time.perf_counter()
+
+        diff = ts - stream["last_timestamp"]
+        num_frames = stream["total_num_frames"] - stream["last_framenum"]
+
+        fps = num_frames / diff
+
+        fps_str = "[frames:{:8} fps:{:5.2f}]\n".format(streams[0]["total_num_frames"], fps)
+
+        stream["last_timestamp"] = ts
+        stream["last_framenum"] = stream["total_num_frames"]
+
+        return [
+            (Token, fps_str),
+            (Token.Prompt, '> '),
+        ]
+
 if True:
     c = Config()
     c.InteractiveShellApp.exec_lines = [
@@ -653,6 +682,7 @@ if True:
     ]
     c.TerminalInteractiveShell.confirm_exit = False
     c.TerminalInteractiveShell.banner1 = ''
+    c.TerminalInteractiveShell.prompts_class = MyPrompt
 
     scope = {
         'v4l2': v4l2,
