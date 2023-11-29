@@ -99,6 +99,13 @@ while len(print_queue) > 0:
             else:
                 print("    Stream{} {}".format(s, fmt))
 
+            if subdev:
+                sel = subdev.get_selection(v4l2.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
+                print("    crop.bounds", sel.r)
+
+                sel = subdev.get_selection(v4l2.V4L2_SEL_TGT_CROP, pad.index)
+                print("    crop", sel.r)
+
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
         if len(routes) > 0:

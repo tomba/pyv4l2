@@ -28,6 +28,12 @@ def v4l2_subdev_route_to_str(self: v4l2_subdev_route):
 v4l2_subdev_route.__repr__ = v4l2_subdev_route_to_str
 
 
+def v4l2_rect_to_str(self: v4l2_rect):
+    return f'v4l2_rect(({self.left},{self.top})/{self.width}x{self.height})'
+
+v4l2_rect.__repr__ = v4l2_rect_to_str
+
+
 def filepath_for_major_minor(major, minor):
     import os
     import glob
@@ -56,3 +62,6 @@ MEDIA_BUS_FMT_META_12 = 0x8003
 
 V4L2_META_FMT_GENERIC_8 = v4l2.v4l2_fourcc('M', 'E', 'T', '8')
 V4L2_META_FMT_GENERIC_CSI2_12 = v4l2.v4l2_fourcc('M', 'C', '1', 'C')
+
+V4L2_SEL_TGT_CROP = 0x0000
+V4L2_SEL_TGT_CROP_BOUNDS = 0x0002

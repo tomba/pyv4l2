@@ -114,3 +114,32 @@ class SubDevice:
         routes = [Route.from_v4l2_subdev_route(kroutes[idx]) for idx in range(routing.num_routes)]
 
         return routes
+
+    def get_selection(self, target, pad, stream=0, which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
+        sel = v4l2.v4l2_subdev_selection()
+        sel.pad = pad
+        sel.stream = stream
+        sel.which = which
+        sel.target = target
+        sel.flags = 0
+
+        try:
+            fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_G_SELECTION, sel, True)
+        except OSError as e:
+            if e.errno == errno.ENOTTY:
+                return sel
+
+        return sel
+
+    def set_selection(self, target, rect: v4l2.v4l2_rect, pad, stream=0, which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
+        sel = v4l2.v4l2_subdev_selection()
+        sel.pad = pad
+        sel.stream = stream
+        sel.which = which
+        sel.target = target
+        sel.flags = 0
+        sel.r = rect
+
+        fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_S_SELECTION, sel, True)
+
+        return sel

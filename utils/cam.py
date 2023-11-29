@@ -198,12 +198,17 @@ for e in config.get("subdevs", []):
         else:
             pad = p["pad"]
             stream = 0
+
         w, h, fmt = p["fmt"]
         try:
             subdev.set_format(pad, stream, w, h, fmt)
         except Exception as e:
             print("Failed to set format for {}".format(ent))
             raise e
+
+        if "crop" in p:
+            x, y, w, h = p["crop"]
+            subdev.set_selection(v4l2.V4L2_SEL_TGT_CROP, v4l2.v4l2_rect(x, y, w, h), pad, stream)
 
         if "ival" in p:
             numerator, denominator = p["ival"]
