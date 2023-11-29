@@ -212,34 +212,16 @@ for e in config.get("subdevs", []):
 
 card = None
 
-if args.type == "drm":
+if args.type == "drm" or args.display:
     card = pykms.Card()
 
 if args.display:
-    if card == None:
-        card = pykms.Card()
     res = pykms.ResourceManager(card)
     conn = res.reserve_connector(CONNECTOR)
     crtc = res.reserve_crtc(conn)
-
-    plane = crtc.possible_planes[0]
-    #plane = res.reserve_generic_plane(crtc)
-
     card.disable_planes()
-
     mode = conn.get_default_mode()
     modeb = mode.to_blob(card)
-
-    tmpfb = pykms.DumbFramebuffer(card, mode.hdisplay, mode.vdisplay, pykms.PixelFormat.XRGB8888)
-
-    req = pykms.AtomicReq(card)
-    req.add(conn, "CRTC_ID", crtc.id)
-    req.add(crtc, {"ACTIVE": 1,
-            "MODE_ID": modeb.id})
-    #req.add(plane, "FB_ID", fb.id)
-    req.add_plane(plane, tmpfb, crtc, dst=(0, 0, mode.hdisplay, mode.vdisplay))
-    r = req.commit_sync(allow_modeset = True)
-    assert(r == 0)
 
 if args.tx:
     import socket
@@ -421,6 +403,19 @@ for stream in streams:
             payload_size = stream["w"] * stream["h"] * _fourcc_bitspp_map[stream["fourcc"]] // 8
             vbuf = v4l2.create_mmapbuffer(stream["w"], stream["h"], stream["fourcc"], payload_size)
         cap.queue(vbuf)
+
+if args.display:
+    # Do the initial modeset
+    req = pykms.AtomicReq(card)
+    req.add(conn, "CRTC_ID", crtc.id)
+    req.add(crtc, {"ACTIVE": 1,
+            "MODE_ID": modeb.id})
+
+    for stream in streams:
+        req.add(stream["plane"], "FB_ID", stream["kms_fb"].id)
+
+    r = req.commit_sync(allow_modeset = True)
+    assert(r == 0)
 
 for stream in streams:
     print(f'{stream["dev"]}: stream on')
