@@ -13,7 +13,7 @@ import sys
 import time
 import v4l2
 
-USE_IPYTHON = False
+USE_IPYTHON = True
 
 if USE_IPYTHON:
     import IPython
@@ -496,8 +496,9 @@ def readvid(stream):
               .format(stream["dev"], diff))
 
     if diff >= 5:
-        print("{}: {} frames in {:.2f} s, {:.2f} fps"
-              .format(stream["dev"],stream["num_frames"], diff, stream["num_frames"] / diff))
+        if not USE_IPYTHON:
+            print("{}: {} frames in {:.2f} s, {:.2f} fps"
+                  .format(stream["dev"],stream["num_frames"], diff, stream["num_frames"] / diff))
 
         stream["num_frames"] = 0
         stream["time"] = t
@@ -620,7 +621,7 @@ if not USE_IPYTHON:
         for key, mask in events:
             callback = key.data
             callback(key.fileobj, mask)
-    exit(0)
+    sys.exit(0)
 
 print("Starting IPython")
 
@@ -643,12 +644,12 @@ def inputhook2(context):
 
     sel.unregister(fd)
 
-IPython.terminal.pt_inputhooks.register("foo", inputhook2)
+IPython.terminal.pt_inputhooks.register("mygui", inputhook2)
 
 if True:
     c = Config()
     c.InteractiveShellApp.exec_lines = [
-        '%gui foo',
+        '%gui mygui',
     ]
     c.TerminalInteractiveShell.confirm_exit = False
     c.TerminalInteractiveShell.banner1 = ''
