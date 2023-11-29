@@ -269,7 +269,7 @@ class MPlaneCaptureStreamer(CaptureStreamer):
         if self.mem_type == v4l2.V4L2_MEMORY_DMABUF:
             vfb.fd = buf.m.planes[0].m.fd
         else:
-            vfb.offset = buf.m.offset
+            vfb.offset = buf.m.planes[0].m.mem_offset
 
         idx = buf.index
 

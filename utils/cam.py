@@ -441,7 +441,7 @@ def net_tx(stream, vbuf):
         assert(fb != None)
         plane_sizes = [fb.size(0), 0, 0, 0]
     else:
-        plane_sizes = [vbuf.length, 0, 0, 0]
+        plane_sizes = [vbuf.buffer_size, 0, 0, 0]
 
     fmt = stream["fourcc"]
 
@@ -465,7 +465,7 @@ def net_tx(stream, vbuf):
         with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
             sock.sendall(b)
     else:
-        with mmap.mmap(cap.fd, vbuf.length, mmap.MAP_SHARED, mmap.PROT_READ,
+        with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
                        offset=vbuf.offset) as b:
             sock.sendall(b)
 
@@ -504,7 +504,7 @@ def readvid(stream):
                 with open(filename, "wb") as f:
                     f.write(b)
         else:
-            with mmap.mmap(cap.fd, vbuf.length, mmap.MAP_SHARED, mmap.PROT_READ,
+            with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
                            offset=vbuf.offset) as b:
                 with open(filename, "wb") as f:
                     f.write(b)
