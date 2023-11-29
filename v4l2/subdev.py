@@ -129,7 +129,7 @@ class SubDevice:
             if e.errno == errno.ENOTTY:
                 return sel
 
-        return sel
+        return sel.r
 
     def set_selection(self, target, rect: v4l2.v4l2_rect, pad, stream=0, which=v4l2.V4L2_SUBDEV_FORMAT_ACTIVE):
         sel = v4l2.v4l2_subdev_selection()
@@ -142,4 +142,4 @@ class SubDevice:
 
         fcntl.ioctl(self.fd, v4l2.VIDIOC_SUBDEV_S_SELECTION, sel, True)
 
-        return sel
+        return sel.r

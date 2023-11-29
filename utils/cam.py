@@ -13,6 +13,12 @@ import sys
 import time
 import v4l2
 
+USE_IPYTHON = False
+
+if USE_IPYTHON:
+    import IPython
+    from traitlets.config import Config
+
 # ctx-idx, width, height, bytesperline, format, num-planes, plane1, plane2, plane3, plane4
 struct_fmt = struct.Struct("<IIII16pI4I")
 
@@ -161,12 +167,16 @@ for l in config.get("links", []):
         print("Failed to link {} -> {}".format((source_ent, source_pad), (sink_ent, sink_pad)))
         raise e
 
+subdevices = {}
+
 # Configure entities
 for e in config.get("subdevs", []):
     ent = md.find_entity(e["entity"])
     assert ent
     subdev = v4l2.SubDevice(ent)
     assert subdev, "no subdev for entity %s" % ent
+
+    subdevices[ent.name] = subdev
 
     # Configure routes
     if "routing" in e:
@@ -205,6 +215,10 @@ for e in config.get("subdevs", []):
         except Exception as e:
             print("Failed to set format for {}".format(ent))
             raise e
+
+        if "crop.bounds" in p:
+            x, y, w, h = p["crop.bounds"]
+            subdev.set_selection(v4l2.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.v4l2_rect(x, y, w, h), pad, stream)
 
         if "crop" in p:
             x, y, w, h = p["crop"]
@@ -593,14 +607,61 @@ def readdrm(fileobj, mask):
             handle_pageflip()
 
 sel = selectors.DefaultSelector()
-sel.register(sys.stdin, selectors.EVENT_READ, readkey)
+if not USE_IPYTHON:
+    sel.register(sys.stdin, selectors.EVENT_READ, readkey)
 if args.display:
     sel.register(card.fd, selectors.EVENT_READ, readdrm)
 for stream in streams:
     sel.register(stream["cap"].fd, selectors.EVENT_READ, lambda c,m,d=stream: readvid(d))
 
-while True:
-    events = sel.select()
-    for key, mask in events:
-        callback = key.data
-        callback(key.fileobj, mask)
+if not USE_IPYTHON:
+    while True:
+        events = sel.select()
+        for key, mask in events:
+            callback = key.data
+            callback(key.fileobj, mask)
+    exit(0)
+
+print("Starting IPython")
+
+# Using a file descriptor to notify the event loop to stop.
+def inputhook2(context):
+    fd = context.fileno()
+
+    ipy_key = sel.register(fd, selectors.EVENT_READ)
+
+    loop = True
+    while loop:
+        events = sel.select()
+        for key, mask in events:
+            if key == ipy_key:
+                loop = False
+                continue
+
+            callback = key.data
+            callback(key.fileobj, mask)
+
+    sel.unregister(fd)
+
+IPython.terminal.pt_inputhooks.register("foo", inputhook2)
+
+if True:
+    c = Config()
+    c.InteractiveShellApp.exec_lines = [
+        '%gui foo',
+    ]
+    c.TerminalInteractiveShell.confirm_exit = False
+    c.TerminalInteractiveShell.banner1 = ''
+
+    scope = {
+        'v4l2': v4l2,
+        'streams': streams,
+        'subdevices': subdevices,
+    }
+
+    IPython.start_ipython(config=c, argv=[], user_ns=scope)
+else:
+    c = Config()
+    c.InteractiveShellEmbed.confirm_exit = False
+    c.InteractiveShellEmbed.banner1 = ''
+    IPython.embed(config=c)

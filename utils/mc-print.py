@@ -101,10 +101,10 @@ while len(print_queue) > 0:
 
             if subdev:
                 sel = subdev.get_selection(v4l2.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
-                print("    crop.bounds", sel.r)
+                print("    crop.bounds", sel)
 
                 sel = subdev.get_selection(v4l2.V4L2_SEL_TGT_CROP, pad.index)
-                print("    crop", sel.r)
+                print("    crop", sel)
 
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
