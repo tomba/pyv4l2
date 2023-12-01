@@ -13,12 +13,6 @@ import sys
 import time
 import v4l2
 
-USE_IPYTHON = True
-
-if USE_IPYTHON:
-    import IPython
-    from traitlets.config import Config
-
 # ctx-idx, width, height, bytesperline, format, num-planes, plane1, plane2, plane3, plane4
 struct_fmt = struct.Struct("<IIII16pI4I")
 
@@ -32,7 +26,14 @@ parser.add_argument("-d", "--display", action="store_true", default=False, help=
 parser.add_argument("-x", "--tx", nargs='?', type=str, default=None, const='all', help="send frames to a server")
 parser.add_argument("-t", "--type", type=str, default="drm", help="buffer type (drm/v4l2)")
 parser.add_argument("-p", "--print", action="store_true", default=False, help="print config dict")
+parser.add_argument("-i", "--ipython", action="store_true", default=False, help="IPython mode")
 args = parser.parse_args()
+
+USE_IPYTHON = args.ipython
+
+if USE_IPYTHON:
+    import IPython
+    from traitlets.config import Config
 
 if args.tx:
     args.tx = args.tx.split(',')
@@ -625,10 +626,9 @@ if not USE_IPYTHON:
             callback(key.fileobj, mask)
     sys.exit(0)
 
-print("Starting IPython")
+# Rest if for IPython
 
-# Using a file descriptor to notify the event loop to stop.
-def inputhook2(context):
+def inputhook(context):
     fd = context.fileno()
 
     ipy_key = sel.register(fd, selectors.EVENT_READ)
@@ -646,7 +646,7 @@ def inputhook2(context):
 
     sel.unregister(fd)
 
-IPython.terminal.pt_inputhooks.register("mygui", inputhook2)
+IPython.terminal.pt_inputhooks.register("mygui", inputhook)
 
 from pygments.token import Token
 
@@ -674,6 +674,8 @@ class MyPrompt(IPython.terminal.prompts.Prompts):
             (Token, fps_str),
             (Token.Prompt, '> '),
         ]
+
+print("Starting IPython")
 
 if True:
     c = Config()
