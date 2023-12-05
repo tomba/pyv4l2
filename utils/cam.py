@@ -6,7 +6,7 @@ import importlib
 import mmap
 import os
 import pprint
-import pykms
+import kms
 import selectors
 import struct
 import sys
@@ -233,10 +233,10 @@ for e in config.get("subdevs", []):
 card = None
 
 if args.type == "drm" or args.display:
-    card = pykms.Card()
+    card = kms.Card()
 
 if args.display:
-    res = pykms.ResourceManager(card)
+    res = kms.ResourceManager(card)
     conn = res.reserve_connector(CONNECTOR)
     crtc = res.reserve_crtc(conn)
     card.disable_planes()
@@ -273,18 +273,18 @@ for i, stream in enumerate(streams):
 
     if stream.get("dra-plane-hack", False):
         # Hack to reserve the unscaleable GFX plane
-        res.reserve_generic_plane(crtc, pykms.PixelFormat.RGB565)
+        res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
 
     if not "kms-fourcc" in stream:
         if stream["fourcc"] == v4l2.V4L2_META_FMT_GENERIC_8:
-            stream["kms-fourcc"] = pykms.PixelFormat.RGB565
+            stream["kms-fourcc"] = kms.PixelFormat.RGB565
         elif stream["fourcc"] == v4l2.V4L2_META_FMT_GENERIC_CSI2_12:
-            stream["kms-fourcc"] = pykms.PixelFormat.RGB565
+            stream["kms-fourcc"] = kms.PixelFormat.RGB565
         else:
             #kms_fourcc = v4l2.pixelformat_to_drm_fourcc(stream["fourcc"])
-            #stream["kms-fourcc"] = pykms.fourcc_to_pixelformat(kms_fourcc)
+            #stream["kms-fourcc"] = kms.fourcc_to_pixelformat(kms_fourcc)
             # XXX
-            stream["kms-fourcc"] = pykms.PixelFormat(stream["fourcc"])
+            stream["kms-fourcc"] = stream["fourcc"]
 
     if args.type == "drm" and "embedded" in stream and stream["embedded"]:
         divs = [16, 8, 4, 2, 1]
@@ -377,7 +377,7 @@ for stream in streams:
         # Allocate FBs
         fbs = []
         for i in range(NUM_BUFS):
-            fb = pykms.DumbFramebuffer(card, stream["kms-buf-w"], stream["kms-buf-h"], stream["kms-fourcc"])
+            fb = kms.DumbFramebuffer(card, stream["kms-buf-w"], stream["kms-buf-h"], stream["kms-fourcc"])
             fbs.append(fb)
         stream["fbs"] = fbs
 
@@ -426,7 +426,7 @@ for stream in streams:
 
 if args.display:
     # Do the initial modeset
-    req = pykms.AtomicReq(card)
+    req = kms.AtomicReq(card)
     req.add(conn, "CRTC_ID", crtc.id)
     req.add(crtc, {"ACTIVE": 1,
             "MODE_ID": modeb.id})
@@ -434,8 +434,7 @@ if args.display:
     for stream in streams:
         req.add(stream["plane"], "FB_ID", stream["kms_fb"].id)
 
-    r = req.commit_sync(allow_modeset = True)
-    assert(r == 0)
+    req.commit_sync(allow_modeset = True)
 
 for stream in streams:
     print(f'{stream["dev"]}: stream on')
@@ -562,7 +561,7 @@ def handle_pageflip():
 
     kms_committed = False
 
-    req = pykms.AtomicReq(card)
+    req = kms.AtomicReq(card)
 
     do_commit = False
 
@@ -599,15 +598,14 @@ def handle_pageflip():
         do_commit = True
 
     if do_commit:
-        r = req.commit(allow_modeset = False)
-        assert(r == 0)
+        req.commit(allow_modeset = False)
         kms_committed = True
 
 
 def readdrm(fileobj, mask):
     #print("EVENT");
     for ev in card.read_events():
-        if ev.type == pykms.DrmEventType.FLIP_COMPLETE:
+        if ev.type == kms.DrmEventType.FLIP_COMPLETE:
             handle_pageflip()
 
 sel = selectors.DefaultSelector()
