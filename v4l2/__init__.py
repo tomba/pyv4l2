@@ -1,4 +1,4 @@
-from .v4l2_kernel import *
+from .uapi import *
 from .media import *
 from .subdev import *
 from .videodev import *
