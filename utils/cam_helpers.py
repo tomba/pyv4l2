@@ -1,6 +1,9 @@
-import v4l2
-import socket
+import importlib
 import mmap
+import os
+import socket
+import sys
+import v4l2
 
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
@@ -106,3 +109,153 @@ class NetTX:
             with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
                            offset=vbuf.offset) as b:
                 self.sock.sendall(b)
+
+#
+# Config file functions
+#
+
+def merge_configs(configs):
+    d = { "subdevs": [], "devices": [], "links": [] }
+
+    for config in configs:
+        # links can be appended directly
+        # xxx there may be (harmless) duplicates
+        d["links"] += config["links"]
+
+        # devices can be appended directly
+        d["devices"] += config["devices"]
+
+        # subdevs need to be merged based on entity
+        for subdev in config["subdevs"]:
+            ent = subdev["entity"]
+
+            dst = next((s for s in d["subdevs"] if s["entity"] == ent), None)
+            if dst:
+                if "pads" in subdev:
+                    dst["pads"] += subdev["pads"]
+                if "routing" in subdev:
+                    dst["routing"] += subdev["routing"]
+            else:
+                d["subdevs"].append(subdev)
+
+    return d
+
+def read_config(config_name):
+    parts = config_name.split(":")
+
+    if len(parts) > 2:
+        sys.exit(-1)
+
+    config_file = parts[0]
+
+    if len(parts) == 2:
+        config_names = parts[1].split(",")
+    else:
+        config_names = []
+
+    config_names = [c for c in config_names if len(c) > 0]
+
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/cam-configs")
+    configurations, default_configurations = importlib.import_module(config_file).get_configs()
+
+    if len(config_names) == 0:
+        config_names = default_configurations
+
+    for cfg in config_names:
+        if cfg not in configurations:
+            print("Cannot find config '{}'".format(cfg))
+            sys.exit(-1)
+
+    config = merge_configs([configurations[x] for x in config_names])
+
+    return config
+
+#
+# V4L2 configuration
+#
+
+# Setup links
+def setup_links(md, config):
+    for l in config.get("links", []):
+        source_ent, source_pad = l["src"]
+        sink_ent, sink_pad = l["dst"]
+
+        try:
+            source_ent = md.find_entity(source_ent)
+            if source_ent == None:
+                print("Failed to find entity", l["src"])
+                exit(-1)
+
+            sink_ent = md.find_entity(sink_ent)
+            if sink_ent == None:
+                print("Failed to find entity", l["dst"])
+                exit(-1)
+
+            link(md, (source_ent, source_pad), (sink_ent, sink_pad))
+        except Exception as e:
+            print("Failed to link {} -> {}".format((source_ent, source_pad), (sink_ent, sink_pad)))
+            raise e
+
+# Configure entities
+def configure_subdevs(md, config):
+    subdevices = {}
+
+    for e in config.get("subdevs", []):
+        ent = md.find_entity(e["entity"])
+        assert ent
+        subdev = v4l2.SubDevice(ent)
+        assert subdev, "no subdev for entity %s" % ent
+
+        subdevices[ent.name] = subdev
+
+        # Configure routes
+        if "routing" in e:
+            routes = []
+            for r in e["routing"]:
+                sink_pad, sink_stream = r["src"]
+                source_pad, source_stream = r["dst"]
+
+                route = v4l2.Route()
+                route.sink_pad = sink_pad
+                route.sink_stream = sink_stream
+                route.source_pad = source_pad
+                route.source_stream = source_stream
+                route.flags = v4l2.V4L2_SUBDEV_ROUTE_FL_ACTIVE
+
+                routes.append(route)
+
+            if len(routes) > 0:
+                try:
+                    subdev.set_routes(routes)
+                except Exception as e:
+                    print("Failed to set routes for {}".format(ent))
+                    raise e
+
+        # Configure streams
+        for p in e.get("pads", []):
+            if type(p["pad"]) == tuple:
+                pad, stream = p["pad"]
+            else:
+                pad = p["pad"]
+                stream = 0
+
+            w, h, fmt = p["fmt"]
+            try:
+                subdev.set_format(pad, stream, w, h, fmt)
+            except Exception as e:
+                print("Failed to set format for {}".format(ent))
+                raise e
+
+            if "crop.bounds" in p:
+                x, y, w, h = p["crop.bounds"]
+                subdev.set_selection(v4l2.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.v4l2_rect(x, y, w, h), pad, stream)
+
+            if "crop" in p:
+                x, y, w, h = p["crop"]
+                subdev.set_selection(v4l2.V4L2_SEL_TGT_CROP, v4l2.v4l2_rect(x, y, w, h), pad, stream)
+
+            if "ival" in p:
+                numerator, denominator = p["ival"]
+                subdev.set_frame_interval(pad, stream, numerator, denominator)
+
+    return subdevices
