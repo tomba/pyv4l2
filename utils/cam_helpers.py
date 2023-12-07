@@ -1,8 +1,10 @@
 import importlib
+import kms
 import mmap
 import os
 import socket
 import sys
+import typing
 import v4l2
 
 # Disable all possible links
@@ -259,3 +261,23 @@ def configure_subdevs(md, config):
                 subdev.set_frame_interval(pad, stream, numerator, denominator)
 
     return subdevices
+
+def save_fb_to_file(stream, is_drm, fb_or_vbuf):
+    cap = stream["cap"]
+
+    filename = "frame-{}-{}.data".format(stream["id"], stream["total_num_frames"])
+    print("save to " + filename)
+
+    if is_drm:
+        fb = typing.cast(kms.DumbFramebuffer, fb_or_vbuf)
+
+        with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
+            with open(filename, "wb") as f:
+                f.write(b)
+    else:
+        vbuf = typing.cast(v4l2.VideoBuffer, fb_or_vbuf)
+
+        with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
+                       offset=vbuf.offset) as b:
+            with open(filename, "wb") as f:
+                f.write(b)

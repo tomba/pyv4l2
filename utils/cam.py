@@ -283,18 +283,7 @@ def readvid(stream):
         assert(fb != None)
 
     if args.save:
-        filename = "frame-{}-{}.data".format(stream["id"], stream["total_num_frames"])
-        print("save to " + filename)
-
-        if args.type == "drm":
-            with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
-                with open(filename, "wb") as f:
-                    f.write(b)
-        else:
-            with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
-                           offset=vbuf.offset) as b:
-                with open(filename, "wb") as f:
-                    f.write(b)
+        save_fb_to_file(stream, args.type == "drm", fb if args.type == "drm" else vbuf)
 
     if stream["display"]:
         stream["kms_fb_queue"].append(fb)
