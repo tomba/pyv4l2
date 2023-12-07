@@ -303,7 +303,7 @@ def readvid(stream):
         cap.queue(vbuf)
 
 
-def readkey(conn, mask):
+def readkey():
     for stream in reversed(streams):
         print(f'{stream["dev"]}: stream off')
         stream["cap"].stream_off()
@@ -361,7 +361,7 @@ def handle_pageflip():
         kms_committed = True
 
 
-def readdrm(fileobj, mask):
+def readdrm():
     #print("EVENT");
     for ev in card.read_events():
         if ev.type == kms.DrmEventType.FLIP_COMPLETE:
@@ -373,14 +373,14 @@ if not USE_IPYTHON:
 if args.display:
     sel.register(card.fd, selectors.EVENT_READ, readdrm)
 for stream in streams:
-    sel.register(stream["cap"].fd, selectors.EVENT_READ, lambda c,m,d=stream: readvid(d))
+    sel.register(stream["cap"].fd, selectors.EVENT_READ, lambda data=stream: readvid(data))
 
 if not USE_IPYTHON:
     while True:
         events = sel.select()
-        for key, mask in events:
+        for key, _ in events:
             callback = key.data
-            callback(key.fileobj, mask)
+            callback()
     sys.exit(0)
 
 # Rest if for IPython
@@ -393,13 +393,13 @@ def inputhook(context):
     loop = True
     while loop:
         events = sel.select()
-        for key, mask in events:
+        for key, _ in events:
             if key == ipy_key:
                 loop = False
                 continue
 
             callback = key.data
-            callback(key.fileobj, mask)
+            callback()
 
     sel.unregister(fd)
 
