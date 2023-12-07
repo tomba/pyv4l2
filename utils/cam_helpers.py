@@ -1,4 +1,6 @@
 import v4l2
+import socket
+import mmap
 
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
@@ -56,3 +58,51 @@ def embedded_fourcc_to_bytes_per_pixel(fmt):
         return 8
     else:
         assert(False)
+
+class NetTX:
+    import struct
+
+    # ctx-idx, width, height, bytesperline, format, num-planes, plane1, plane2, plane3, plane4
+    struct_fmt = struct.Struct("<IIII16pI4I")
+
+    def __init__(self) -> None:
+        HOST, PORT = "192.168.88.20", 43242
+
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect((HOST, PORT))
+
+    def tx(self, stream, vbuf, is_drm):
+        cap = stream["cap"]
+
+        if is_drm:
+            fb = next((fb for fb in stream["fbs"] if fb.fd(0) == vbuf.fd), None)
+            assert(fb != None)
+            plane_sizes = [fb.size(0), 0, 0, 0]
+        else:
+            plane_sizes = [vbuf.buffer_size, 0, 0, 0]
+
+        fmt = stream["fourcc"]
+
+        if stream["embedded"]:
+            # XXX we dont' really have "lines" with embedded data
+            bytesperline = stream["w"]
+            bpp = embedded_fourcc_to_bytes_per_pixel(stream["fourcc"])
+            bytesperline = bytesperline * bpp // 8
+        else:
+            bytesperline = stream["cap"].bytesperline
+
+        hdr = NetTX.struct_fmt.pack(stream["id"],
+                              stream["w"], stream["h"],
+                              bytesperline,
+                              bytes(v4l2.fourcc_to_str(fmt), "ascii"),
+                              1, *plane_sizes)
+
+        self.sock.sendall(hdr)
+
+        if is_drm:
+            with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
+                self.sock.sendall(b)
+        else:
+            with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
+                           offset=vbuf.offset) as b:
+                self.sock.sendall(b)

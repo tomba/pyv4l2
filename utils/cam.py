@@ -8,14 +8,10 @@ import os
 import pprint
 import kms
 import selectors
-import struct
 import sys
 import time
 import v4l2
 from cam_helpers import *
-
-# ctx-idx, width, height, bytesperline, format, num-planes, plane1, plane2, plane3, plane4
-struct_fmt = struct.Struct("<IIII16pI4I")
 
 CONNECTOR = ""
 
@@ -200,13 +196,10 @@ if args.display:
     mode = conn.get_default_mode()
     modeb = mode.to_blob(card)
 
+net_tx = None
+
 if args.tx:
-    import socket
-
-    HOST, PORT = "192.168.88.20", 43242
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((HOST, PORT))
+    net_tx = NetTX()
 
 NUM_BUFS = 5
 
@@ -392,43 +385,6 @@ for stream in streams:
 
 kms_committed = False
 
-def net_tx(stream, vbuf):
-    cap = stream["cap"]
-
-    if args.type == "drm":
-        fb = next((fb for fb in stream["fbs"] if fb.fd(0) == vbuf.fd), None)
-        assert(fb != None)
-        plane_sizes = [fb.size(0), 0, 0, 0]
-    else:
-        plane_sizes = [vbuf.buffer_size, 0, 0, 0]
-
-    fmt = stream["fourcc"]
-
-    if stream["embedded"]:
-        # XXX we dont' really have "lines" with embedded data
-        bytesperline = stream["w"]
-        bpp = embedded_fourcc_to_bytes_per_pixel(stream["fourcc"])
-        bytesperline = bytesperline * bpp // 8
-    else:
-        bytesperline = stream["cap"].bytesperline
-
-    hdr = struct_fmt.pack(stream["id"],
-                          stream["w"], stream["h"],
-                          bytesperline,
-                          bytes(v4l2.fourcc_to_str(fmt), "ascii"),
-                          1, *plane_sizes)
-
-    sock.sendall(hdr)
-
-    if args.type == "drm":
-        with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
-            sock.sendall(b)
-    else:
-        with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
-                       offset=vbuf.offset) as b:
-            sock.sendall(b)
-
-
 def readvid(stream):
     stream["total_num_frames"] += 1
 
@@ -484,7 +440,7 @@ def readvid(stream):
             handle_pageflip()
     else:
         if args.tx and (args.tx == ["all"] or str(stream["id"]) in args.tx):
-            net_tx(stream, vbuf)
+            net_tx.tx(stream, vbuf, args.type == "drm")
 
         cap.queue(vbuf)
 
