@@ -12,6 +12,7 @@ import struct
 import sys
 import time
 import v4l2
+from cam_helpers import *
 
 # ctx-idx, width, height, bytesperline, format, num-planes, plane1, plane2, plane3, plane4
 struct_fmt = struct.Struct("<IIII16pI4I")
@@ -95,50 +96,6 @@ for cfg in config_names:
 
 config = merge_configs([configurations[x] for x in config_names])
 
-# Disable all possible links
-def disable_all_links(md):
-    for ent in md.entities:
-        for l in ent.pad_links:
-            if l.is_immutable:
-                continue
-            #print((l.sink, l.sink_pad), (l.source, l.source_pad))
-            l.enabled = False
-            md.link_setup(l.source, l.sink, 0)
-            #ent.setup_link(l)
-
-
-# Enable link between (src_ent, src_pad) -> (sink_ent, sink_pad)
-def link(source, sink):
-    src_ent = source[0]
-    sink_ent = sink[0]
-
-    source_pad = src_ent.pads[source[1]]
-
-    #links = src_ent.get_links(source[1])
-    links = source_pad.links
-
-    link = None
-
-    for l in links:
-        if l.sink_pad.entity == sink_ent and l.sink_pad.index == sink[1]:
-            link = l
-            break
-
-    if link == None:
-        raise Exception("Failed to find link between", source, sink)
-
-    #if link.is_enabled:
-    #    return
-
-    #print("CONF")
-
-    if link.is_immutable:
-        return
-
-    link.enabled = True
-    #src_ent.setup_link(link)
-
-    md.link_setup(link.source, link.sink, v4l2.MEDIA_LNK_FL_ENABLED)
 
 
 print("Configure media entities")
@@ -163,7 +120,7 @@ for l in config.get("links", []):
             print("Failed to find entity", l["dst"])
             exit(-1)
 
-        link((source_ent, source_pad), (sink_ent, sink_pad))
+        link(md, (source_ent, source_pad), (sink_ent, sink_pad))
     except Exception as e:
         print("Failed to link {} -> {}".format((source_ent, source_pad), (sink_ent, sink_pad)))
         raise e
@@ -329,18 +286,6 @@ for i, stream in enumerate(streams):
 if args.print:
     for stream in streams:
         pprint.pprint(stream)
-
-def embedded_fourcc_to_bytes_per_pixel(fmt):
-    if fmt == v4l2.PixelFormat.META_CSI2_12:
-        return 12
-    elif fmt == v4l2.PixelFormat.META_CSI2_10:
-        return 10
-    elif fmt == v4l2.PixelFormat.META_8:
-        return 8
-    elif fmt == v4l2.PixelFormat.SENSOR_DATA:
-        return 8
-    else:
-        assert(False)
 
 for stream in streams:
     vid_ent = md.find_entity(stream["entity"])
