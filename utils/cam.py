@@ -241,8 +241,7 @@ if args.display:
 
     req.commit_sync(allow_modeset = True)
 
-    print("Press enter to start capture")
-    sys.stdin.readline()
+    #print("Press enter to start capture"); sys.stdin.readline()
 
 for stream in streams:
     print(f'{stream["dev"]}: stream on')
