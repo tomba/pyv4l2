@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyv4l2"
+version = "0.1"
+dependencies = [ ]
+requires-python = ">=3.8"
+authors = [
+  {name = "Tomi Valkeinen", email = "tomi.valkeinen@ideasonboard.com"},
+]
+maintainers = [
+  {name = "Tomi Valkeinen", email = "tomi.valkeinen@ideasonboard.com"},
+]
+description = "Pure-Python V4L2 bindings"
+readme = "README.md"
+license = {file = "LICENSE.md"}
+keywords = ["linux", "v4l2"]
+classifiers = [
+  "Programming Language :: Python",
+  "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+  "Development Status :: 4 - Beta",
+]
+
+[project.urls]
+Homepage = "https://github.com/tomba/pyv4l2"
+Repository = "https://github.com/tomba/pyv4l2.git"
+"Bug Tracker" = "https://github.com/tomba/pyv4l2/issues"
