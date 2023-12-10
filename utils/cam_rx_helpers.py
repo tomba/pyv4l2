@@ -280,7 +280,7 @@ def data_to_rgb(fmt, w, h, bytesperline, data):
 def rgb_to_pix(rgb):
     w = rgb.shape[1]
     h = rgb.shape[0]
-    qim = QtGui.QImage(rgb, w, h, QtGui.QImage.Format.Format_RGB888)
+    qim = QtGui.QImage(rgb, w, h, QtGui.QImage.Format.Format_RGB888) # pylint: disable=no-member
     pix = QtGui.QPixmap.fromImage(qim)
     return pix
 

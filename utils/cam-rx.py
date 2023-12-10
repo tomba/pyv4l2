@@ -16,7 +16,6 @@ receivers = []
 
 struct_fmt = struct.Struct('<IIII16pI4I')
 
-
 # Loading MJPEG to a QPixmap produces corrupt JPEG data warnings. Ignore these.
 def qt_message_handler(msg_type, msg_log_context, msg_string):
     if msg_string.startswith("Corrupt JPEG data"):
@@ -103,6 +102,8 @@ class Receiver(QtWidgets.QWidget):
         print("done")
 
     def on_ready_read(self):
+        qApp = QtWidgets.QApplication.instance()
+
         while self.socket.bytesAvailable():
             if self.state == 0:
                 data = self.socket.read(struct_fmt.size - len(self.header_buffer))
@@ -145,10 +146,11 @@ class Receiver(QtWidgets.QWidget):
         label = self.labels[idx]
 
         if fmt in [ "META_8", "META_CSI2_10", "META_CSI2_12" ]:
-            pix = meta_to_pix(fmt, w, h, bytesperline, self.data_buffer)
+            meta_to_pix(fmt, w, h, bytesperline, self.data_buffer)
         else:
             pix = data_to_pix(fmt, w, h, bytesperline, self.data_buffer)
 
+            # pylint: disable=no-member
             pix = pix.scaled(label.width(), label.height(), Qt.AspectRatioMode.KeepAspectRatio,
                              Qt.TransformationMode.FastTransformation)
 
@@ -174,14 +176,12 @@ def new_connection(tcpServer):
 
 
 def readkey():
-    global qApp
+    qApp = QtWidgets.QApplication.instance()
     sys.stdin.readline()
     qApp.quit()
 
 
 if __name__ == '__main__':
-    global qApp
-
     qApp = QtWidgets.QApplication(sys.argv)
     qApp.setQuitOnLastWindowClosed(False)
 
