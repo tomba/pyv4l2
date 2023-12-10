@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
-import pyv4l2 as v4l2
-import pykms
+import v4l2
+import kms
 
 sensor_1_w = 1280
 sensor_1_h = 720
