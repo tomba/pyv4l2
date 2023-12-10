@@ -100,10 +100,10 @@ while len(print_queue) > 0:
                 print("    Stream{} {}".format(s, fmt))
 
             if subdev:
-                sel = subdev.get_selection(v4l2.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
+                sel = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
                 print("    crop.bounds", sel)
 
-                sel = subdev.get_selection(v4l2.V4L2_SEL_TGT_CROP, pad.index)
+                sel = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, pad.index)
                 print("    crop", sel)
 
     if subdev:

@@ -1,7 +1,8 @@
 import ctypes
 import fcntl
 import v4l2
-
+import v4l2.uapi
+from .helpers import *
 
 class MediaTopology:
     def __init__(self, topology, entities, interfaces, pads, links) -> None:
@@ -24,7 +25,7 @@ class MediaObject:
 
 
 class MediaEntity(MediaObject):
-    def __init__(self, md, media_entity: v4l2.media_v2_entity) -> None:
+    def __init__(self, md, media_entity: v4l2.uapi.media_v2_entity) -> None:
         super().__init__(md, media_entity.id)
         self.media_entity = media_entity
         self.name = media_entity.name.decode('ascii')
@@ -63,7 +64,7 @@ class MediaEntity(MediaObject):
 
 
 class MediaInterface(MediaObject):
-    def __init__(self, md, media_iface: v4l2.media_v2_interface) -> None:
+    def __init__(self, md, media_iface: v4l2.uapi.media_v2_interface) -> None:
         super().__init__(md, media_iface.id)
         self.media_iface = media_iface
         self.majorminor = (self.media_iface.unnamed_1.devnode.major, self.media_iface.unnamed_1.devnode.minor)
@@ -78,15 +79,15 @@ class MediaInterface(MediaObject):
 
     @property
     def is_subdev(self):
-        return self.media_iface.intf_type == v4l2.MEDIA_INTF_T_V4L_SUBDEV
+        return self.media_iface.intf_type == v4l2.uapi.MEDIA_INTF_T_V4L_SUBDEV
 
     @property
     def is_video(self):
-        return self.media_iface.intf_type == v4l2.MEDIA_INTF_T_V4L_VIDEO
+        return self.media_iface.intf_type == v4l2.uapi.MEDIA_INTF_T_V4L_VIDEO
 
 
 class MediaPad(MediaObject):
-    def __init__(self, md, media_pad: v4l2.media_v2_pad) -> None:
+    def __init__(self, md, media_pad: v4l2.uapi.media_v2_pad) -> None:
         super().__init__(md, media_pad.id)
         self.media_pad = media_pad
         self.index = media_pad.index
@@ -101,19 +102,19 @@ class MediaPad(MediaObject):
 
     @property
     def is_source(self):
-        return (self.media_pad.flags & v4l2.MEDIA_PAD_FL_SOURCE) != 0
+        return (self.media_pad.flags & v4l2.uapi.MEDIA_PAD_FL_SOURCE) != 0
 
     @property
     def is_sink(self):
-        return (self.media_pad.flags & v4l2.MEDIA_PAD_FL_SINK) != 0
+        return (self.media_pad.flags & v4l2.uapi.MEDIA_PAD_FL_SINK) != 0
 
     @property
     def is_internal(self):
-        return (self.media_pad.flags & v4l2.MEDIA_PAD_FL_INTERNAL) != 0
+        return (self.media_pad.flags & v4l2.uapi.MEDIA_PAD_FL_INTERNAL) != 0
 
 
 class MediaLink(MediaObject):
-    def __init__(self, md, media_link: v4l2.media_v2_link) -> None:
+    def __init__(self, md, media_link: v4l2.uapi.media_v2_link) -> None:
         super().__init__(md, media_link.id)
         self.media_link = media_link
         self.flags = media_link.flags
@@ -130,11 +131,11 @@ class MediaLink(MediaObject):
 
     @property
     def is_enabled(self):
-        return (self.flags & v4l2.MEDIA_LNK_FL_ENABLED) != 0
+        return (self.flags & v4l2.uapi.MEDIA_LNK_FL_ENABLED) != 0
 
     @property
     def is_immutable(self):
-        return (self.flags & v4l2.MEDIA_LNK_FL_IMMUTABLE) != 0
+        return (self.flags & v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE) != 0
 
     @property
     def source_pad(self) -> MediaPad:
@@ -156,26 +157,26 @@ class MediaDevice:
         self.__read_topology()
 
     def get_device_info(self):
-        mdi = v4l2.media_device_info()
-        fcntl.ioctl(self.fd, v4l2.MEDIA_IOC_DEVICE_INFO, mdi, True)
+        mdi = v4l2.uapi.media_device_info()
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_DEVICE_INFO, mdi, True)
         return mdi
 
     def __read_topology(self):
-        topology = v4l2.media_v2_topology()
+        topology = v4l2.uapi.media_v2_topology()
 
-        fcntl.ioctl(self.fd, v4l2.MEDIA_IOC_G_TOPOLOGY, topology, True)
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_G_TOPOLOGY, topology, True)
 
-        entities = (v4l2.media_v2_entity * topology.num_entities)()
-        interfaces = (v4l2.media_v2_interface * topology.num_interfaces)()
-        pads = (v4l2.media_v2_pad * topology.num_pads)()
-        links = (v4l2.media_v2_link * topology.num_links)()
+        entities = (v4l2.uapi.media_v2_entity * topology.num_entities)()
+        interfaces = (v4l2.uapi.media_v2_interface * topology.num_interfaces)()
+        pads = (v4l2.uapi.media_v2_pad * topology.num_pads)()
+        links = (v4l2.uapi.media_v2_link * topology.num_links)()
 
         topology.ptr_entities = ctypes.addressof(entities)
         topology.ptr_interfaces = ctypes.addressof(interfaces)
         topology.ptr_pads = ctypes.addressof(pads)
         topology.ptr_links = ctypes.addressof(links)
 
-        fcntl.ioctl(self.fd, v4l2.MEDIA_IOC_G_TOPOLOGY, topology, True)
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_G_TOPOLOGY, topology, True)
 
         self.topology = MediaTopology(topology, entities, interfaces, pads, links)
 
@@ -208,14 +209,14 @@ class MediaDevice:
         return next((o for o in self.objects if o.id == id), None)
 
     def link_setup(self, source: MediaPad, sink: MediaPad, flags):
-        desc = v4l2.media_link_desc()
+        desc = v4l2.uapi.media_link_desc()
         desc.source.entity = source.entity.id
         desc.source.index = source.index
         desc.sink.entity = sink.entity.id
         desc.sink.index = sink.index
         desc.flags = flags
 
-        fcntl.ioctl(self.fd, v4l2.MEDIA_IOC_SETUP_LINK, desc, False)
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_SETUP_LINK, desc, False)
 
     def find_entity(self, name):
         for e in self.entities:
