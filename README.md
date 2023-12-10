@@ -9,3 +9,7 @@ v4l2.uapi namespace contains the kernel user-space API (uAPI).
 ## v4l2
 
 v4l2 namespace contains wrappers to the uAPI to simplify the use of the uAPI.
+
+## License
+
+This project is covered by the [LGPL-3.0](LICENSE.md) license.
