@@ -93,9 +93,9 @@ for i, stream in enumerate(streams):
         res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
 
     if not "kms-fourcc" in stream:
-        if stream["fourcc"] == v4l2.V4L2_META_FMT_GENERIC_8:
+        if stream["fourcc"] == v4l2.PixelFormat.META_FMT_GENERIC_8:
             stream["kms-fourcc"] = kms.PixelFormat.RGB565
-        elif stream["fourcc"] == v4l2.V4L2_META_FMT_GENERIC_CSI2_12:
+        elif stream["fourcc"] == v4l2.PixelFormat.META_FMT_GENERIC_CSI2_12:
             stream["kms-fourcc"] = kms.PixelFormat.RGB565
         else:
             #kms_fourcc = v4l2.pixelformat_to_drm_fourcc(stream["fourcc"])
@@ -157,12 +157,12 @@ for stream in streams:
     vd = v4l2.VideoDevice(vid_ent)
 
     if not stream.get("embedded", False):
-        mem_type = v4l2.V4L2_MEMORY_DMABUF if args.type == "drm" else v4l2.V4L2_MEMORY_MMAP
+        mem_type = v4l2.uapi.V4L2_MEMORY_DMABUF if args.type == "drm" else v4l2.uapi.V4L2_MEMORY_MMAP
         cap = vd.get_capture_streamer(mem_type)
         cap.set_port(0)
         cap.set_format(stream["fourcc"], stream["w"], stream["h"])
     else:
-        cap = vd.meta_capture_streamer
+        cap = vd.get_meta_capture_streamer(mem_type)
         bpp = embedded_fourcc_to_bytes_per_pixel(stream["fourcc"])
 
         cap.set_format(stream["fourcc"], stream["w"] * stream["h"] * bpp // 8)
@@ -220,9 +220,9 @@ for stream in streams:
             vbuf = v4l2.create_dmabuffer(fbs[i].fd(0), stream["w"], stream["h"], stream["fourcc"], payload_size)
         else:
             _fourcc_bitspp_map = {
-                v4l2.V4L2_PIX_FMT_UYVY: 16,
-                v4l2.V4L2_PIX_FMT_YUYV: 16,
-                v4l2.V4L2_PIX_FMT_SRGGB12: 16,
+                v4l2.PixelFormat.UYVY: 16,
+                v4l2.PixelFormat.YUYV: 16,
+                v4l2.PixelFormat.SRGGB12: 16,
             }
 
             payload_size = stream["w"] * stream["h"] * _fourcc_bitspp_map[stream["fourcc"]] // 8

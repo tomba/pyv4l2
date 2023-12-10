@@ -6,6 +6,7 @@ import socket
 import sys
 import typing
 import v4l2
+import v4l2.uapi
 
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
@@ -50,7 +51,7 @@ def link(md: v4l2.MediaDevice, source, sink):
     link.enabled = True
     #src_ent.setup_link(link)
 
-    md.link_setup(link.source, link.sink, v4l2.MEDIA_LNK_FL_ENABLED)
+    md.link_setup(link.source, link.sink, v4l2.uapi.MEDIA_LNK_FL_ENABLED)
 
 def embedded_fourcc_to_bytes_per_pixel(fmt):
     if fmt == v4l2.PixelFormat.META_CSI2_12:
@@ -222,7 +223,7 @@ def configure_subdevs(md, config):
                 route.sink_stream = sink_stream
                 route.source_pad = source_pad
                 route.source_stream = source_stream
-                route.flags = v4l2.V4L2_SUBDEV_ROUTE_FL_ACTIVE
+                route.flags = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE
 
                 routes.append(route)
 
@@ -250,11 +251,11 @@ def configure_subdevs(md, config):
 
             if "crop.bounds" in p:
                 x, y, w, h = p["crop.bounds"]
-                subdev.set_selection(v4l2.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.v4l2_rect(x, y, w, h), pad, stream)
+                subdev.set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream)
 
             if "crop" in p:
                 x, y, w, h = p["crop"]
-                subdev.set_selection(v4l2.V4L2_SEL_TGT_CROP, v4l2.v4l2_rect(x, y, w, h), pad, stream)
+                subdev.set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream)
 
             if "ival" in p:
                 numerator, denominator = p["ival"]

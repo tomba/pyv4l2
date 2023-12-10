@@ -81,3 +81,6 @@ class BusFormat(IntEnum):
     JPEG_1X8 = v4l2.uapi.V4L2_MBUS_FMT_JPEG_1X8
     S5C_UYVY_JPEG_1X8 = v4l2.uapi.V4L2_MBUS_FMT_S5C_UYVY_JPEG_1X8
     AHSV8888_1X32 = v4l2.uapi.V4L2_MBUS_FMT_AHSV8888_1X32
+
+    META_8 = NotImplementedError()
+    META_12 = NotImplementedError()

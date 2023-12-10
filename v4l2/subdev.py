@@ -144,3 +144,6 @@ class SubDevice:
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_SELECTION, sel, True)
 
         return sel.r
+
+    def set_frame_interval(self, pad, stream, numerator, denominator):
+        raise NotImplementedError()

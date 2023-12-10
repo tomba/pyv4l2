@@ -238,3 +238,10 @@ class PixelFormat(IntEnum):
     FLAG_SET_CSC = v4l2.uapi.V4L2_PIX_FMT_FLAG_SET_CSC
     HM12 = v4l2.uapi.V4L2_PIX_FMT_HM12
     SUNXI_TILED_NV12 = v4l2.uapi.V4L2_PIX_FMT_SUNXI_TILED_NV12
+
+    META_8 = NotImplementedError()
+    META_CSI2_10 = NotImplementedError()
+    META_CSI2_12 = NotImplementedError()
+    SENSOR_DATA = NotImplementedError()
+    META_FMT_GENERIC_8 = NotImplementedError()
+    META_FMT_GENERIC_CSI2_12 = NotImplementedError()

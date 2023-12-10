@@ -63,6 +63,10 @@ class VideoDevice:
         else:
             return CaptureStreamer(self, mem_type, v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE)
 
+    def get_meta_capture_streamer(self, mem_type):
+        raise NotImplementedError()
+
+
 class CaptureStreamer:
     _fourcc_bitspp_map = {
         v4l2.uapi.V4L2_PIX_FMT_UYVY: 16,
