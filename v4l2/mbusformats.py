@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import IntEnum
 
 import v4l2.uapi
