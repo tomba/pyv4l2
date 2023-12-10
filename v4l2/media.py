@@ -4,6 +4,7 @@ import ctypes
 import fcntl
 import v4l2
 import v4l2.uapi
+import weakref
 from .helpers import *
 
 class MediaTopology:
@@ -154,9 +155,10 @@ class MediaLink(MediaObject):
 
 class MediaDevice:
     def __init__(self, filename) -> None:
-        self.file = open(filename)
-        self.fd = self.file.fileno()
+        self.fd = os.open(filename, os.O_RDWR | os.O_NONBLOCK)
         self.__read_topology()
+
+        weakref.finalize(self, os.close, self.fd)
 
     def get_device_info(self):
         mdi = v4l2.uapi.media_device_info()
