@@ -61,7 +61,7 @@ if args.display:
     crtc = res.reserve_crtc(conn)
     card.disable_planes()
     mode = conn.get_default_mode()
-    modeb = mode.to_blob(card)
+    modeb = kms.Blob(card, mode)
 
 if args.tx:
     net_tx = NetTX()
