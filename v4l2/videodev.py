@@ -72,9 +72,9 @@ class VideoDevice:
 
 class CaptureStreamer:
     _fourcc_bitspp_map = {
-        v4l2.uapi.V4L2_PIX_FMT_UYVY: 16,
-        v4l2.uapi.V4L2_PIX_FMT_YUYV: 16,
-        v4l2.uapi.V4L2_PIX_FMT_SRGGB12: 16,
+        v4l2.pixelformats.PixelFormat.UYVY: 16,
+        v4l2.pixelformats.PixelFormat.YUYV: 16,
+        v4l2.pixelformats.PixelFormat.SRGGB12: 16,
     }
 
     def __init__(self, vdev: VideoDevice, mem_type, buf_type) -> None:
