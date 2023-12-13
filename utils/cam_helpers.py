@@ -54,13 +54,13 @@ def link(md: v4l2.MediaDevice, source, sink):
     md.link_setup(link.source, link.sink, v4l2.uapi.MEDIA_LNK_FL_ENABLED)
 
 def embedded_fourcc_to_bytes_per_pixel(fmt):
-    if fmt == v4l2.PixelFormat.META_CSI2_12:
+    if fmt == v4l2.MetaFormat.GENERIC_CSI2_12:
         return 12
-    elif fmt == v4l2.PixelFormat.META_CSI2_10:
+    elif fmt == v4l2.MetaFormat.GENERIC_CSI2_10:
         return 10
-    elif fmt == v4l2.PixelFormat.META_8:
+    elif fmt == v4l2.MetaFormat.GENERIC_8:
         return 8
-    elif fmt == v4l2.PixelFormat.SENSOR_DATA:
+    elif fmt == v4l2.MetaFormat.SENSOR_DATA:
         return 8
     else:
         assert(False)

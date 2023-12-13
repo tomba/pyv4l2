@@ -3,8 +3,8 @@ from __future__ import annotations
 import ctypes
 import fcntl
 import os
-import v4l2
 import v4l2.uapi
+import v4l2.pixelformats
 
 class VideoDevice:
     def __init__(self, entity: v4l2.MediaEntity) -> None:
@@ -66,7 +66,8 @@ class VideoDevice:
             return CaptureStreamer(self, mem_type, v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE)
 
     def get_meta_capture_streamer(self, mem_type):
-        raise NotImplementedError()
+        assert(self.has_meta_capture)
+        return MetaCaptureStreamer(self, mem_type, v4l2.uapi.V4L2_BUF_TYPE_META_CAPTURE)
 
 
 class CaptureStreamer:
@@ -285,8 +286,33 @@ class MPlaneCaptureStreamer(CaptureStreamer):
         return vfb
 
 
-class MetaCaptureStreamer:
-    pass
+class MetaCaptureStreamer(CaptureStreamer):
+    _fourcc_bitspp_map = {
+        v4l2.pixelformats.MetaFormat.GENERIC_8: 16,
+        v4l2.pixelformats.MetaFormat.GENERIC_CSI2_10: 10,
+        v4l2.pixelformats.MetaFormat.GENERIC_CSI2_12: 12,
+    }
+
+    def __init__(self, vdev: VideoDevice, mem_type, buf_type) -> None:
+        super().__init__(vdev, mem_type, buf_type)
+
+    def set_format(self, fourcc, size):
+        global __fourcc_bitspp_map
+
+        v4lfmt = v4l2.uapi.v4l2_format()
+
+        v4lfmt.type = self.buf_type
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
+
+        if fourcc not in MetaCaptureStreamer._fourcc_bitspp_map:
+            print("Missing support for fourcc", v4l2.uapi.fourcc_to_str(fourcc))
+        assert(fourcc in MetaCaptureStreamer._fourcc_bitspp_map)
+
+        v4lfmt.fmt.meta.dataformat = fourcc
+        v4lfmt.fmt.meta.buffersize = size
+
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
+
 
 class VideoBuffer:
     def __init__(self, mem_type) -> None:

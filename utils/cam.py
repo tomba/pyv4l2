@@ -4,7 +4,6 @@ from cam_helpers import *
 from collections import deque
 import argparse
 import kms
-import mmap
 import pprint
 import selectors
 import sys
@@ -93,9 +92,9 @@ for i, stream in enumerate(streams):
         res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
 
     if not "kms-fourcc" in stream:
-        if stream["fourcc"] == v4l2.PixelFormat.META_FMT_GENERIC_8:
+        if stream["fourcc"] == v4l2.MetaFormat.GENERIC_8:
             stream["kms-fourcc"] = kms.PixelFormat.RGB565
-        elif stream["fourcc"] == v4l2.PixelFormat.META_FMT_GENERIC_CSI2_12:
+        elif stream["fourcc"] == v4l2.MetaFormat.GENERIC_CSI2_12:
             stream["kms-fourcc"] = kms.PixelFormat.RGB565
         else:
             #kms_fourcc = v4l2.pixelformat_to_drm_fourcc(stream["fourcc"])
@@ -237,7 +236,8 @@ if args.display:
             "MODE_ID": modeb.id})
 
     for stream in streams:
-        req.add(stream["plane"], "FB_ID", stream["kms_fb"].id)
+        if "plane" in stream:
+            req.add(stream["plane"], "FB_ID", stream["kms_fb"].id)
 
     req.commit_sync(allow_modeset = True)
 

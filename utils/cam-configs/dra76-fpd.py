@@ -21,13 +21,13 @@ mbus_fmt_ov10635_2 = (ov10635_w, ov10635_h, ov10635_bus_fmt_2)
 fmt_pix_ov10635 = (ov10635_w, ov10635_h, ov10635_pix_fmt)
 
 mbus_fmt_ov10635_meta = (ov10635_w, ov10635_meta_h, v4l2.BusFormat.META_8)
-fmt_pix_ov10635_meta = (ov10635_w, ov10635_meta_h, v4l2.PixelFormat.META_FMT_GENERIC_8)
+fmt_pix_ov10635_meta = (ov10635_w, ov10635_meta_h, v4l2.MetaFormat.GENERIC_8)
 
 mbus_fmt_imx390 = (imx390_w, imx390_h, imx390_bus_fmt)
 fmt_pix_imx390 = (imx390_w, imx390_h, imx390_pix_fmt)
 
 mbus_fmt_imx390_meta = (imx390_w, imx390_meta_h, v4l2.BusFormat.META_12)
-fmt_pix_imx390_meta = (imx390_w, imx390_meta_h, v4l2.PixelFormat.META_FMT_GENERIC_CSI2_12)
+fmt_pix_imx390_meta = (imx390_w, imx390_meta_h, v4l2.MetaFormat.GENERIC_CSI2_12)
 
 mbus_fmt_tpg = (1920, 1024, v4l2.BusFormat.UYVY8_1X16)
 fmt_tpg = (1920, 1024, v4l2.PixelFormat.UYVY)
