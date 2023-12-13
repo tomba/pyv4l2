@@ -83,9 +83,6 @@ class CaptureStreamer:
         self.buf_type = buf_type
         self.fbs = []
 
-    def set_port(self, port):
-        pass
-
     def set_format(self, fourcc, width, height):
         global __fourcc_bitspp_map
 

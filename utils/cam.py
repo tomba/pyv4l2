@@ -158,7 +158,6 @@ for stream in streams:
     if not stream.get("embedded", False):
         mem_type = v4l2.uapi.V4L2_MEMORY_DMABUF if args.type == "drm" else v4l2.uapi.V4L2_MEMORY_MMAP
         cap = vd.get_capture_streamer(mem_type)
-        cap.set_port(0)
         cap.set_format(stream["fourcc"], stream["w"], stream["h"])
     else:
         cap = vd.get_meta_capture_streamer(mem_type)
