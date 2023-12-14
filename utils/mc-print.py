@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
 import v4l2
+import v4l2.uapi
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-d", "--device", default="/dev/media0", help="media device")
-parser.add_argument("pattern", nargs="?", help="Entity pattern to show")
+parser.add_argument('-d', '--device', default='/dev/media0', help='media device')
+parser.add_argument('pattern', nargs='?', help='Entity pattern to show')
 args = parser.parse_args()
 
 md = v4l2.MediaDevice(args.device)
@@ -64,11 +65,12 @@ while len(print_queue) > 0:
         if len(links) == 0:
             continue
 
-        print("  Pad{} ({}) ".format(pad.index, "Source" if pad.is_source else "Sink"))
+        print('  Pad{} ({}) '.format(pad.index, 'Source' if pad.is_source else 'Sink'))
 
         for link in links:
             remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
-            print("    {} '{}':{}".format("->" if pad.is_source else "<-", remote_pad.entity.name, remote_pad.index))
+            dir = '->' if pad.is_source else '<-'
+            print(f'    {dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]')
 
         streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
 
@@ -79,38 +81,52 @@ while len(print_queue) > 0:
 
         for s in streams:
             fmt = None
-            err = ""
+            err = ''
 
             if subdev:
                 try:
                     fmt = subdev.get_format(pad.index, s)
+                    f = fmt.format
+                    try:
+                        bfmt = v4l2.BusFormat(f.code).name
+                    except ValueError:
+                        bfmt = f'0x{f.code:x}'
+
+                    fmt = f'{f.width}✕{f.height}/{bfmt} field:{f.field} colorspace:{f.colorspace} quantization:{f.quantization} xfer:{f.xfer_func} flags:{f.flags}'
                 except Exception as e:
                     fmt = None
                     err = e
             elif videodev:
                 try:
                     fmt = videodev.get_format()
+
+                    if fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+                        f = fmt.fmt.pix_mp
+                        fmt = f'{f.width}x{f.height}-{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
+                    elif fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE:
+                        f = fmt.fmt.pix
+                        fmt = f'{f.width}x{f.height}-{v4l2.fourcc_to_str(f.pixelformat)}'
                 except Exception as e:
                     fmt = None
-                    err = e
+                    err = repr(e)
 
             if err:
-                print("    Stream{} <{}>".format(s, err))
+                print('    Stream{} <{}>'.format(s, err))
             else:
-                print("    Stream{} {}".format(s, fmt))
+                print('    Stream{} {}'.format(s, fmt))
 
             if subdev:
-                sel = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
-                print("    crop.bounds", sel)
+                r = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
+                print(f'    crop.bounds:({r.left},{r.top})/{r.width}✕{r.height}')
 
-                sel = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, pad.index)
-                print("    crop", sel)
+                r = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, pad.index)
+                print(f'    crop:({r.left},{r.top})/{r.width}✕{r.height}')
 
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
         if len(routes) > 0:
-            print("  Routing:")
+            print('  Routing:')
             for r in routes:
-                print("    {}/{} -> {}/{}".format(r.sink_pad, r.sink_stream, r.source_pad, r.source_stream))
+                print('    {}/{} -> {}/{}'.format(r.sink_pad, r.sink_stream, r.source_pad, r.source_stream))
 
     print()

@@ -6,6 +6,7 @@ import v4l2
 import v4l2.uapi
 import weakref
 from .helpers import *
+from enum import Enum, IntFlag
 
 class MediaTopology:
     def __init__(self, topology, entities, interfaces, pads, links) -> None:
@@ -227,3 +228,8 @@ class MediaDevice:
             if e.name == name:
                 return e
         return None
+
+class MediaLinkFlag(IntFlag):
+    Enabled = v4l2.uapi.MEDIA_LNK_FL_ENABLED
+    Immutable = v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE
+    Dynamic = v4l2.uapi.MEDIA_LNK_FL_DYNAMIC

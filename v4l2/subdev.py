@@ -130,7 +130,7 @@ class SubDevice:
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_SELECTION, sel, True)
         except OSError as e:
             if e.errno == errno.ENOTTY:
-                return sel
+                return v4l2.uapi.v4l2_rect()
 
         return sel.r
 

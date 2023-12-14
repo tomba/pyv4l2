@@ -16,6 +16,9 @@ class VideoDevice:
         cap = v4l2.uapi.v4l2_capability()
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYCAP, cap, True)
 
+        self.has_capture = False
+        self.has_mplane_capture = False
+
         if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE_MPLANE:
             self.has_capture = True
             self.has_mplane_capture = True
@@ -52,13 +55,24 @@ class VideoDevice:
         os.close(self.fd)
 
     def get_format(self):
+        if not self.has_capture:
+            raise NotImplementedError()
+
         fmt = v4l2.uapi.v4l2_format()
-        fmt.type = v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE
+
+        if self.has_mplane_capture:
+            fmt.type = v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE
+        elif self.has_capture:
+            fmt.type = v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE
+        else:
+            raise NotImplementedError()
+
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, fmt, True)
         return fmt
 
     def get_capture_streamer(self, mem_type):
-        assert(self.has_capture)
+        if not self.has_capture:
+            raise NotImplementedError()
 
         if self.has_mplane_capture:
             return MPlaneCaptureStreamer(self, mem_type, v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
