@@ -3,7 +3,6 @@
 from cam_helpers import *
 from collections import deque
 import argparse
-import kms
 import pprint
 import selectors
 import sys
@@ -18,7 +17,7 @@ parser.add_argument("-c", "--config-only", action="store_true", default=False, h
 parser.add_argument("-s", "--save", action="store_true", default=False, help="save frames to files")
 parser.add_argument("-d", "--display", action="store_true", default=False, help="show frames on screen")
 parser.add_argument("-x", "--tx", nargs='?', type=str, default=None, const='all', help="send frames to a server")
-parser.add_argument("-t", "--type", type=str, default="drm", help="buffer type (drm/v4l2)")
+parser.add_argument("-t", "--type", type=str, help="buffer type (drm/v4l2)")
 parser.add_argument("-p", "--print", action="store_true", default=False, help="print config dict")
 parser.add_argument("-i", "--ipython", action="store_true", default=False, help="IPython mode")
 args = parser.parse_args()
@@ -32,10 +31,15 @@ if USE_IPYTHON:
 if args.tx:
     args.tx = args.tx.split(',')
 
+if not args.type:
+    if args.display:
+        args.type = "drm"
+    else:
+        args.type = "v4l2"
+
 if not args.type in ["drm", "v4l2"]:
     print("Bad buffer type", args.type)
     exit(-1)
-
 
 config = read_config(args.config_name)
 
@@ -50,6 +54,7 @@ setup_links(md, config)
 subdevices = configure_subdevs(md, config)
 
 if args.type == "drm" or args.display:
+    import kms
     card = kms.Card()
 else:
     card = None
