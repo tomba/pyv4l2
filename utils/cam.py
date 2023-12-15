@@ -21,6 +21,7 @@ parser.add_argument("-t", "--type", type=str, help="buffer type (drm/v4l2)")
 parser.add_argument("-p", "--print", action="store_true", default=False, help="print config dict")
 parser.add_argument("-i", "--ipython", action="store_true", default=False, help="IPython mode")
 parser.add_argument('-S', '--script', help='User script')
+parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
 args = parser.parse_args()
 
 USE_IPYTHON = args.ipython
@@ -255,7 +256,9 @@ if args.display:
 
     req.commit_sync(allow_modeset = True)
 
-    #print("Press enter to start capture"); sys.stdin.readline()
+    if args.delay:
+        print(f'Waiting for {args.delay} seconds')
+        time.sleep(args.delay)
 
 for stream in streams:
     print(f'{stream["dev"]}: stream on')
