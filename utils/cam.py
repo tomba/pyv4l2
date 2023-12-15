@@ -20,6 +20,7 @@ parser.add_argument("-x", "--tx", nargs='?', type=str, default=None, const='all'
 parser.add_argument("-t", "--type", type=str, help="buffer type (drm/v4l2)")
 parser.add_argument("-p", "--print", action="store_true", default=False, help="print config dict")
 parser.add_argument("-i", "--ipython", action="store_true", default=False, help="IPython mode")
+parser.add_argument('-S', '--script', help='User script')
 args = parser.parse_args()
 
 USE_IPYTHON = args.ipython
@@ -27,6 +28,15 @@ USE_IPYTHON = args.ipython
 if USE_IPYTHON:
     import IPython
     from traitlets.config import Config
+
+if args.script:
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('userscript', args.script)
+    user_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(user_mod)
+    user_script = user_mod
+else:
+    user_script = None
 
 if args.tx:
     args.tx = args.tx.split(',')
@@ -258,7 +268,15 @@ for stream in streams:
 
 kms_committed = False
 
+if user_script:
+    updater = user_script.Updater(subdevices)
+else:
+    updater = None
+
 def readvid(stream):
+    if updater:
+        updater.update()
+
     stream["total_num_frames"] += 1
 
     # With IPython we have separate fps tracking
@@ -438,6 +456,9 @@ class MyPrompt(IPython.terminal.prompts.Prompts):
 
 print("Starting IPython")
 
+def set_crop(x, y, w, h):
+    subdevices['rkisp1_resizer_mainpath'].set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, (x, y, w, h), pad=0)
+
 if True:
     c = Config()
     c.InteractiveShellApp.exec_lines = [
@@ -451,6 +472,7 @@ if True:
         'v4l2': v4l2,
         'streams': streams,
         'subdevices': subdevices,
+        'set_crop': set_crop,
     }
 
     IPython.start_ipython(config=c, argv=[], user_ns=scope)
