@@ -88,6 +88,7 @@ class NetTX:
             plane_sizes = [vbuf.buffer_size, 0, 0, 0]
 
         fmt = stream['fourcc']
+        fmt = fmt.name
 
         if stream['embedded']:
             # XXX we dont' really have 'lines' with embedded data
@@ -100,7 +101,7 @@ class NetTX:
         hdr = NetTX.struct_fmt.pack(stream['id'],
                               stream['w'], stream['h'],
                               bytesperline,
-                              bytes(v4l2.fourcc_to_str(fmt), 'ascii'),
+                              bytes(fmt, 'ascii'),
                               1, *plane_sizes)
 
         self.sock.sendall(hdr)
