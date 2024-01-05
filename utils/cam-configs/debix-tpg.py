@@ -4,14 +4,14 @@ import v4l2
 
 configurations = {}
 
-fmt1 = (2592, 1940, v4l2.BusFormat.SRGGB12_1X12)
-fmt2 = (2592, 1940, v4l2.BusFormat.YUYV8_2X8)
-fmt3 = (1920, 1080, v4l2.BusFormat.YUYV8_2X8)
+fmt1 = (2400, 1600, v4l2.BusFormat.SRGGB12_1X12) # TPG output
+fmt2 = (2400, 1600, v4l2.BusFormat.YUYV8_2X8) # ISP output
+fmt3 = (1920, 1080, v4l2.BusFormat.YUYV8_2X8) # RSZ output
 vfmt = (1920, 1080, v4l2.PixelFormat.YUYV)
 
-crop1 = (0, 0, 2592, 1940)
-crop2 = (0, 0, 2592, 1940)
-crop3 = (0, 0, 2592, 1940)
+crop1 = (0, 0, 2400, 1600) # ISP input crop
+crop2 = (0, 0, 2400, 1600) # ISP output crop
+crop3 = (0, 0, 2400, 1600) # RSZ input crop
 
 #2592✕1940
 configurations["cam0"] = {
