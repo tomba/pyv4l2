@@ -47,10 +47,13 @@ class SubDevice:
         self.file = open(entity.interface.dev_path)
         self.fd = self.file.fileno()
 
-        cap = v4l2.uapi.v4l2_subdev_client_capability()
-        cap.capabilities = v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS
-        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_CLIENT_CAP, cap, True)
-        self.has_streams = (cap.capabilities & v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0;
+        try:
+            cap = v4l2.uapi.v4l2_subdev_client_capability()
+            cap.capabilities = v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS
+            fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_CLIENT_CAP, cap, True)
+            self.has_streams = (cap.capabilities & v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0;
+        except:
+            self.has_streams = False
 
     def get_format(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
         fmt = v4l2.uapi.v4l2_subdev_format()

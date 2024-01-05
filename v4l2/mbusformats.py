@@ -88,3 +88,11 @@ class BusFormat(IntEnum):
     META_8 = 0x8001
     META_10 = 0x8002
     META_12 = 0x8003
+
+    SBGGR16_1X16 = 0x301d
+    SGBRG16_1X16 = 0x301e
+    SGRBG16_1X16 = 0x301f
+    SRGGB16_1X16 = 0x3020
+
+    # XXX deprecated rpi format
+    SENSOR_DATA = 0x77002

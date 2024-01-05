@@ -233,13 +233,10 @@ for stream in streams:
 
             vbuf = v4l2.create_dmabuffer(fbs[i].fd(0), stream['w'], stream['h'], stream['fourcc'], payload_size)
         else:
-            _fourcc_bitspp_map = {
-                v4l2.PixelFormat.UYVY: 16,
-                v4l2.PixelFormat.YUYV: 16,
-                v4l2.PixelFormat.SRGGB12: 16,
-            }
+            pfi = v4l2.get_pixel_format_info(stream['fourcc'])
+            bitspp = pfi.planes[0].bitspp # XXX quick hack
 
-            payload_size = stream['w'] * stream['h'] * _fourcc_bitspp_map[stream['fourcc']] // 8
+            payload_size = stream['w'] * stream['h'] * bitspp // 8
             vbuf = v4l2.create_mmapbuffer(stream['w'], stream['h'], stream['fourcc'], payload_size)
         cap.queue(vbuf)
 

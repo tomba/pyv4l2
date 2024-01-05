@@ -85,12 +85,6 @@ class VideoDevice:
 
 
 class CaptureStreamer:
-    _fourcc_bitspp_map = {
-        v4l2.pixelformats.PixelFormat.UYVY: 16,
-        v4l2.pixelformats.PixelFormat.YUYV: 16,
-        v4l2.pixelformats.PixelFormat.SRGGB12: 16,
-    }
-
     def __init__(self, vdev: VideoDevice, mem_type, buf_type) -> None:
         self.vdev = vdev
         self.mem_type = mem_type
@@ -105,11 +99,8 @@ class CaptureStreamer:
         v4lfmt.type = self.buf_type
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
 
-        if fourcc not in CaptureStreamer._fourcc_bitspp_map:
-            print("Missing support for fourcc", v4l2.uapi.fourcc_to_str(fourcc))
-        assert(fourcc in CaptureStreamer._fourcc_bitspp_map)
-
-        bitspp = CaptureStreamer._fourcc_bitspp_map[fourcc]
+        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
+        bitspp = pfi.planes[0].bitspp # XXX quick hack
 
         v4lfmt.fmt.pix.pixelformat = fourcc
         v4lfmt.fmt.pix.width = width

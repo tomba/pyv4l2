@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from enum import IntEnum
+from enum import Enum, IntEnum
+from typing import NamedTuple
 
 import v4l2.uapi
 
@@ -246,3 +247,151 @@ class MetaFormat(IntEnum):
     GENERIC_8 = v4l2.uapi.v4l2_fourcc('M', 'E', 'T', '8')
     GENERIC_CSI2_10 = v4l2.uapi.v4l2_fourcc('M', 'C', '1', 'A')
     GENERIC_CSI2_12 = v4l2.uapi.v4l2_fourcc('M', 'C', '1', 'C')
+    # XXX deprecated rpi format
+    SENSOR_DATA = v4l2.uapi.v4l2_fourcc('S', 'E', 'N', 'S')
+
+class PixelFormatPlaneInfo(NamedTuple):
+    bitspp: int
+    xsub: int
+    ysub: int
+
+class PixelFormatInfo:
+    fourcc: int
+    name: str
+    colortype: int
+    planes: list[PixelFormatPlaneInfo]
+
+    def __init__(self, data) -> None:
+        self.fourcc = data[0]
+        self.name = data[0].name
+        self.colortype = data[1]
+        self.planes = [PixelFormatPlaneInfo(*t) for t in data[2]]
+
+    def __repr__(self) -> str:
+        return f'PixelFormatInfo({self.fourcc:#8x}, {self.name}, {self.colortype}, {self.planes})'
+
+class PixelColorType(Enum):
+    RGB = 0
+    YUV = 1
+    RAW = 2
+    Undefined = 3
+
+formats = (
+    # YUV packed
+    ( PixelFormat.UYVY,
+                     PixelColorType.YUV,
+                     ( ( 16, 2, 1 ), ),
+                 ),
+    ( PixelFormat.YUYV,
+                     PixelColorType.YUV,
+                     ( ( 16, 2, 1 ), ),
+                 ),
+    ( PixelFormat.YVYU,
+                     PixelColorType.YUV,
+                     ( ( 16, 2, 1 ), ),
+                 ),
+    ( PixelFormat.VYUY,
+                     PixelColorType.YUV,
+                     ( ( 16, 2, 1 ), ),
+                 ),
+    # YUV semi-planar
+    ( PixelFormat.NV12,
+                     PixelColorType.YUV,
+                     ( ( 8, 1, 1 ),
+                       ( 8, 2, 2 ), ),
+                 ),
+    ( PixelFormat.NV21,
+                     PixelColorType.YUV,
+                     ( ( 8, 1, 1 ),
+                       ( 8, 2, 2 ), ),
+                 ),
+    ( PixelFormat.NV16,
+                     PixelColorType.YUV,
+                     ( ( 8, 1, 1 ),
+                       ( 8, 2, 1 ), ),
+                 ),
+    ( PixelFormat.NV61,
+                     PixelColorType.YUV,
+                     ( ( 8, 1, 1 ),
+                       ( 8, 2, 1 ), ),
+                 ),
+    # RGB16
+    ( PixelFormat.RGB565,
+                       PixelColorType.RGB,
+                       ( ( 16, 1, 1 ), ),
+                   ),
+#    # RGB24
+#    ( PixelFormat.RGB888,
+#                       PixelColorType.RGB,
+#                       ( ( 24, 1, 1 ), ),
+#                   ),
+#    # RGB32
+#    ( PixelFormat.XRGB8888,
+#                     PixelColorType.RGB,
+#                     ( ( 32, 1, 1 ), ),
+#                 ),
+    ( PixelFormat.SBGGR8,
+                       PixelColorType.RAW,
+                       ( ( 8, 1, 1 ), ),
+                   ),
+    ( PixelFormat.SGBRG8,
+                       PixelColorType.RAW,
+                       ( ( 8, 1, 1 ), ),
+                   ),
+    ( PixelFormat.SGRBG8,
+                       PixelColorType.RAW,
+                       ( ( 8, 1, 1 ), ),
+                   ),
+    ( PixelFormat.SRGGB8,
+                       PixelColorType.RAW,
+                       ( ( 8, 1, 1 ), ),
+                   ),
+    ( PixelFormat.SRGGB10,
+                    PixelColorType.RAW,
+                    ( ( 16, 1, 1 ), ),
+                ),
+    ( PixelFormat.SRGGB10P,
+                     PixelColorType.RAW,
+                     ( ( 10, 1, 1 ), ),
+                 ),
+    ( PixelFormat.SBGGR12,
+                    PixelColorType.RAW,
+                    ( ( 16, 1, 1 ), ),
+                ),
+    ( PixelFormat.SRGGB12,
+                    PixelColorType.RAW,
+                    ( ( 16, 1, 1 ), ),
+                ),
+    ( PixelFormat.SRGGB16,
+                    PixelColorType.RAW,
+                    ( ( 16, 1, 1 ), ),
+                ),
+#    ( PixelFormat.Y8,
+#                   PixelColorType.YUV,
+#                   ( ( 8, 1, 1 ), ),
+#               ),
+    ( MetaFormat.GENERIC_8,
+                       PixelColorType.Undefined,
+                       ( ( 8, 1, 1 ), ),
+                   ),
+    ( MetaFormat.GENERIC_CSI2_10,
+                         PixelColorType.Undefined,
+                         ( ( 10, 1, 1 ), ),
+                     ),
+    ( MetaFormat.GENERIC_CSI2_12,
+                         PixelColorType.Undefined,
+                         ( ( 12, 1, 1 ), ),
+                     ),
+    ( MetaFormat.SENSOR_DATA,
+                        PixelColorType.Undefined,
+                        ( ( 8, 1, 1 ), ),
+                    ),
+)
+
+def get_pixel_format_info(fourcc) -> PixelFormatInfo:
+    for p in formats:
+        if p[0] == fourcc:
+            info = PixelFormatInfo(p)
+            return info
+
+    raise Exception("Pixel format not found")
