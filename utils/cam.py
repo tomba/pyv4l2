@@ -180,7 +180,6 @@ for stream in streams:
         size = stream['w'] * stream['h'] * bpp // 8
         cap = vd.get_meta_capture_streamer(mem_type, size, stream['fourcc'])
 
-    stream['vd'] = vd
     stream['cap'] = cap
 
 if args.config_only:
@@ -188,8 +187,6 @@ if args.config_only:
 
 for stream in streams:
     cap = stream['cap']
-
-    cap.set_queue_size(NUM_BUFS)
 
     if args.type == 'drm':
         # Allocate FBs
@@ -223,21 +220,17 @@ for stream in streams:
         stream['kms_fb'] = fb
         stream['kms_fb_queue'] = deque()
 
+    if args.type == 'drm':
+        fds = [fb.fd(0) for fb in stream['fbs']]
+        cap.reserve_buffers_dmabuf(NUM_BUFS, fds)
+    else:
+        cap.reserve_buffers(NUM_BUFS)
+
     first_buf = 1 if stream['display'] else 0
 
     # Queue the rest to the camera
     for i in range(first_buf, NUM_BUFS):
-        if args.type == 'drm':
-            payload_size = fbs[i].size(0)
-
-            vbuf = v4l2.create_dmabuffer(fbs[i].fd(0), stream['w'], stream['h'], stream['fourcc'], payload_size)
-        else:
-            pfi = v4l2.get_pixel_format_info(stream['fourcc'])
-            bitspp = pfi.planes[0].bitspp # XXX quick hack
-
-            payload_size = stream['w'] * stream['h'] * bitspp // 8
-            vbuf = v4l2.create_mmapbuffer(stream['w'], stream['h'], stream['fourcc'], payload_size)
-        cap.queue(vbuf)
+        cap.queue(cap.buffers[i])
 
 if args.display:
     # Do the initial modeset
