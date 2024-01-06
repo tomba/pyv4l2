@@ -173,13 +173,12 @@ for stream in streams:
 
     if not stream.get('embedded', False):
         mem_type = v4l2.MemType.DMABUF if args.type == 'drm' else v4l2.MemType.MMAP
-        cap = vd.get_capture_streamer(mem_type)
-        cap.set_format(stream['fourcc'], stream['w'], stream['h'])
+        cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['fourcc'])
     else:
-        cap = vd.get_meta_capture_streamer(mem_type)
+        mem_type = v4l2.MemType.MMAP
         bpp = embedded_fourcc_to_bytes_per_pixel(stream['fourcc'])
-
-        cap.set_format(stream['fourcc'], stream['w'] * stream['h'] * bpp // 8)
+        size = stream['w'] * stream['h'] * bpp // 8
+        cap = vd.get_meta_capture_streamer(mem_type, size, stream['fourcc'])
 
     stream['vd'] = vd
     stream['cap'] = cap
