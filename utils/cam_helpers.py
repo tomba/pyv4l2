@@ -90,7 +90,7 @@ class NetTX:
         fmt = stream['fourcc']
         fmt = fmt.name
 
-        if stream['embedded']:
+        if stream.get('embedded', False):
             # XXX we dont' really have 'lines' with embedded data
             bytesperline = stream['w']
             bpp = embedded_fourcc_to_bytes_per_pixel(stream['fourcc'])
