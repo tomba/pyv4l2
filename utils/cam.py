@@ -172,7 +172,7 @@ for stream in streams:
     vd = v4l2.VideoDevice(vid_ent)
 
     if not stream.get('embedded', False):
-        mem_type = v4l2.uapi.V4L2_MEMORY_DMABUF if args.type == 'drm' else v4l2.uapi.V4L2_MEMORY_MMAP
+        mem_type = v4l2.MemType.DMABUF if args.type == 'drm' else v4l2.MemType.MMAP
         cap = vd.get_capture_streamer(mem_type)
         cap.set_format(stream['fourcc'], stream['w'], stream['h'])
     else:
@@ -457,6 +457,7 @@ class MyPrompt(IPython.terminal.prompts.Prompts):
 print('Starting IPython')
 
 def set_crop(x, y, w, h):
+    import v4l2.uapi # XXX
     subdevices['rkisp1_resizer_mainpath'].set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, (x, y, w, h), pad=0)
 
 if True:
