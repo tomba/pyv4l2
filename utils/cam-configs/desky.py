@@ -11,13 +11,13 @@ fmt_pix_1 = (sensor_1_w, sensor_1_h, PIX_FMT)
 
 configurations = {}
 
-configurations["lappy"] = {
+configurations["desky"] = {
     "subdevs": [
     ],
 
     "devices": [
         {
-            "entity": "Integrated Camera: Integrated C",
+            "entity": "UVC Camera (046d:0825)",
             "fmt": fmt_pix_1,
             "dev": "/dev/video0",
         },
@@ -28,4 +28,4 @@ configurations["lappy"] = {
 }
 
 def get_configs():
-    return (configurations, ["lappy"])
+    return (configurations, ["desky"])
