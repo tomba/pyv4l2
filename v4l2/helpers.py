@@ -22,7 +22,7 @@ def filepath_for_major_minor(major, minor):
         if major == dev_major and minor == dev_minor:
             return fname
 
-    raise Exception("No device-node found for ({},{})".format(major, minor))
+    raise Exception(f'No device-node found for ({major},{minor})')
 
 class BufType(Enum):
     VIDEO_CAPTURE = v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE

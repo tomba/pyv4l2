@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+from enum import IntFlag
 import ctypes
 import fcntl
+import weakref
 import v4l2
 import v4l2.uapi
-import weakref
 from .helpers import *
-from enum import Enum, IntFlag
 
 class MediaTopology:
     def __init__(self, topology, entities, interfaces, pads, links) -> None:
@@ -76,7 +76,6 @@ class MediaInterface(MediaObject):
 
     def _finalize(self):
         super()._finalize()
-        pass
 
     def __repr__(self) -> str:
         return f'MediaInterface({self.id})'
@@ -230,6 +229,6 @@ class MediaDevice:
         return None
 
 class MediaLinkFlag(IntFlag):
-    Enabled = v4l2.uapi.MEDIA_LNK_FL_ENABLED
-    Immutable = v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE
-    Dynamic = v4l2.uapi.MEDIA_LNK_FL_DYNAMIC
+    ENABLED = v4l2.uapi.MEDIA_LNK_FL_ENABLED
+    IMMUTABLE = v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE
+    DYNAMIC = v4l2.uapi.MEDIA_LNK_FL_DYNAMIC

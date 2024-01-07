@@ -51,7 +51,7 @@ class SubDevice:
             cap = v4l2.uapi.v4l2_subdev_client_capability()
             cap.capabilities = v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_CLIENT_CAP, cap, True)
-            self.has_streams = (cap.capabilities & v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0;
+            self.has_streams = (cap.capabilities & v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0
         except:
             self.has_streams = False
 
@@ -106,8 +106,8 @@ class SubDevice:
     def set_routes(self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
         # Allocate extra space for return routes
         kroutes = (v4l2.uapi.v4l2_subdev_route * 16)()
-        for i in range(len(routes)):
-            kroutes[i] = routes[i].to_v4l2_subdev_route()
+        for i,route in enumerate(routes):
+            kroutes[i] = route.to_v4l2_subdev_route()
 
         routing = v4l2.uapi.v4l2_subdev_routing()
         routing.which = which

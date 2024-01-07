@@ -147,9 +147,10 @@ class VideoCaptureStreamer(CaptureStreamer):
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
         self.set_queue_size(len(dmabuf_fds))
 
-        for i in range(len(dmabuf_fds)):
+        for i,fd in enumerate(dmabuf_fds):
             buf = VideoBuffer(v4l2.MemType.DMABUF)
-            buf.fd = dmabuf_fds[i]
+            buf.index = i
+            buf.fd = fd
             buf.width = self.width
             buf.height = self.height
             buf.fourcc = self.fourcc
@@ -239,17 +240,17 @@ class MPlaneCaptureStreamer(VideoCaptureStreamer):
 
         mp = v4lfmt.fmt.pix_mp
 
-        mp.pixelformat = fourcc;
-        mp.width = width;
-        mp.height = height;
+        mp.pixelformat = fourcc
+        mp.width = width
+        mp.height = height
 
-        mp.num_planes = num_planes;
+        mp.num_planes = num_planes
 
         for i in range(num_planes):
             p = mp.plane_fmt[i]
 
             p.bytesperline = width * bitspp // 8
-            p.sizeimage = p.bytesperline * height # XXX / pfpi.ysub;
+            p.sizeimage = p.bytesperline * height # XXX / pfpi.ysub
             p.field = v4l2.uapi.V4L2_FIELD_NONE
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)

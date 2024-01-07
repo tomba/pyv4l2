@@ -274,7 +274,7 @@ class PixelColorType(Enum):
     RGB = 0
     YUV = 1
     RAW = 2
-    Undefined = 3
+    UNDEFINED = 3
 
 formats = (
     # YUV packed
@@ -371,19 +371,19 @@ formats = (
 #                   ( ( 8, 1, 1 ), ),
 #               ),
     ( MetaFormat.GENERIC_8,
-                       PixelColorType.Undefined,
+                       PixelColorType.UNDEFINED,
                        ( ( 8, 1, 1 ), ),
                    ),
     ( MetaFormat.GENERIC_CSI2_10,
-                         PixelColorType.Undefined,
+                         PixelColorType.UNDEFINED,
                          ( ( 10, 1, 1 ), ),
                      ),
     ( MetaFormat.GENERIC_CSI2_12,
-                         PixelColorType.Undefined,
+                         PixelColorType.UNDEFINED,
                          ( ( 12, 1, 1 ), ),
                      ),
     ( MetaFormat.SENSOR_DATA,
-                        PixelColorType.Undefined,
+                        PixelColorType.UNDEFINED,
                         ( ( 8, 1, 1 ), ),
                     ),
 )
