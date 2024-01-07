@@ -50,7 +50,7 @@ class MediaEntity(MediaObject):
             for id in ids:
                 ob = self.md.find_id(id)
 
-                if type(ob) != MediaInterface:
+                if not isinstance(ob, MediaInterface):
                     continue
 
                 ifaces.append(ob)
@@ -58,7 +58,7 @@ class MediaEntity(MediaObject):
         if len(ifaces) > 1:
             raise Exception("Multiple interfaces for entity")
 
-        if len(ifaces):
+        if len(ifaces) > 0:
             self.interface = ifaces[0]
 
     def __repr__(self) -> str:
@@ -144,13 +144,13 @@ class MediaLink(MediaObject):
 
     @property
     def source_pad(self) -> MediaPad:
-        if type(self.source) == MediaPad:
+        if isinstance(self.source, MediaPad):
             return self.source
         raise Exception("Source is not a MediaPad")
 
     @property
     def sink_pad(self) -> MediaPad:
-        if type(self.sink) == MediaPad:
+        if isinstance(self.sink, MediaPad):
             return self.sink
         raise Exception("Sink is not a MediaPad")
 
@@ -197,19 +197,19 @@ class MediaDevice:
 
     @property
     def entities(self):
-        yield from [o for o in self.objects if type(o) == MediaEntity]
+        yield from [o for o in self.objects if isinstance(o, MediaEntity)]
 
     @property
     def pads(self):
-        yield from [o for o in self.objects if type(o) == MediaPad]
+        yield from [o for o in self.objects if isinstance(o, MediaPad)]
 
     @property
     def links(self):
-        yield from [o for o in self.objects if type(o) == MediaLink]
+        yield from [o for o in self.objects if isinstance(o, MediaLink)]
 
     @property
     def interfaces(self):
-        yield from [o for o in self.objects if type(o) == MediaInterface]
+        yield from [o for o in self.objects if isinstance(o, MediaInterface)]
 
     def find_id(self, id) -> MediaObject | None:
         return next((o for o in self.objects if o.id == id), None)
