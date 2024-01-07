@@ -4,9 +4,11 @@ from enum import IntFlag
 import ctypes
 import fcntl
 import weakref
-import v4l2
+import os
 import v4l2.uapi
-from .helpers import *
+from .helpers import filepath_for_major_minor
+
+__all__ = [ 'MediaDevice' ]
 
 class MediaTopology:
     def __init__(self, topology, entities, interfaces, pads, links) -> None:
@@ -72,7 +74,7 @@ class MediaInterface(MediaObject):
         super().__init__(md, media_iface.id)
         self.media_iface = media_iface
         self.majorminor = (self.media_iface.unnamed_1.devnode.major, self.media_iface.unnamed_1.devnode.minor)
-        self.dev_path = v4l2.filepath_for_major_minor(*self.majorminor)
+        self.dev_path = filepath_for_major_minor(*self.majorminor)
 
     def _finalize(self):
         super()._finalize()

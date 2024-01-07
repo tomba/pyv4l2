@@ -3,8 +3,9 @@ from __future__ import annotations
 import ctypes
 import errno
 import fcntl
-import v4l2
 import v4l2.uapi
+
+__all__ = [ 'Route', 'SubDevice' ]
 
 class Route:
     def __init__(self) -> None:

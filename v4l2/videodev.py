@@ -6,6 +6,8 @@ import os
 import v4l2.uapi
 import v4l2.pixelformats
 
+__all__ = [ 'VideoDevice' ]
+
 class VideoDevice:
     def __init__(self, entity: v4l2.MediaEntity) -> None:
         self.entity = entity

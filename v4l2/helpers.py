@@ -5,6 +5,8 @@ import glob
 from enum import Enum
 import v4l2.uapi
 
+__all__ = [ 'BufType', 'MemType' ]
+
 def filepath_for_major_minor(major, minor):
     for fname in glob.glob('/dev/video*'):
         dev = os.stat(fname).st_rdev

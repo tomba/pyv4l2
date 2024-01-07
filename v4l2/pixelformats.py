@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from enum import Enum, IntEnum
 from typing import NamedTuple
-
 import v4l2.uapi
+
+__all__ = [ 'PixelFormat', 'MetaFormat' ]
 
 # str.join('\n', [f'    {e[13:]} = v4l2.uapi.{e}' for e in v4l2.uapi.__dir__() if e.startswith("V4L2_PIX_FMT_")])
 
