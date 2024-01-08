@@ -4249,13 +4249,15 @@ struct_v4l2_subdev_frame_interval.__slots__ = [
     'pad',
     'interval',
     'stream',
+    'which',
     'reserved',
 ]
 struct_v4l2_subdev_frame_interval._fields_ = [
     ('pad', __u32),
     ('interval', struct_v4l2_fract),
     ('stream', __u32),
-    ('reserved', __u32 * int(8)),
+    ('which', __u32),
+    ('reserved', __u32 * int(7)),
 ]
 
 
