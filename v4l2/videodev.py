@@ -63,9 +63,9 @@ class VideoDevice:
         fmt = v4l2.uapi.v4l2_format()
 
         if self.has_mplane_capture:
-            fmt.type = v4l2.BufType.VIDEO_CAPTURE_MPLANE
+            fmt.type = v4l2.BufType.VIDEO_CAPTURE_MPLANE.value
         elif self.has_capture:
-            fmt.type = v4l2.BufType.VIDEO_CAPTURE
+            fmt.type = v4l2.BufType.VIDEO_CAPTURE.value
         else:
             raise NotImplementedError()
 

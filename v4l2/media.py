@@ -8,7 +8,11 @@ import os
 import v4l2.uapi
 from .helpers import filepath_for_major_minor
 
-__all__ = [ 'MediaDevice' ]
+__all__ = [
+    'MediaObject', 'MediaEntity', 'MediaInterface', 'MediaPad', 'MediaLink',
+    'MediaDevice',
+    'MediaLinkFlag'
+]
 
 class MediaTopology:
     def __init__(self, topology, entities, interfaces, pads, links) -> None:
