@@ -259,8 +259,8 @@ def configure_subdevs(md, config):
                 subdev.set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream)
 
             if 'ival' in p:
-                numerator, denominator = p['ival']
-                subdev.set_frame_interval(pad, stream, numerator, denominator)
+                assert(len(p['ival']) == 2)
+                subdev.set_frame_interval(pad, stream, p['ival'])
 
     return subdevices
 

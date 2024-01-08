@@ -151,5 +151,13 @@ class SubDevice:
 
         return sel.r
 
-    def set_frame_interval(self, pad, stream, numerator, denominator):
-        raise NotImplementedError()
+    def set_frame_interval(self, pad, stream, interval: tuple[int, int], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+        v4l2_ival = v4l2.uapi.v4l2_subdev_frame_interval()
+        v4l2_ival.pad = pad
+        v4l2_ival.stream = stream
+        v4l2_ival.which = which
+        v4l2_ival.interval = interval
+
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_FRAME_INTERVAL, v4l2_ival, True)
+
+        return (v4l2_ival.interval.numerator, v4l2_ival.interval.denominator)

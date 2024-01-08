@@ -20,7 +20,9 @@ configurations["cam0"] = {
             "entity": "rkisp1_tpg",
             "pads": [
                 { "pad": (0, 0),
-                  "fmt": fmt1 },
+                  "fmt": fmt1,
+                  "ival": (1, 30),
+                },
             ],
         },
 
