@@ -222,7 +222,7 @@ for stream in streams:
 
     if args.type == 'drm':
         fds = [fb.fd(0) for fb in stream['fbs']]
-        cap.reserve_buffers_dmabuf(NUM_BUFS, fds)
+        cap.reserve_buffers_dmabuf(fds)
     else:
         cap.reserve_buffers(NUM_BUFS)
 
@@ -351,8 +351,10 @@ def handle_pageflip():
 
             fb = stream['kms_old_fb']
 
-            payload_size = fb.size(0)
-            vbuf = v4l2.create_dmabuffer(fb.fd(0), stream['w'], stream['h'], stream['fourcc'], payload_size)
+            # XXX we should just track the vbufs in streams, instead of looking
+            # for the vbuf based on the drm fb
+            vbuf = next(vbuf for vbuf in cap.buffers if vbuf.fd == fb.fd(0))
+
             cap.queue(vbuf)
             stream['kms_old_fb'] = None
 
