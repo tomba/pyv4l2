@@ -395,4 +395,4 @@ def get_pixel_format_info(fourcc) -> PixelFormatInfo:
             info = PixelFormatInfo(p)
             return info
 
-    raise Exception("Pixel format not found")
+    raise Exception(f'Pixel format "{fourcc}" not found')

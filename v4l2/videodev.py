@@ -149,6 +149,8 @@ class VideoCaptureStreamer(CaptureStreamer):
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
         self.set_queue_size(len(dmabuf_fds))
 
+        self.buffers = []
+
         for i,fd in enumerate(dmabuf_fds):
             buf = VideoBuffer(v4l2.MemType.DMABUF)
             buf.index = i
@@ -334,14 +336,27 @@ class MetaCaptureStreamer(CaptureStreamer):
     def reserve_buffers(self, num_bufs):
         self.set_queue_size(num_bufs)
 
-        self.buffers = [ None ] * num_bufs
+        self.buffers = []
 
         for i in range(num_bufs):
             buf = VideoBuffer(v4l2.MemType.MMAP)
             buf.index = i
             buf.fourcc = self.fourcc
             buf.payload_size = self.size
-            self.buffers[i] = buf
+            self.buffers.append(buf)
+
+    def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
+        self.set_queue_size(len(dmabuf_fds))
+
+        self.buffers = []
+
+        for i,fd in enumerate(dmabuf_fds):
+            buf = VideoBuffer(v4l2.MemType.DMABUF)
+            buf.index = i
+            buf.fd = fd
+            buf.fourcc = self.fourcc
+            buf.payload_size = self.size
+            self.buffers.append(buf)
 
     def queue(self, vbuf: VideoBuffer):
         assert(vbuf in self.buffers)
