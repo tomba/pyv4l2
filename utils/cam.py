@@ -118,7 +118,7 @@ for i, stream in enumerate(streams):
             # XXX
             stream['kms-fourcc'] = stream['fourcc']
 
-    if args.type == 'drm' and 'embedded' in stream and stream['embedded']:
+    if args.type == 'drm' and stream.get('embedded', False):
         divs = [16, 8, 4, 2, 1]
         for div in divs:
             w = stream['kms-buf-w'] // div
