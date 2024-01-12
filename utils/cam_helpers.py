@@ -62,8 +62,10 @@ def embedded_fourcc_to_bytes_per_pixel(fmt):
         return 8
     elif fmt == v4l2.MetaFormat.SENSOR_DATA:
         return 8
+    elif fmt == v4l2.MetaFormat.RPI_FE_CFG:
+        return 8
     else:
-        assert(False)
+        raise NotImplementedError(f'Unsupported fmt {fmt.name}')
 
 class NetTX:
     import struct
