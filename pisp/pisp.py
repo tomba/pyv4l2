@@ -1,7 +1,7 @@
 r"""Wrapper for pisp_statistics.h
 
 Generated with:
-/home/tomba/work/ctypesgen/run.py --no-embed-preamble --no-macro-try-except --no-source-comments -D__volatile__= -D__signed__= -U__SIZEOF_INT128__ -I/home/tomba/work/libpisp/src/libpisp -o pisp/pisp.py /home/tomba/work/libpisp/src/libpisp/frontend/pisp_statistics.h /home/tomba/work/libpisp/src/libpisp/frontend/pisp_fe_config.h
+/home/tomba/work/ctypesgen/run.py --no-embed-preamble --no-macro-try-except --no-source-comments -D__volatile__= -D__signed__= -U__SIZEOF_INT128__ -I/home/tomba/work/libpisp/src/libpisp -o pisp/pisp.py /home/tomba/work/libpisp/src/libpisp/frontend/pisp_statistics.h /home/tomba/work/libpisp/src/libpisp/frontend/pisp_fe_config.h /home/tomba/work/libpisp/src/libpisp/common/pisp_types.h
 
 Do not modify this file.
 """
@@ -155,6 +155,110 @@ struct_anon_26._fields_ = [
 ]
 
 pisp_image_format_config = struct_anon_26
+
+enum_anon_27 = c_int
+
+PISP_FAIL = (-1)
+
+PISP_SUCCESS = 0
+
+pisp_status = enum_anon_27
+
+enum_anon_28 = c_int
+
+PISP_BAYER_ORDER_RGGB = 0
+
+PISP_BAYER_ORDER_GBRG = 1
+
+PISP_BAYER_ORDER_BGGR = 2
+
+PISP_BAYER_ORDER_GRBG = 3
+
+PISP_BAYER_ORDER_GREYSCALE = 128
+
+pisp_bayer_order = enum_anon_28
+
+enum_anon_29 = c_int
+
+PISP_IMAGE_FORMAT_BPS_8 = 0x00000000
+
+PISP_IMAGE_FORMAT_BPS_10 = 0x00000001
+
+PISP_IMAGE_FORMAT_BPS_12 = 0x00000002
+
+PISP_IMAGE_FORMAT_BPS_16 = 0x00000003
+
+PISP_IMAGE_FORMAT_BPS_MASK = 0x00000003
+
+PISP_IMAGE_FORMAT_PLANARITY_INTERLEAVED = 0x00000000
+
+PISP_IMAGE_FORMAT_PLANARITY_SEMI_PLANAR = 0x00000010
+
+PISP_IMAGE_FORMAT_PLANARITY_PLANAR = 0x00000020
+
+PISP_IMAGE_FORMAT_PLANARITY_MASK = 0x00000030
+
+PISP_IMAGE_FORMAT_SAMPLING_444 = 0x00000000
+
+PISP_IMAGE_FORMAT_SAMPLING_422 = 0x00000100
+
+PISP_IMAGE_FORMAT_SAMPLING_420 = 0x00000200
+
+PISP_IMAGE_FORMAT_SAMPLING_MASK = 0x00000300
+
+PISP_IMAGE_FORMAT_ORDER_NORMAL = 0x00000000
+
+PISP_IMAGE_FORMAT_ORDER_SWAPPED = 0x00001000
+
+PISP_IMAGE_FORMAT_SHIFT_0 = 0x00000000
+
+PISP_IMAGE_FORMAT_SHIFT_1 = 0x00010000
+
+PISP_IMAGE_FORMAT_SHIFT_2 = 0x00020000
+
+PISP_IMAGE_FORMAT_SHIFT_3 = 0x00030000
+
+PISP_IMAGE_FORMAT_SHIFT_4 = 0x00040000
+
+PISP_IMAGE_FORMAT_SHIFT_5 = 0x00050000
+
+PISP_IMAGE_FORMAT_SHIFT_6 = 0x00060000
+
+PISP_IMAGE_FORMAT_SHIFT_7 = 0x00070000
+
+PISP_IMAGE_FORMAT_SHIFT_8 = 0x00080000
+
+PISP_IMAGE_FORMAT_SHIFT_MASK = 0x000f0000
+
+PISP_IMAGE_FORMAT_BPP_32 = 0x00100000
+
+PISP_IMAGE_FORMAT_X_VALUE = 0x00200000
+
+PISP_IMAGE_FORMAT_UNCOMPRESSED = 0x00000000
+
+PISP_IMAGE_FORMAT_COMPRESSION_MODE_1 = 0x01000000
+
+PISP_IMAGE_FORMAT_COMPRESSION_MODE_2 = 0x02000000
+
+PISP_IMAGE_FORMAT_COMPRESSION_MODE_3 = 0x03000000
+
+PISP_IMAGE_FORMAT_COMPRESSION_MASK = 0x03000000
+
+PISP_IMAGE_FORMAT_HOG_SIGNED = 0x04000000
+
+PISP_IMAGE_FORMAT_HOG_UNSIGNED = 0x08000000
+
+PISP_IMAGE_FORMAT_INTEGRAL_IMAGE = 0x10000000
+
+PISP_IMAGE_FORMAT_WALLPAPER_ROLL = 0x20000000
+
+PISP_IMAGE_FORMAT_THREE_CHANNEL = 0x40000000
+
+PISP_IMAGE_FORMAT_SINGLE_16 = PISP_IMAGE_FORMAT_BPS_16
+
+PISP_IMAGE_FORMAT_THREE_16 = (PISP_IMAGE_FORMAT_BPS_16 | PISP_IMAGE_FORMAT_THREE_CHANNEL)
+
+pisp_image_format = enum_anon_29
 
 
 class struct_anon_30(Structure):
@@ -705,7 +809,7 @@ struct_anon_59.__slots__ = [
     'stats_buffer',
     'output_buffer',
     'input_buffer',
-    'global',
+    'global_',
     'input',
     'decompress',
     'decompand',
@@ -729,7 +833,7 @@ struct_anon_59._fields_ = [
     ('stats_buffer', pisp_fe_stats_buffer_config),
     ('output_buffer', pisp_fe_output_buffer_config * int(2)),
     ('input_buffer', pisp_fe_input_buffer_config),
-    ('global', pisp_fe_global_config),
+    ('global_', pisp_fe_global_config),
     ('input', pisp_fe_input_config),
     ('decompress', pisp_decompress_config),
     ('decompand', pisp_fe_decompand_config),
@@ -778,6 +882,93 @@ PISP_CDAF_STATS_SIZE = 8
 
 
 PISP_CDAF_STATS_NUM_FOMS = (PISP_CDAF_STATS_SIZE * PISP_CDAF_STATS_SIZE)
+
+
+def PISP_IMAGE_FORMAT_bps_8(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_BPS_MASK) == PISP_IMAGE_FORMAT_BPS_8)
+
+
+def PISP_IMAGE_FORMAT_bps_10(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_BPS_MASK) == PISP_IMAGE_FORMAT_BPS_10)
+
+
+def PISP_IMAGE_FORMAT_bps_12(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_BPS_MASK) == PISP_IMAGE_FORMAT_BPS_12)
+
+
+def PISP_IMAGE_FORMAT_bps_16(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_BPS_MASK) == PISP_IMAGE_FORMAT_BPS_16)
+
+
+def PISP_IMAGE_FORMAT_bps(fmt):
+    return (fmt & PISP_IMAGE_FORMAT_BPS_MASK) and (8 + (2 << ((fmt & PISP_IMAGE_FORMAT_BPS_MASK) - 1))) or 8
+
+
+def PISP_IMAGE_FORMAT_shift(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_SHIFT_MASK) / PISP_IMAGE_FORMAT_SHIFT_1)
+
+
+def PISP_IMAGE_FORMAT_three_channel(fmt):
+    return (fmt & PISP_IMAGE_FORMAT_THREE_CHANNEL)
+
+
+def PISP_IMAGE_FORMAT_single_channel(fmt):
+    return (not (fmt & PISP_IMAGE_FORMAT_THREE_CHANNEL))
+
+
+def PISP_IMAGE_FORMAT_compressed(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_COMPRESSION_MASK) != PISP_IMAGE_FORMAT_UNCOMPRESSED)
+
+
+def PISP_IMAGE_FORMAT_sampling_444(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_SAMPLING_MASK) == PISP_IMAGE_FORMAT_SAMPLING_444)
+
+
+def PISP_IMAGE_FORMAT_sampling_422(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_SAMPLING_MASK) == PISP_IMAGE_FORMAT_SAMPLING_422)
+
+
+def PISP_IMAGE_FORMAT_sampling_420(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_SAMPLING_MASK) == PISP_IMAGE_FORMAT_SAMPLING_420)
+
+
+def PISP_IMAGE_FORMAT_order_normal(fmt):
+    return (not (fmt & PISP_IMAGE_FORMAT_ORDER_SWAPPED))
+
+
+def PISP_IMAGE_FORMAT_order_swapped(fmt):
+    return (fmt & PISP_IMAGE_FORMAT_ORDER_SWAPPED)
+
+
+def PISP_IMAGE_FORMAT_bpp_32(fmt):
+    return (fmt & PISP_IMAGE_FORMAT_BPP_32)
+
+
+def PISP_IMAGE_FORMAT_x_value(fmt):
+    return (fmt & PISP_IMAGE_FORMAT_X_VALUE) and 255 or 0
+
+
+def PISP_IMAGE_FORMAT_interleaved(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_PLANARITY_MASK) == PISP_IMAGE_FORMAT_PLANARITY_INTERLEAVED)
+
+
+def PISP_IMAGE_FORMAT_semiplanar(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_PLANARITY_MASK) == PISP_IMAGE_FORMAT_PLANARITY_SEMI_PLANAR)
+
+
+def PISP_IMAGE_FORMAT_planar(fmt):
+    return ((fmt & PISP_IMAGE_FORMAT_PLANARITY_MASK) == PISP_IMAGE_FORMAT_PLANARITY_PLANAR)
+
+
+def PISP_IMAGE_FORMAT_wallpaper(fmt):
+    return (fmt & PISP_IMAGE_FORMAT_WALLPAPER_ROLL)
+
+
+def PISP_IMAGE_FORMAT_HOG(fmt):
+    return (fmt & (PISP_IMAGE_FORMAT_HOG_SIGNED | PISP_IMAGE_FORMAT_HOG_UNSIGNED))
+
+
+PISP_WALLPAPER_WIDTH = 128
 
 
 PISP_FE_NUM_OUTPUTS = 2

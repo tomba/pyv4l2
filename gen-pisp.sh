@@ -4,6 +4,7 @@ INCLUDE_PATH="/home/tomba/work/libpisp/src/libpisp"
 INCLUDES="
 	${INCLUDE_PATH}/frontend/pisp_statistics.h
 	${INCLUDE_PATH}/frontend/pisp_fe_config.h
+	${INCLUDE_PATH}/common/pisp_types.h
 "
 
 # For some reason ctypesgen refuses to use the media-bus-format.h from the above
@@ -23,3 +24,5 @@ ${CTYPESGEN} ${CTYPESGEN_OPTS} -I${INCLUDE_PATH} -o ${OUT} ${INCLUDES}
 
 # Add pylint ignore comment
 #sed --in-place s/"^def POINTER(obj):"/"def POINTER(obj): # pylint: disable=function-redefined:"/ v4l2/uapi/ctypes_preamble.py
+
+sed --in-place s#"'global'"#"'global_'"# ${OUT}
