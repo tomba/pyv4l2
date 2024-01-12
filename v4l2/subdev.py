@@ -3,6 +3,7 @@ from __future__ import annotations
 import ctypes
 import errno
 import fcntl
+import os
 import v4l2.uapi
 
 __all__ = [ 'Route', 'SubDevice' ]
@@ -45,8 +46,8 @@ class SubDevice:
     def __init__(self, entity: v4l2.MediaEntity) -> None:
         self.entity = entity
         assert(entity.interface.is_subdev)
-        self.file = open(entity.interface.dev_path)
-        self.fd = self.file.fileno()
+        self.fd = os.open(entity.interface.dev_path, os.O_RDWR | os.O_NONBLOCK)
+        assert(self.fd != -1)
 
         try:
             cap = v4l2.uapi.v4l2_subdev_client_capability()
