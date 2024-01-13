@@ -178,6 +178,8 @@ class MediaDevice:
     def __find_media_device_by_value(key: str, value: str) -> str:
         partial_match = None
 
+        bvalue = value.encode()
+
         for path in glob.glob('/dev/media*'):
             try:
                 fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
@@ -188,12 +190,12 @@ class MediaDevice:
                 mdi = v4l2.uapi.media_device_info()
                 fcntl.ioctl(fd, v4l2.uapi.MEDIA_IOC_DEVICE_INFO, mdi, True)
 
-                device_val = str(getattr(mdi, key))
+                device_val = getattr(mdi, key)
 
-                if device_val == value:
+                if device_val == bvalue:
                     return path
 
-                if not partial_match and value in device_val:
+                if not partial_match and bvalue in device_val:
                     partial_match = path
             finally:
                 os.close(fd)
