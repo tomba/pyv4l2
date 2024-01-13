@@ -43,10 +43,8 @@ class Route:
 
 
 class SubDevice:
-    def __init__(self, entity: v4l2.MediaEntity) -> None:
-        self.entity = entity
-        assert(entity.interface.is_subdev)
-        self.fd = os.open(entity.interface.dev_path, os.O_RDWR | os.O_NONBLOCK)
+    def __init__(self, dev_path: str) -> None:
+        self.fd = os.open(dev_path, os.O_RDWR | os.O_NONBLOCK)
         assert(self.fd != -1)
 
         try:

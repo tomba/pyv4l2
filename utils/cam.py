@@ -173,7 +173,7 @@ for stream in streams:
     if not 'dev' in stream:
         stream['dev'] = vid_ent.interface.dev_path
 
-    vd = v4l2.VideoDevice(vid_ent)
+    vd = v4l2.VideoDevice(vid_ent.interface.dev_path)
 
     mem_type = v4l2.MemType.DMABUF if args.type == 'drm' else v4l2.MemType.MMAP
 

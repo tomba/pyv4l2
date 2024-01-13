@@ -210,7 +210,7 @@ def configure_subdevs(md, config):
     for e in config.get('subdevs', []):
         ent = md.find_entity(e['entity'])
         assert ent
-        subdev = v4l2.SubDevice(ent)
+        subdev = v4l2.SubDevice(ent.interface.dev_path)
         assert subdev, 'no subdev for entity %s' % ent
 
         subdevices[ent.name] = subdev
