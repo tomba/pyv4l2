@@ -246,25 +246,22 @@ def to_rgb(fmt, w, h, bytesperline, data):
     if fmt == 'UYVY':
         return convert_uyvy(data, w, h)
 
-    elif fmt == 'NV12':
+    if fmt == 'NV12':
         return convert_nv12(data, w, h)
 
-    elif fmt == 'RGB888':
+    if fmt.startswith('S'):
+        return convert_raw(data, w, h, bytesperline, fmt)
+
+    if fmt == 'RGB24': #fmt == 'RGB888':
         rgb = data.reshape((h, w, 3))
         rgb[:, :, [0, 1, 2]] = rgb[:, :, [2, 1, 0]]
-
     elif fmt == 'BGR888':
         rgb = data.reshape((h, w, 3))
-
     elif fmt in ['ARGB8888', 'XRGB8888']:
         rgb = data.reshape((h, w, 4))
         rgb = np.flip(rgb, axis=2)
         # drop alpha component
         rgb = np.delete(rgb, np.s_[0::4], axis=2)
-
-    elif fmt.startswith('S'):
-        return convert_raw(data, w, h, bytesperline, fmt)
-
     else:
         raise Exception('Unsupported format ' + fmt)
 

@@ -322,11 +322,11 @@ formats = (
                        PixelColorType.RGB,
                        ( ( 16, 1, 1 ), ),
                    ),
-#    # RGB24
-#    ( PixelFormat.RGB888,
-#                       PixelColorType.RGB,
-#                       ( ( 24, 1, 1 ), ),
-#                   ),
+    # RGB24
+    ( PixelFormat.RGB24,
+                       PixelColorType.RGB,
+                       ( ( 24, 1, 1 ), ),
+                   ),
 #    # RGB32
 #    ( PixelFormat.XRGB8888,
 #                     PixelColorType.RGB,
@@ -400,4 +400,4 @@ def get_pixel_format_info(fourcc) -> PixelFormatInfo:
             info = PixelFormatInfo(p)
             return info
 
-    raise Exception(f'Pixel format "{fourcc}" not found')
+    raise Exception(f'Pixel format "{fourcc.name}" not found')
