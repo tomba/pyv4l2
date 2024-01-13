@@ -2,6 +2,8 @@
 
 import v4l2
 import kms
+import pisp
+import ctypes
 
 imx219_w = 640
 imx219_h = 480
@@ -24,6 +26,7 @@ imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_8
 meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
 meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)
 
+meta_fmt_fe_config = (ctypes.sizeof(pisp.pisp_fe_config), 1, v4l2.MetaFormat.RPI_FE_CFG)
 
 meta_mbus_fmt_imx219_legacy = (16384, 1, v4l2.BusFormat.SENSOR_DATA)
 meta_fmt_pix_imx219_legacy = (16384, 1, v4l2.MetaFormat.SENSOR_DATA)
@@ -212,7 +215,20 @@ configurations["cam0-fe1"] = {
     ],
 }
 
+configurations["cam0-fe-config"] = {
+    "devices": [
+        {
+            "entity": "rp1-cfe-fe_config",
+            "fmt": meta_fmt_fe_config,
+            "embedded": True,
+            "display": False,
+        },
+    ],
 
+    "links": [
+        { "src": ("rp1-cfe-fe_config", 0), "dst": ("pisp-fe", 1) },
+    ],
+}
 
 
 configurations["cam0-legacy"] = {

@@ -8,6 +8,7 @@ import selectors
 import sys
 import time
 import v4l2
+from cam_pisp import *
 
 CONNECTOR = ''
 
@@ -230,6 +231,9 @@ for stream in streams:
 
     # Queue the rest to the camera
     for i in range(first_buf, NUM_BUFS):
+        if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
+            pisp_create_config(cap, cap.buffers[i])
+
         cap.queue(cap.buffers[i])
 
 if args.display:
