@@ -1,5 +1,4 @@
 import importlib
-import kms
 import mmap
 import os
 import socket
@@ -121,15 +120,17 @@ class NetTX:
 #
 
 def merge_configs(configs):
-    d = { 'subdevs': [], 'devices': [], 'links': [] }
+    d = { 'media': None, 'subdevs': [], 'devices': [], 'links': [] }
 
     for config in configs:
+        d['media'] = config.get('media', None)
+
         # links can be appended directly
         # xxx there may be (harmless) duplicates
-        d['links'] += config['links']
+        d['links'] += config.get('links', [])
 
         # devices can be appended directly
-        d['devices'] += config['devices']
+        d['devices'] += config.get('devices', [])
 
         # subdevs need to be merged based on entity
         for subdev in config.get('subdevs', []):
@@ -273,6 +274,7 @@ def save_fb_to_file(stream, is_drm, fb_or_vbuf):
     print('save to ' + filename)
 
     if is_drm:
+        import kms
         fb = typing.cast(kms.DumbFramebuffer, fb_or_vbuf)
 
         with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:

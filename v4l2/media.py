@@ -5,6 +5,7 @@ import ctypes
 import fcntl
 import weakref
 import os
+import glob
 import v4l2.uapi
 from .helpers import filepath_for_major_minor
 
@@ -160,11 +161,47 @@ class MediaLink(MediaObject):
 
 
 class MediaDevice:
-    def __init__(self, filename) -> None:
-        self.fd = os.open(filename, os.O_RDWR | os.O_NONBLOCK)
+    def __init__(self, name: str, key: str = 'path') -> None:
+        if key != 'path':
+            try:
+                name = MediaDevice.__find_media_device_by_value(key, name)
+                key = 'path'
+            except:
+                pass
+
+        self.fd = os.open(name, os.O_RDWR | os.O_NONBLOCK)
         self.__read_topology()
 
         weakref.finalize(self, os.close, self.fd)
+
+    @staticmethod
+    def __find_media_device_by_value(key: str, value: str) -> str:
+        partial_match = None
+
+        for path in glob.glob('/dev/media*'):
+            try:
+                fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
+            except:
+                continue
+
+            try:
+                mdi = v4l2.uapi.media_device_info()
+                fcntl.ioctl(fd, v4l2.uapi.MEDIA_IOC_DEVICE_INFO, mdi, True)
+
+                device_val = str(getattr(mdi, key))
+
+                if device_val == value:
+                    return path
+
+                if not partial_match and value in device_val:
+                    partial_match = path
+            finally:
+                os.close(fd)
+
+        if partial_match:
+            return partial_match
+
+        raise FileNotFoundError(f'No media device "{key}" = "{value}" found')
 
     def get_device_info(self):
         mdi = v4l2.uapi.media_device_info()

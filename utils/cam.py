@@ -57,7 +57,10 @@ config = read_config(args.config_name)
 
 print('Configure media entities')
 
-md = v4l2.MediaDevice('/dev/media0')
+if config['media']:
+    md = v4l2.MediaDevice(*config['media'])
+else:
+    md = v4l2.MediaDevice('/dev/media0')
 
 disable_all_links(md)
 
