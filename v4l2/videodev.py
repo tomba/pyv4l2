@@ -6,7 +6,7 @@ import os
 import v4l2.uapi
 import v4l2.pixelformats
 
-__all__ = [ 'VideoDevice' ]
+__all__ = [ 'VideoDevice', 'VideoBuffer' ]
 
 class VideoDevice:
     def __init__(self, entity: v4l2.MediaEntity) -> None:
@@ -18,14 +18,14 @@ class VideoDevice:
         cap = v4l2.uapi.v4l2_capability()
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYCAP, cap, True)
 
-        self.has_capture = False
-        self.has_mplane_capture = False
-
         if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE_MPLANE:
             self.has_capture = True
             self.has_mplane_capture = True
         elif cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE:
             self.has_capture = True
+            self.has_mplane_capture = False
+        else:
+            self.has_capture = False
             self.has_mplane_capture = False
 
         if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_OUTPUT_MPLANE:
@@ -33,6 +33,9 @@ class VideoDevice:
             self.has_mplane_output = True
         elif cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_OUTPUT:
             self.has_output = True
+            self.has_mplane_output = False
+        else:
+            self.has_output = False
             self.has_mplane_output = False
 
         if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_M2M_MPLANE:
@@ -52,6 +55,13 @@ class VideoDevice:
 
         if cap.device_caps & v4l2.uapi.V4L2_CAP_META_CAPTURE:
             self.has_meta_capture = True
+        else:
+            self.has_meta_capture = False
+
+        if cap.device_caps & v4l2.uapi.V4L2_CAP_META_OUTPUT:
+            self.has_meta_output = True
+        else:
+            self.has_meta_output = False
 
     def __del__(self):
         os.close(self.fd)
@@ -86,9 +96,16 @@ class VideoDevice:
 
     def get_meta_capture_streamer(self, mem_type: v4l2.MemType,
                                   size: int, fourcc: v4l2.MetaFormat):
-        assert(self.has_meta_capture)
-        return MetaCaptureStreamer(self, mem_type, v4l2.BufType.META_CAPTURE,
-                                   size, fourcc)
+        if self.has_meta_capture:
+            return MetaCaptureStreamer(self, mem_type, v4l2.BufType.META_CAPTURE,
+                                       size, fourcc)
+
+        if self.has_meta_output:
+            return MetaOutputStreamer(self, mem_type, v4l2.BufType.META_OUTPUT,
+                                       size, fourcc)
+
+        raise NotImplementedError()
+
 
 class CaptureStreamer():
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType) -> None:
@@ -389,6 +406,89 @@ class MetaCaptureStreamer(CaptureStreamer):
             vbuf.offset = v4l2buf.m.offset
 
         return vbuf
+
+
+class MetaOutputStreamer(CaptureStreamer):
+    def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
+                 size: int, fourcc: v4l2.MetaFormat) -> None:
+        super().__init__(vdev, mem_type, buf_type)
+
+        self.size = size
+        self.fourcc = fourcc
+
+        self.set_format(fourcc, size)
+
+    def set_format(self, fourcc: v4l2.MetaFormat, size):
+        v4lfmt = v4l2.uapi.v4l2_format()
+
+        v4lfmt.type = self.buf_type.value
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
+
+        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
+        #bitspp = pfi.planes[0].bitspp # XXX quick hack
+
+        v4lfmt.fmt.meta.dataformat = fourcc
+        v4lfmt.fmt.meta.buffersize = size
+
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
+
+    def reserve_buffers(self, num_bufs):
+        self.set_queue_size(num_bufs)
+
+        self.buffers = []
+
+        for i in range(num_bufs):
+            buf = VideoBuffer(v4l2.MemType.MMAP)
+            buf.index = i
+            buf.fourcc = self.fourcc
+            buf.payload_size = self.size
+            self.buffers.append(buf)
+
+        for vbuf in self.buffers:
+            v4l2buf = v4l2.uapi.v4l2_buffer()
+            v4l2buf.type = self.buf_type.value
+            v4l2buf.memory = vbuf.mem_type.value
+            v4l2buf.index = vbuf.index
+
+            fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYBUF, v4l2buf, True)
+
+            vbuf.offset = v4l2buf.m.offset
+
+
+    def queue(self, vbuf: VideoBuffer):
+        assert(vbuf in self.buffers)
+        assert(vbuf.index != -1)
+
+        v4l2buf = v4l2.uapi.v4l2_buffer()
+        v4l2buf.type = self.buf_type.value
+        v4l2buf.memory = vbuf.mem_type.value
+        v4l2buf.index = vbuf.index
+        if vbuf.mem_type == v4l2.MemType.DMABUF:
+            v4l2buf.m.fd = vbuf.fd
+
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QBUF, v4l2buf, True)
+
+    def dequeue(self) -> VideoBuffer:
+        v4l2buf = v4l2.uapi.v4l2_buffer()
+        v4l2buf.type = self.buf_type.value
+        v4l2buf.memory = self.mem_type.value
+
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_DQBUF, v4l2buf, True)
+
+        vbuf = self.buffers[v4l2buf.index]
+
+        # XXX
+        vbuf.buffer_size = v4l2buf.length
+
+        if self.mem_type == v4l2.MemType.DMABUF:
+            assert(vbuf.fd == v4l2buf.m.fd)
+        else:
+            vbuf.offset = v4l2buf.m.offset
+
+        return vbuf
+
+
+
 
 
 class VideoBuffer:

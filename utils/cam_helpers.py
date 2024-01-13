@@ -132,7 +132,7 @@ def merge_configs(configs):
         d['devices'] += config['devices']
 
         # subdevs need to be merged based on entity
-        for subdev in config['subdevs']:
+        for subdev in config.get('subdevs', []):
             ent = subdev['entity']
 
             dst = next((s for s in d['subdevs'] if s['entity'] == ent), None)
