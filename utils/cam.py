@@ -284,13 +284,10 @@ def readkey(ctx):
     for stream in reversed(streams):
         print(f'{stream["dev_path"]}: stream off')
         stream['cap'].stream_off()
-        #time.sleep(0.5)
-        #print('DISABLED CAP')
-        #time.sleep(1)
 
     print('Done')
     sys.stdin.readline()
-    exit(0)
+    sys.exit(0)
 
 
 def run(ctx: Context):
