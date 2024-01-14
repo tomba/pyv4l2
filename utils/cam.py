@@ -12,6 +12,7 @@ from cam_helpers import *
 from cam_pisp import *
 import v4l2
 
+
 class Context(object):
     args: argparse.Namespace
     USE_IPYTHON: bool
@@ -19,6 +20,7 @@ class Context(object):
     subdevices: dict
     streams: list
     kms_committed: bool
+    md: v4l2.MediaDevice
 
 
 def init_setup(ctx: Context):
@@ -56,6 +58,9 @@ def init_setup(ctx: Context):
 
     if args.tx:
         args.tx = args.tx.split(',')
+        ctx.net_tx = NetTX()
+    else:
+        ctx.net_tx = None
 
     if not args.type:
         if args.display:
@@ -83,38 +88,20 @@ def init_setup(ctx: Context):
         md = None
         ctx.subdevices = None
 
-    if args.type == 'drm' or args.display:
-        import kms
-        card = kms.Card()
-    else:
-        card = None
+    ctx.md = md
 
-    if args.display:
-        res = kms.ResourceManager(card)
-        conn = res.reserve_connector()
-        crtc = res.reserve_crtc(conn)
-        card.disable_planes()
-        mode = conn.get_default_mode()
-        modeb = kms.Blob(card, mode)
+    ctx.streams = config['devices']
 
-    if args.tx:
-        ctx.net_tx = NetTX()
-    else:
-        ctx.net_tx = None
 
-    streams = config['devices']
-    ctx.streams = streams
-
-    num_planes = sum(1 for stream in streams if args.display and stream.get('display', True))
-
-    display_idx = 0
+def init_viddevs(ctx: Context):
+    streams = ctx.streams
 
     for stream in streams:
         if 'num_bufs' not in stream:
             stream['num_bufs'] = 5
 
-        if md:
-            vid_ent = md.find_entity(stream['entity'])
+        if ctx.md:
+            vid_ent = ctx.md.find_entity(stream['entity'])
             assert(vid_ent)
 
             if not 'dev_path' in stream:
@@ -129,8 +116,30 @@ def init_setup(ctx: Context):
 
         stream['dev'] = vd
 
+
+def init_kms(ctx: Context):
+    streams = ctx.streams
+
+    if ctx.args.type == 'drm' or ctx.args.display:
+        import kms
+        card = kms.Card()
+    else:
+        card = None
+
+    if ctx.args.display:
+        res = kms.ResourceManager(card)
+        conn = res.reserve_connector()
+        crtc = res.reserve_crtc(conn)
+        card.disable_planes()
+        mode = conn.get_default_mode()
+        modeb = kms.Blob(card, mode)
+
+    num_planes = sum(1 for stream in streams if ctx.args.display and stream.get('display', True))
+
+    display_idx = 0
+
     for i, stream in enumerate(streams):
-        stream['display'] = args.display and stream.get('display', True)
+        stream['display'] = ctx.args.display and stream.get('display', True)
         stream['embedded'] = stream.get('embedded', False)
 
         stream['id'] = i
@@ -157,7 +166,7 @@ def init_setup(ctx: Context):
                 # XXX
                 stream['kms-fourcc'] = stream['fourcc']
 
-        if args.type == 'drm' and stream.get('embedded', False):
+        if ctx.args.type == 'drm' and stream.get('embedded', False):
             divs = [16, 8, 4, 2, 1]
             for div in divs:
                 w = stream['kms-buf-w'] // div
@@ -197,14 +206,10 @@ def init_setup(ctx: Context):
             assert(plane)
             stream['plane'] = plane
 
-    if args.print:
-        for stream in streams:
-            pprint.pprint(stream)
-
     for stream in streams:
         vd = stream['dev']
 
-        mem_type = v4l2.MemType.DMABUF if args.type == 'drm' else v4l2.MemType.MMAP
+        mem_type = v4l2.MemType.DMABUF if ctx.args.type == 'drm' else v4l2.MemType.MMAP
 
         if not stream.get('embedded', False):
             cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['fourcc'])
@@ -214,10 +219,6 @@ def init_setup(ctx: Context):
             cap = vd.get_meta_capture_streamer(mem_type, size, stream['fourcc'])
 
         stream['cap'] = cap
-
-    if args.config_only:
-        exit(0)
-
 
 
 def setup(ctx: Context):
@@ -527,9 +528,19 @@ def run(ctx: Context):
         IPython.embed(config=c)
 
 
-
 if __name__ == "__main__":
     ctx = Context()
+
     init_setup(ctx)
+    init_viddevs(ctx)
+    init_kms(ctx)
+
+    if ctx.args.print:
+        for stream in ctx.streams:
+            pprint.pprint(stream)
+
+    if ctx.args.config_only:
+        sys.exit(0)
+
     setup(ctx)
     run(ctx)
