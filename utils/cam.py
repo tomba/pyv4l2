@@ -14,13 +14,19 @@ import v4l2
 
 
 class Context(object):
-    args: argparse.Namespace
     USE_IPYTHON: bool
     user_script: types.ModuleType | None
     subdevices: dict
     streams: list
-    kms_committed: bool
     md: v4l2.MediaDevice
+    buf_type: str
+    use_display: bool
+    kms_committed: bool
+    print_config: bool
+    config_only: bool
+    delay: int
+    save: bool
+    tx: list[str]
 
 
 def init_setup(ctx: Context):
@@ -37,7 +43,10 @@ def init_setup(ctx: Context):
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
     args = parser.parse_args()
 
-    ctx.args = args
+    ctx.print_config = args.print
+    ctx.config_only = args.config_only
+    ctx.delay = args.delay
+    ctx.save = args.save
 
     ctx.USE_IPYTHON = args.ipython
 
@@ -57,20 +66,25 @@ def init_setup(ctx: Context):
         ctx.user_script = None
 
     if args.tx:
-        args.tx = args.tx.split(',')
+        ctx.tx = args.tx.split(',')
         ctx.net_tx = NetTX()
     else:
+        ctx.tx = None
         ctx.net_tx = None
 
-    if not args.type:
-        if args.display:
-            args.type = 'drm'
-        else:
-            args.type = 'v4l2'
-
-    if not args.type in ['drm', 'v4l2']:
+    if args.type and args.type not in ['drm', 'v4l2']:
         print('Bad buffer type', args.type)
-        exit(-1)
+        sys.exit(-1)
+
+    ctx.use_display = args.display
+
+    if args.type:
+        ctx.buf_type = args.type
+    else:
+        if args.display:
+            ctx.buf_type = 'drm'
+        else:
+            ctx.buf_type = 'v4l2'
 
     config = read_config(args.config_name)
 
@@ -120,13 +134,13 @@ def init_viddevs(ctx: Context):
 def init_kms(ctx: Context):
     streams = ctx.streams
 
-    if ctx.args.type == 'drm' or ctx.args.display:
+    if ctx.buf_type == 'drm' or ctx.use_display:
         import kms
         card = kms.Card()
     else:
         card = None
 
-    if ctx.args.display:
+    if ctx.use_display:
         res = kms.ResourceManager(card)
         conn = res.reserve_connector()
         crtc = res.reserve_crtc(conn)
@@ -134,12 +148,12 @@ def init_kms(ctx: Context):
         mode = conn.get_default_mode()
         modeb = kms.Blob(card, mode)
 
-    num_planes = sum(1 for stream in streams if ctx.args.display and stream.get('display', True))
+    num_planes = sum(1 for stream in streams if ctx.use_display and stream.get('display', True))
 
     display_idx = 0
 
     for i, stream in enumerate(streams):
-        stream['display'] = ctx.args.display and stream.get('display', True)
+        stream['display'] = ctx.use_display and stream.get('display', True)
         stream['embedded'] = stream.get('embedded', False)
 
         stream['id'] = i
@@ -166,7 +180,7 @@ def init_kms(ctx: Context):
                 # XXX
                 stream['kms-fourcc'] = stream['fourcc']
 
-        if ctx.args.type == 'drm' and stream.get('embedded', False):
+        if ctx.buf_type == 'drm' and stream.get('embedded', False):
             divs = [16, 8, 4, 2, 1]
             for div in divs:
                 w = stream['kms-buf-w'] // div
@@ -209,7 +223,7 @@ def init_kms(ctx: Context):
     for stream in streams:
         vd = stream['dev']
 
-        mem_type = v4l2.MemType.DMABUF if ctx.args.type == 'drm' else v4l2.MemType.MMAP
+        mem_type = v4l2.MemType.DMABUF if ctx.buf_type == 'drm' else v4l2.MemType.MMAP
 
         if not stream.get('embedded', False):
             cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['fourcc'])
@@ -227,7 +241,7 @@ def setup(ctx: Context):
     for stream in streams:
         cap = stream['cap']
 
-        if ctx.args.type == 'drm':
+        if ctx.buf_type == 'drm':
             # Allocate FBs
             fbs = []
             for i in range(stream['num_bufs']):
@@ -236,7 +250,7 @@ def setup(ctx: Context):
             stream['fbs'] = fbs
 
         if stream['display']:
-            assert(ctx.args.type == 'drm')
+            assert(ctx.buf_type == 'drm')
 
             # Set fb0 to screen
             fb = stream['fbs'][0]
@@ -259,7 +273,7 @@ def setup(ctx: Context):
             stream['kms_fb'] = fb
             stream['kms_fb_queue'] = deque()
 
-        if ctx.args.type == 'drm':
+        if ctx.buf_type == 'drm':
             fds = [fb.fd(0) for fb in stream['fbs']]
             cap.reserve_buffers_dmabuf(fds)
         else:
@@ -274,7 +288,7 @@ def setup(ctx: Context):
 
             cap.queue(cap.buffers[i])
 
-    if ctx.args.display:
+    if ctx.use_display:
         # Do the initial modeset
         req = kms.AtomicReq(card)
         req.add(conn, 'CRTC_ID', crtc.id)
@@ -287,9 +301,9 @@ def setup(ctx: Context):
 
         req.commit_sync(allow_modeset = True)
 
-        if ctx.args.delay:
-            print(f'Waiting for {args.delay} seconds')
-            time.sleep(args.delay)
+        if ctx.delay:
+            print(f'Waiting for {ctx.delay} seconds')
+            time.sleep(ctx.delay)
 
     for stream in streams:
         print(f'{stream["dev_path"]}: stream on')
@@ -336,12 +350,12 @@ def readvid(ctx: Context, stream):
     cap = stream['cap']
     vbuf = cap.dequeue()
 
-    if ctx.args.type == 'drm':
+    if ctx.buf_type == 'drm':
         fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
         assert(fb != None)
 
-    if ctx.args.save:
-        save_fb_to_file(stream, ctx.args.type == 'drm', fb if ctx.args.type == 'drm' else vbuf)
+    if ctx.save:
+        save_fb_to_file(stream, ctx.buf_type == 'drm', fb if ctx.buf_type == 'drm' else vbuf)
 
     if stream['display']:
         stream['kms_fb_queue'].append(fb)
@@ -355,8 +369,8 @@ def readvid(ctx: Context, stream):
         if ctx.kms_committed == False:
             handle_pageflip(ctx)
     else:
-        if ctx.args.tx and (ctx.args.tx == ['all'] or str(stream['id']) in ctx.args.tx):
-            ctx.net_tx.tx(stream, vbuf, ctx.args.type == 'drm')
+        if ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx):
+            ctx.net_tx.tx(stream, vbuf, ctx.buf_type == 'drm')
 
         cap.queue(vbuf)
 
@@ -394,7 +408,7 @@ def handle_pageflip(ctx: Context):
         cap = stream['cap']
 
         if stream['kms_old_fb']:
-            assert(args.type == 'drm')
+            assert(ctx.buf_type == 'drm')
 
             fb = stream['kms_old_fb']
 
@@ -435,7 +449,7 @@ def run(ctx: Context):
     sel = selectors.DefaultSelector()
     if not ctx.USE_IPYTHON:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
-    if ctx.args.display:
+    if ctx.use_display:
         sel.register(card.fd, selectors.EVENT_READ, lambda: readdrm(ctx))
     for stream in ctx.streams:
         sel.register(stream['cap'].fd, selectors.EVENT_READ, lambda data=stream: readvid(ctx, data))
@@ -535,11 +549,11 @@ if __name__ == "__main__":
     init_viddevs(ctx)
     init_kms(ctx)
 
-    if ctx.args.print:
+    if ctx.print_config:
         for stream in ctx.streams:
             pprint.pprint(stream)
 
-    if ctx.args.config_only:
+    if ctx.config_only:
         sys.exit(0)
 
     setup(ctx)
