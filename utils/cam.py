@@ -55,18 +55,18 @@ if not args.type in ['drm', 'v4l2']:
 
 config = read_config(args.config_name)
 
-print('Configure media entities')
-
 if config['media']:
+    print('Configure media entities')
+
     md = v4l2.MediaDevice(*config['media'])
+
+    disable_all_links(md)
+
+    setup_links(md, config)
+
+    subdevices = configure_subdevs(md, config)
 else:
-    md = v4l2.MediaDevice('/dev/media0')
-
-disable_all_links(md)
-
-setup_links(md, config)
-
-subdevices = configure_subdevs(md, config)
+    md = None
 
 if args.type == 'drm' or args.display:
     import kms
@@ -87,16 +87,35 @@ if args.tx:
 else:
     net_tx = None
 
-NUM_BUFS = 5
-
 streams = config['devices']
 
 num_planes = sum(1 for stream in streams if args.display and stream.get('display', True))
 
 display_idx = 0
 
+for stream in streams:
+    if 'num_bufs' not in stream:
+        stream['num_bufs'] = 5
+
+    if md:
+        vid_ent = md.find_entity(stream['entity'])
+        assert(vid_ent)
+
+        if not 'dev_path' in stream:
+            stream['dev_path'] = vid_ent.interface.dev_path
+
+        vd = v4l2.VideoDevice(vid_ent.interface.dev_path)
+    else:
+        dev_path = v4l2.VideoDevice.find_video_device(*stream['entity'])
+        stream['dev_path'] = dev_path
+
+        vd = v4l2.VideoDevice(dev_path)
+
+    stream['dev'] = vd
+
 for i, stream in enumerate(streams):
     stream['display'] = args.display and stream.get('display', True)
+    stream['embedded'] = stream.get('embedded', False)
 
     stream['id'] = i
 
@@ -167,13 +186,7 @@ if args.print:
         pprint.pprint(stream)
 
 for stream in streams:
-    vid_ent = md.find_entity(stream['entity'])
-    assert(vid_ent)
-
-    if not 'dev' in stream:
-        stream['dev'] = vid_ent.interface.dev_path
-
-    vd = v4l2.VideoDevice(vid_ent.interface.dev_path)
+    vd = stream['dev']
 
     mem_type = v4l2.MemType.DMABUF if args.type == 'drm' else v4l2.MemType.MMAP
 
@@ -195,7 +208,7 @@ for stream in streams:
     if args.type == 'drm':
         # Allocate FBs
         fbs = []
-        for i in range(NUM_BUFS):
+        for i in range(stream['num_bufs']):
             fb = kms.DumbFramebuffer(card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-fourcc'])
             fbs.append(fb)
         stream['fbs'] = fbs
@@ -228,12 +241,12 @@ for stream in streams:
         fds = [fb.fd(0) for fb in stream['fbs']]
         cap.reserve_buffers_dmabuf(fds)
     else:
-        cap.reserve_buffers(NUM_BUFS)
+        cap.reserve_buffers(stream['num_bufs'])
 
     first_buf = 1 if stream['display'] else 0
 
     # Queue the rest to the camera
-    for i in range(first_buf, NUM_BUFS):
+    for i in range(first_buf, stream['num_bufs']):
         if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
             pisp_create_config(cap, cap.buffers[i])
 
@@ -257,7 +270,7 @@ if args.display:
         time.sleep(args.delay)
 
 for stream in streams:
-    print(f'{stream["dev"]}: stream on')
+    print(f'{stream["dev_path"]}: stream on')
     stream['cap'].stream_on()
 
 for stream in streams:
@@ -287,11 +300,11 @@ def readvid(stream):
 
         if stream['total_num_frames'] == 1:
             print('{}: first frame in {:.2f} s'
-                  .format(stream['dev'], diff))
+                  .format(stream['dev_path'], diff))
 
         if diff >= 5:
             print('{}: {} frames in {:.2f} s, {:.2f} fps'
-                  .format(stream['dev'], num_frames, diff, num_frames / diff))
+                  .format(stream['dev_path'], num_frames, diff, num_frames / diff))
 
             stream['last_timestamp'] = ts
             stream['last_framenum'] = stream['total_num_frames']
@@ -309,10 +322,10 @@ def readvid(stream):
     if stream['display']:
         stream['kms_fb_queue'].append(fb)
 
-        if len(stream['kms_fb_queue']) >= NUM_BUFS - 1:
+        if len(stream['kms_fb_queue']) >= stream['num_bufs'] - 1:
             print('WARNING fb_queue {}'.format(len(stream['kms_fb_queue'])))
 
-        #print(f'Buf from {stream['dev']}: kms_fb_queue {len(stream['kms_fb_queue'])}, commit ongoing {kms_committed}')
+        #print(f'Buf from {stream['dev_path']}: kms_fb_queue {len(stream['kms_fb_queue'])}, commit ongoing {kms_committed}')
 
         # XXX with a small delay we might get more planes to the commit
         if kms_committed == False:
@@ -326,7 +339,7 @@ def readvid(stream):
 
 def readkey():
     for stream in reversed(streams):
-        print(f'{stream["dev"]}: stream off')
+        print(f'{stream["dev_path"]}: stream off')
         stream['cap'].stream_off()
         #time.sleep(0.5)
         #print('DISABLED CAP')
@@ -349,7 +362,7 @@ def handle_pageflip():
         if not stream['display']:
             continue
 
-        #print(f'Page flip {stream['dev']}: kms_fb_queue {len(stream['kms_fb_queue'])}, new_fb {stream['kms_fb']}, old_fb {stream['kms_old_fb']}')
+        #print(f'Page flip {stream['dev_path']}: kms_fb_queue {len(stream['kms_fb_queue'])}, new_fb {stream['kms_fb']}, old_fb {stream['kms_old_fb']}')
 
         cap = stream['cap']
 
