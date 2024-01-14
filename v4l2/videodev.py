@@ -3,6 +3,7 @@ from __future__ import annotations
 import ctypes
 import fcntl
 import glob
+import fnmatch
 import os
 
 import v4l2.uapi
@@ -68,10 +69,6 @@ class VideoDevice:
 
     @staticmethod
     def find_video_device(key: str, value: str) -> str:
-        partial_match = None
-
-        bvalue = value.encode()
-
         for path in glob.glob('/dev/video*'):
             try:
                 fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
@@ -84,17 +81,12 @@ class VideoDevice:
 
                 device_val = getattr(cap, key)
                 device_val = ctypes.string_at(ctypes.addressof(device_val))
+                device_val = device_val.decode()
 
-                if device_val == bvalue:
+                if fnmatch.fnmatch(device_val, value):
                     return path
-
-                if not partial_match and bvalue in device_val:
-                    partial_match = path
             finally:
                 os.close(fd)
-
-        if partial_match:
-            return partial_match
 
         raise FileNotFoundError(f'No video device "{key}" = "{value}" found')
 

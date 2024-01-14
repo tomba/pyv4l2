@@ -12,12 +12,14 @@ fmt_pix_1 = (sensor_1_w, sensor_1_h, PIX_FMT)
 configurations = {}
 
 configurations["desky"] = {
+    'media': ('UVC Camera*', 'model'),
+
     "subdevs": [
     ],
 
     "devices": [
         {
-            "entity": "UVC Camera (046d:0825)",
+            "entity": "UVC Camera*",
             "fmt": fmt_pix_1,
             "dev": "/dev/video0",
         },
