@@ -14,7 +14,7 @@ import v4l2
 
 
 class Context(object):
-    USE_IPYTHON: bool
+    use_ipython: bool
     user_script: types.ModuleType | None
     subdevices: dict
     streams: list
@@ -48,9 +48,9 @@ def init_setup(ctx: Context):
     ctx.delay = args.delay
     ctx.save = args.save
 
-    ctx.USE_IPYTHON = args.ipython
+    ctx.use_ipython = args.ipython
 
-    if ctx.USE_IPYTHON:
+    if ctx.use_ipython:
         import IPython
         from traitlets.config import Config
 
@@ -330,7 +330,7 @@ def readvid(ctx: Context, stream):
     stream['total_num_frames'] += 1
 
     # With IPython we have separate fps tracking
-    if not ctx.USE_IPYTHON:
+    if not ctx.use_ipython:
         ts = time.perf_counter()
 
         diff = ts - stream['last_timestamp']
@@ -447,14 +447,14 @@ def readdrm(ctx: Context):
 
 def run(ctx: Context):
     sel = selectors.DefaultSelector()
-    if not ctx.USE_IPYTHON:
+    if not ctx.use_ipython:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
     if ctx.use_display:
         sel.register(card.fd, selectors.EVENT_READ, lambda: readdrm(ctx))
     for stream in ctx.streams:
         sel.register(stream['cap'].fd, selectors.EVENT_READ, lambda data=stream: readvid(ctx, data))
 
-    if not ctx.USE_IPYTHON:
+    if not ctx.use_ipython:
         while True:
             events = sel.select()
             for key, _ in events:
