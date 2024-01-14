@@ -14,6 +14,7 @@ import v4l2
 
 
 class Context(object):
+    config: dict
     use_ipython: bool
     user_script: types.ModuleType | None
     subdevices: dict
@@ -29,8 +30,14 @@ class Context(object):
     tx: list[str]
     run_ipython: types.LambdaType
 
+    kms_alloc_fbs: types.LambdaType
+    kms_init: types.LambdaType
+    kms_setup_stream: types.LambdaType
+    kms_init_modeset: types.LambdaType
+    kms_readdrm: types.LambdaType
 
-def init_setup(ctx: Context):
+
+def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
     parser.add_argument('config_name', help='Configuration name')
     parser.add_argument('-c', '--config-only', action='store_true', default=False, help='configure only')
@@ -87,33 +94,54 @@ def init_setup(ctx: Context):
         else:
             ctx.buf_type = 'v4l2'
 
-    config = read_config(args.config_name)
+    if ctx.use_display or ctx.buf_type == 'drm':
+        from cam_kms import alloc_fbs, init_kms
+        ctx.kms_alloc_fbs = alloc_fbs
+        ctx.kms_init = init_kms
 
-    if config['media']:
-        print('Configure media entities')
+    ctx.config = read_config(args.config_name)
 
-        md = v4l2.MediaDevice(*config['media'])
 
-        disable_all_links(md)
-
-        setup_links(md, config)
-
-        ctx.subdevices = configure_subdevs(md, config)
+def init_mdev(ctx: Context):
+    if ctx.config['media']:
+        ctx.md = v4l2.MediaDevice(*ctx.config['media'])
     else:
-        md = None
+        ctx.md = None
+
+
+def init_links(ctx: Context):
+    if not ctx.md:
+        return
+
+    disable_all_links(ctx.md)
+
+    setup_links(ctx.md, ctx.config)
+
+
+def init_subdevs(ctx: Context):
+    if not ctx.md:
         ctx.subdevices = None
+        return
 
-    ctx.md = md
-
-    ctx.streams = config['devices']
+    ctx.subdevices = configure_subdevs(ctx.md, ctx.config)
 
 
 def init_viddevs(ctx: Context):
+    ctx.streams = ctx.config['devices']
+
     streams = ctx.streams
 
+    for i, stream in enumerate(streams):
+        stream['id'] = i
+
     for stream in streams:
-        if 'num_bufs' not in stream:
-            stream['num_bufs'] = 5
+        stream['num_bufs'] = stream.get('num_bufs', 5)
+        stream['display'] = ctx.use_display and stream.get('display', True)
+        stream['embedded'] = stream.get('embedded', False)
+
+        stream['w'] = stream['fmt'][0]
+        stream['h'] = stream['fmt'][1]
+        stream['fourcc'] = stream['fmt'][2]
 
         if ctx.md:
             vid_ent = ctx.md.find_entity(stream['entity'])
@@ -132,94 +160,8 @@ def init_viddevs(ctx: Context):
         stream['dev'] = vd
 
 
-def init_kms(ctx: Context):
+def init_streamer(ctx: Context):
     streams = ctx.streams
-
-    if ctx.buf_type == 'drm' or ctx.use_display:
-        import kms
-        card = kms.Card()
-    else:
-        card = None
-
-    if ctx.use_display:
-        res = kms.ResourceManager(card)
-        conn = res.reserve_connector()
-        crtc = res.reserve_crtc(conn)
-        card.disable_planes()
-        mode = conn.get_default_mode()
-        modeb = kms.Blob(card, mode)
-
-    num_planes = sum(1 for stream in streams if ctx.use_display and stream.get('display', True))
-
-    display_idx = 0
-
-    for i, stream in enumerate(streams):
-        stream['display'] = ctx.use_display and stream.get('display', True)
-        stream['embedded'] = stream.get('embedded', False)
-
-        stream['id'] = i
-
-        stream['w'] = stream['fmt'][0]
-        stream['h'] = stream['fmt'][1]
-        stream['fourcc'] = stream['fmt'][2]
-
-        stream['kms-buf-w'] = stream['w']
-        stream['kms-buf-h'] = stream['h']
-
-        if stream.get('dra-plane-hack', False):
-            # Hack to reserve the unscaleable GFX plane
-            res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
-
-        if not 'kms-fourcc' in stream:
-            if stream['fourcc'] == v4l2.MetaFormat.GENERIC_8:
-                stream['kms-fourcc'] = kms.PixelFormat.RGB565
-            elif stream['fourcc'] == v4l2.MetaFormat.GENERIC_CSI2_12:
-                stream['kms-fourcc'] = kms.PixelFormat.RGB565
-            else:
-                #kms_fourcc = v4l2.pixelformat_to_drm_fourcc(stream['fourcc'])
-                #stream['kms-fourcc'] = kms.fourcc_to_pixelformat(kms_fourcc)
-                # XXX
-                stream['kms-fourcc'] = stream['fourcc']
-
-        if ctx.buf_type == 'drm' and stream.get('embedded', False):
-            divs = [16, 8, 4, 2, 1]
-            for div in divs:
-                w = stream['kms-buf-w'] // div
-                if w % 2 == 0:
-                    break
-
-            h = stream['kms-buf-h'] * div
-
-            stream['kms-buf-w'] = w
-            stream['kms-buf-h'] = h
-
-        if stream['display']:
-            max_w = mode.hdisplay // (1 if num_planes == 1 else 2)
-            max_h = mode.vdisplay // (1 if num_planes <= 2 else 2)
-
-            stream['kms-src-w'] = min(stream['kms-buf-w'], max_w)
-            stream['kms-src-h'] = min(stream['kms-buf-h'], max_h)
-            stream['kms-src-x'] = (stream['kms-buf-w'] - stream['kms-src-w']) // 2
-            stream['kms-src-y'] = (stream['kms-buf-h'] - stream['kms-src-h']) // 2
-
-            stream['kms-dst-w']  =stream['kms-src-w']
-            stream['kms-dst-h'] = stream['kms-src-h']
-
-            if display_idx % 2 == 0:
-                stream['kms-dst-x'] = 0
-            else:
-                stream['kms-dst-x'] = mode.hdisplay - stream['kms-dst-w']
-
-            if display_idx // 2 == 0:
-                stream['kms-dst-y'] = 0
-            else:
-                stream['kms-dst-y'] = mode.vdisplay - stream['kms-dst-h']
-
-            display_idx += 1
-
-            plane = res.reserve_generic_plane(crtc, stream['kms-fourcc'])
-            assert(plane)
-            stream['plane'] = plane
 
     for stream in streams:
         vd = stream['dev']
@@ -243,36 +185,10 @@ def setup(ctx: Context):
         cap = stream['cap']
 
         if ctx.buf_type == 'drm':
-            # Allocate FBs
-            fbs = []
-            for i in range(stream['num_bufs']):
-                fb = kms.DumbFramebuffer(card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-fourcc'])
-                fbs.append(fb)
-            stream['fbs'] = fbs
+            ctx.kms_alloc_fbs(ctx, stream)
 
         if stream['display']:
-            assert(ctx.buf_type == 'drm')
-
-            # Set fb0 to screen
-            fb = stream['fbs'][0]
-            plane = stream['plane']
-
-            plane.set_props({
-                'FB_ID': fb.id,
-                'CRTC_ID': crtc.id,
-                'SRC_X': stream['kms-src-x'] << 16,
-                'SRC_Y': stream['kms-src-y'] << 16,
-                'SRC_W': stream['kms-src-w'] << 16,
-                'SRC_H': stream['kms-src-h'] << 16,
-                'CRTC_X': stream['kms-dst-x'],
-                'CRTC_Y': stream['kms-dst-y'],
-                'CRTC_W': stream['kms-dst-w'],
-                'CRTC_H': stream['kms-dst-h'],
-            })
-
-            stream['kms_old_fb'] = None
-            stream['kms_fb'] = fb
-            stream['kms_fb_queue'] = deque()
+            ctx.kms_setup_stream(ctx, stream)
 
         if ctx.buf_type == 'drm':
             fds = [fb.fd(0) for fb in stream['fbs']]
@@ -290,21 +206,7 @@ def setup(ctx: Context):
             cap.queue(cap.buffers[i])
 
     if ctx.use_display:
-        # Do the initial modeset
-        req = kms.AtomicReq(card)
-        req.add(conn, 'CRTC_ID', crtc.id)
-        req.add(crtc, {'ACTIVE': 1,
-                'MODE_ID': modeb.id})
-
-        for stream in streams:
-            if 'plane' in stream:
-                req.add(stream['plane'], 'FB_ID', stream['kms_fb'].id)
-
-        req.commit_sync(allow_modeset = True)
-
-        if ctx.delay:
-            print(f'Waiting for {ctx.delay} seconds')
-            time.sleep(ctx.delay)
+        ctx.kms_init_modeset(ctx)
 
     for stream in streams:
         print(f'{stream["dev_path"]}: stream on')
@@ -391,68 +293,13 @@ def readkey(ctx):
     exit(0)
 
 
-def handle_pageflip(ctx: Context):
-    streams = ctx.streams
-
-    ctx.kms_committed = False
-
-    req = kms.AtomicReq(card)
-
-    do_commit = False
-
-    for stream in streams:
-        if not stream['display']:
-            continue
-
-        #print(f'Page flip {stream['dev_path']}: kms_fb_queue {len(stream['kms_fb_queue'])}, new_fb {stream['kms_fb']}, old_fb {stream['kms_old_fb']}')
-
-        cap = stream['cap']
-
-        if stream['kms_old_fb']:
-            assert(ctx.buf_type == 'drm')
-
-            fb = stream['kms_old_fb']
-
-            # XXX we should just track the vbufs in streams, instead of looking
-            # for the vbuf based on the drm fb
-            vbuf = next(vbuf for vbuf in cap.buffers if vbuf.fd == fb.fd(0))
-
-            cap.queue(vbuf)
-            stream['kms_old_fb'] = None
-
-        if len(stream['kms_fb_queue']) == 0:
-            continue
-
-        stream['kms_old_fb'] = stream['kms_fb']
-
-        fb = stream['kms_fb_queue'].popleft()
-        stream['kms_fb'] = fb
-
-        plane = stream['plane']
-
-        req.add(plane, 'FB_ID', fb.id)
-
-        do_commit = True
-
-    if do_commit:
-        req.commit(allow_modeset = False)
-        ctx.kms_committed = True
-
-
-def readdrm(ctx: Context):
-    #print('EVENT');
-    for ev in card.read_events():
-        if ev.type == kms.DrmEventType.FLIP_COMPLETE:
-            handle_pageflip(ctx)
-
-
 def run(ctx: Context):
     sel = selectors.DefaultSelector()
 
     if not ctx.use_ipython:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
     if ctx.use_display:
-        sel.register(card.fd, selectors.EVENT_READ, lambda: readdrm(ctx))
+        sel.register(card.fd, selectors.EVENT_READ, lambda: ctx.kms_readdrm(ctx))
     for stream in ctx.streams:
         sel.register(stream['cap'].fd, selectors.EVENT_READ, lambda data=stream: readvid(ctx, data))
 
@@ -470,9 +317,15 @@ def run(ctx: Context):
 if __name__ == "__main__":
     ctx = Context()
 
-    init_setup(ctx)
+    parse_args(ctx)
+    init_mdev(ctx)
+    init_links(ctx)
+    init_subdevs(ctx)
     init_viddevs(ctx)
-    init_kms(ctx)
+    init_streamer(ctx)
+
+    if ctx.use_display or ctx.buf_type == 'drm':
+        ctx.kms_init(ctx)
 
     if ctx.print_config:
         for stream in ctx.streams:
