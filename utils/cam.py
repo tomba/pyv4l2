@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from collections import deque
 import argparse
 import pprint
 import selectors
@@ -10,7 +9,6 @@ import types
 
 from cam_helpers import *
 from cam_pisp import *
-from utils.cam_kms import register_selector
 import v4l2
 
 
@@ -30,13 +28,6 @@ class Context(object):
     save: bool
     tx: list[str]
     run_ipython: types.LambdaType
-
-    kms_alloc_fbs: types.LambdaType
-    kms_init: types.LambdaType
-    kms_setup_stream: types.LambdaType
-    kms_init_modeset: types.LambdaType
-    kms_register_selector: types.LambdaType
-    kms_handle_pageflip: types.LambdaType
 
     kms_ctx: object
 
@@ -97,15 +88,6 @@ def parse_args(ctx: Context):
             ctx.buf_type = 'drm'
         else:
             ctx.buf_type = 'v4l2'
-
-    if ctx.use_display or ctx.buf_type == 'drm':
-        from cam_kms import alloc_fbs, init_kms, setup_stream, init_modeset, readdrm, register_selector, handle_pageflip
-        ctx.kms_alloc_fbs = alloc_fbs
-        ctx.kms_init = init_kms
-        ctx.kms_setup_stream = setup_stream
-        ctx.kms_init_modeset = init_modeset
-        ctx.kms_register_selector = register_selector
-        ctx.kms_handle_pageflip = handle_pageflip
 
     ctx.config = read_config(args.config_name)
 
@@ -193,10 +175,10 @@ def setup(ctx: Context):
         cap = stream['cap']
 
         if ctx.buf_type == 'drm':
-            ctx.kms_alloc_fbs(ctx, stream)
+            ctx.kms_ctx.alloc_fbs(stream)
 
         if stream['display']:
-            ctx.kms_setup_stream(ctx, stream)
+            ctx.kms_ctx.setup_stream(stream)
 
         if ctx.buf_type == 'drm':
             fds = [fb.fd(0) for fb in stream['fbs']]
@@ -214,7 +196,7 @@ def setup(ctx: Context):
             cap.queue(cap.buffers[i])
 
     if ctx.use_display:
-        ctx.kms_init_modeset(ctx)
+        ctx.kms_ctx.init_modeset()
 
     for stream in streams:
         print(f'{stream["dev_path"]}: stream on')
@@ -278,7 +260,7 @@ def readvid(ctx: Context, stream):
 
         # XXX with a small delay we might get more planes to the commit
         if ctx.kms_committed == False:
-            ctx.kms_handle_pageflip(ctx)
+            ctx.kms_ctx.handle_pageflip()
     else:
         if ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx):
             ctx.net_tx.tx(stream, vbuf, ctx.buf_type == 'drm')
@@ -304,7 +286,7 @@ def run(ctx: Context):
     if not ctx.use_ipython:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
     if ctx.use_display:
-        ctx.kms_register_selector(ctx, sel)
+        ctx.kms_ctx.register_selector(sel)
     for stream in ctx.streams:
         sel.register(stream['cap'].fd, selectors.EVENT_READ, lambda data=stream: readvid(ctx, data))
 
@@ -330,7 +312,8 @@ if __name__ == "__main__":
     init_streamer(ctx)
 
     if ctx.use_display or ctx.buf_type == 'drm':
-        ctx.kms_init(ctx)
+        from cam_kms import KmsContext
+        ctx.kms_ctx = KmsContext(ctx)
 
     if ctx.print_config:
         for stream in ctx.streams:
