@@ -119,6 +119,8 @@ configurations["cam0-meta"] = {
 }
 
 configurations["cam0-fe0"] = {
+    'media': ('rp1-cfe', 'model'),
+
     "subdevs": [
         # Camera
         {

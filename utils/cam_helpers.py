@@ -123,7 +123,9 @@ def merge_configs(configs):
     d = { 'media': None, 'subdevs': [], 'devices': [], 'links': [] }
 
     for config in configs:
-        d['media'] = config.get('media', None)
+        # XXX maybe restructure configs to have media as a "parent" config
+        if not d['media']:
+            d['media'] = config.get('media', None)
 
         # links can be appended directly
         # xxx there may be (harmless) duplicates
