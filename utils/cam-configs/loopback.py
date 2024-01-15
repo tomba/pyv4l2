@@ -15,7 +15,7 @@ configurations = {}
 configurations['cam0'] = {
     'devices': [
         {
-            'entity': ('bus_info', 'platform:v4l2loopback-000'),
+            'device': ('bus_info', 'platform:v4l2loopback-000'),
             'num_bufs': 2,
             #'fmt': fmt_pix_imx219,
         },

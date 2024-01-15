@@ -36,6 +36,8 @@ configurations = {}
 sensor_ent = "imx219 6-0010"
 
 configurations["cam0"] = {
+    'media': ('rp1-cfe', 'model'),
+
     "subdevs": [
         # Camera
         {

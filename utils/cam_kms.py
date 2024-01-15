@@ -1,12 +1,24 @@
 import kms
+from collections import deque
+import selectors
+import time
+
+class KmsContext(object):
+    card: kms.Card
+    crtc: kms.Crtc
+    conn: kms.Connector
+    modeb: kms.Blob
+
 
 def init_kms(ctx):
+    kms_ctx = KmsContext()
+    ctx.kms_ctx = kms_ctx
+
     streams = ctx.streams
 
-    if ctx.buf_type == 'drm' or ctx.use_display:
-        card = kms.Card()
-    else:
-        card = None
+    card = kms.Card()
+
+    kms_ctx.card = card
 
     if ctx.use_display:
         res = kms.ResourceManager(card)
@@ -15,6 +27,10 @@ def init_kms(ctx):
         card.disable_planes()
         mode = conn.get_default_mode()
         modeb = kms.Blob(card, mode)
+
+        kms_ctx.crtc = crtc
+        kms_ctx.conn = conn
+        kms_ctx.modeb = modeb
 
     num_planes = sum(1 for stream in streams if ctx.use_display and stream.get('display', True))
 
@@ -81,13 +97,17 @@ def init_kms(ctx):
 
 
 def alloc_fbs(ctx, stream):
+    kms_ctx = ctx.kms_ctx
+
     fbs = []
     for i in range(stream['num_bufs']):
-        fb = kms.DumbFramebuffer(card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-fourcc'])
+        fb = kms.DumbFramebuffer(kms_ctx.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-fourcc'])
         fbs.append(fb)
     stream['fbs'] = fbs
 
 def setup_stream(ctx, stream):
+    kms_ctx = ctx.kms_ctx
+
     assert(ctx.buf_type == 'drm')
 
     # Set fb0 to screen
@@ -96,7 +116,7 @@ def setup_stream(ctx, stream):
 
     plane.set_props({
         'FB_ID': fb.id,
-        'CRTC_ID': crtc.id,
+        'CRTC_ID': kms_ctx.crtc.id,
         'SRC_X': stream['kms-src-x'] << 16,
         'SRC_Y': stream['kms-src-y'] << 16,
         'SRC_W': stream['kms-src-w'] << 16,
@@ -113,11 +133,14 @@ def setup_stream(ctx, stream):
 
 
 def init_modeset(ctx):
+    kms_ctx = ctx.kms_ctx
+    streams = ctx.streams
+
     # Do the initial modeset
-    req = kms.AtomicReq(card)
-    req.add(conn, 'CRTC_ID', crtc.id)
-    req.add(crtc, {'ACTIVE': 1,
-            'MODE_ID': modeb.id})
+    req = kms.AtomicReq(kms_ctx.card)
+    req.add(kms_ctx.conn, 'CRTC_ID', kms_ctx.crtc.id)
+    req.add(kms_ctx.crtc, {'ACTIVE': 1,
+            'MODE_ID': kms_ctx.modeb.id})
 
     for stream in streams:
         if 'plane' in stream:
@@ -131,11 +154,13 @@ def init_modeset(ctx):
 
 
 def handle_pageflip(ctx):
+    kms_ctx = ctx.kms_ctx
+
     streams = ctx.streams
 
     ctx.kms_committed = False
 
-    req = kms.AtomicReq(card)
+    req = kms.AtomicReq(kms_ctx.card)
 
     do_commit = False
 
@@ -178,7 +203,14 @@ def handle_pageflip(ctx):
         ctx.kms_committed = True
 
 def readdrm(ctx):
+    kms_ctx = ctx.kms_ctx
+
     #print('EVENT');
-    for ev in card.read_events():
+    for ev in kms_ctx.card.read_events():
         if ev.type == kms.DrmEventType.FLIP_COMPLETE:
             handle_pageflip(ctx)
+
+def register_selector(ctx, sel):
+    kms_ctx = ctx.kms_ctx
+
+    sel.register(kms_ctx.card.fd, selectors.EVENT_READ, lambda: readdrm(ctx))

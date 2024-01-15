@@ -10,6 +10,7 @@ import types
 
 from cam_helpers import *
 from cam_pisp import *
+from utils.cam_kms import register_selector
 import v4l2
 
 
@@ -34,7 +35,10 @@ class Context(object):
     kms_init: types.LambdaType
     kms_setup_stream: types.LambdaType
     kms_init_modeset: types.LambdaType
-    kms_readdrm: types.LambdaType
+    kms_register_selector: types.LambdaType
+    kms_handle_pageflip: types.LambdaType
+
+    kms_ctx: object
 
 
 def parse_args(ctx: Context):
@@ -95,9 +99,13 @@ def parse_args(ctx: Context):
             ctx.buf_type = 'v4l2'
 
     if ctx.use_display or ctx.buf_type == 'drm':
-        from cam_kms import alloc_fbs, init_kms
+        from cam_kms import alloc_fbs, init_kms, setup_stream, init_modeset, readdrm, register_selector, handle_pageflip
         ctx.kms_alloc_fbs = alloc_fbs
         ctx.kms_init = init_kms
+        ctx.kms_setup_stream = setup_stream
+        ctx.kms_init_modeset = init_modeset
+        ctx.kms_register_selector = register_selector
+        ctx.kms_handle_pageflip = handle_pageflip
 
     ctx.config = read_config(args.config_name)
 
@@ -152,7 +160,7 @@ def init_viddevs(ctx: Context):
 
             vd = v4l2.VideoDevice(vid_ent.interface.dev_path)
         else:
-            dev_path = v4l2.VideoDevice.find_video_device(*stream['entity'])
+            dev_path = v4l2.VideoDevice.find_video_device(*stream['device'])
             stream['dev_path'] = dev_path
 
             vd = v4l2.VideoDevice(dev_path)
@@ -270,7 +278,7 @@ def readvid(ctx: Context, stream):
 
         # XXX with a small delay we might get more planes to the commit
         if ctx.kms_committed == False:
-            handle_pageflip(ctx)
+            ctx.kms_handle_pageflip(ctx)
     else:
         if ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx):
             ctx.net_tx.tx(stream, vbuf, ctx.buf_type == 'drm')
@@ -296,7 +304,7 @@ def run(ctx: Context):
     if not ctx.use_ipython:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
     if ctx.use_display:
-        sel.register(card.fd, selectors.EVENT_READ, lambda: ctx.kms_readdrm(ctx))
+        ctx.kms_register_selector(ctx, sel)
     for stream in ctx.streams:
         sel.register(stream['cap'].fd, selectors.EVENT_READ, lambda data=stream: readvid(ctx, data))
 
