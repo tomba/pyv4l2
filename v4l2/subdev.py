@@ -90,6 +90,7 @@ class SubDevice:
 
         routes = (v4l2.uapi.v4l2_subdev_route * routing.num_routes)()
         routing.routes = ctypes.addressof(routes)
+        routing.len_routes = routing.num_routes
 
         try:
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_ROUTING, routing, True)
