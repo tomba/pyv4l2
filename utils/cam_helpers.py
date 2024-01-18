@@ -111,7 +111,8 @@ class NetTX:
             with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
                 self.sock.sendall(b)
         else:
-            with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
+            # Need PROT_WRITE to be able to read fe-config buffers
+            with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE,
                            offset=vbuf.offset) as b:
                 self.sock.sendall(b)
 

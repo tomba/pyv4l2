@@ -236,6 +236,8 @@ configurations["cam0-fe-config"] = {
 
 
 configurations["cam0-legacy"] = {
+    'media': ('rp1-cfe', 'model'),
+
     "subdevs": [
         # Camera
         {

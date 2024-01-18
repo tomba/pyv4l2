@@ -44,6 +44,8 @@ class KmsContext:
                     stream['kms-fourcc'] = kms.PixelFormat.RGB565
                 elif stream['fourcc'] == v4l2.MetaFormat.GENERIC_CSI2_12:
                     stream['kms-fourcc'] = kms.PixelFormat.RGB565
+                elif stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
+                    stream['kms-fourcc'] = kms.PixelFormat.RGB565
                 else:
                     #kms_fourcc = v4l2.pixelformat_to_drm_fourcc(stream['fourcc'])
                     #stream['kms-fourcc'] = kms.fourcc_to_pixelformat(kms_fourcc)

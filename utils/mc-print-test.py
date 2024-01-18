@@ -13,7 +13,7 @@ for e in md.entities:
         print("\t\tdevice node name", e.interface.dev_path)
 
         if e.interface.is_video:
-            vdev = v4l2.VideoDevice(e)
+            vdev = v4l2.VideoDevice(e.interface.dev_path)
 
             try:
                 f = vdev.get_format()
@@ -22,7 +22,7 @@ for e in md.entities:
             else:
                 print(f'\t\tfmt: {f.fmt.pix.width}x{f.fmt.pix.height}')
         elif e.interface.is_subdev:
-            subdev = v4l2.SubDevice(e)
+            subdev = v4l2.SubDevice(e.interface.dev_path)
 
             try:
                 f = subdev.get_format(0, stream=0)

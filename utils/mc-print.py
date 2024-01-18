@@ -48,11 +48,11 @@ while len(print_queue) > 0:
 
     subdev = None
     if ent.interface and ent.interface.is_subdev:
-        subdev = v4l2.SubDevice(ent)
+        subdev = v4l2.SubDevice(ent.interface.dev_path)
 
     videodev = None
     if ent.interface and ent.interface.is_video:
-        videodev = v4l2.VideoDevice(ent)
+        videodev = v4l2.VideoDevice(ent.interface.dev_path)
 
     routes = []
     if subdev:

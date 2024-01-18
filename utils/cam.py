@@ -13,6 +13,7 @@ import v4l2
 
 
 class Context(object):
+    verbose: bool
     config: dict
     use_ipython: bool
     user_script: types.ModuleType | None
@@ -44,8 +45,10 @@ def parse_args(ctx: Context):
     parser.add_argument('-i', '--ipython', action='store_true', default=False, help='IPython mode')
     parser.add_argument('-S', '--script', help='User script')
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
+    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
     args = parser.parse_args()
 
+    ctx.verbose = args.verbose
     ctx.print_config = args.print
     ctx.config_only = args.config_only
     ctx.delay = args.delay
@@ -191,7 +194,9 @@ def setup(ctx: Context):
         # Queue the rest to the camera
         for i in range(first_buf, stream['num_bufs']):
             if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
-                pisp_create_config(cap, cap.buffers[i])
+                # XXX We need to pass details about the video stream. Which one is it?
+                # Let's decide it's stream 0
+                pisp_create_config(streams[0], cap, cap.buffers[i])
 
             cap.queue(cap.buffers[i])
 
@@ -215,8 +220,22 @@ def setup(ctx: Context):
         ctx.updater = None
 
 
+def queue_buf(ctx: Context, stream, vbuf: v4l2.VideoBuffer):
+    cap = stream['cap']
+
+    if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
+        pisp_create_config(stream, cap, vbuf)
+        # XXX We need to pass details about the video stream. Which one is it?
+        # Let's decide it's stream 0
+        pisp_create_config(ctx.streams[0], cap, vbuf)
+
+    cap.queue(vbuf)
+
 
 def readvid(ctx: Context, stream):
+    if ctx.verbose:
+        print('{}: event'.format(stream['dev_path']))
+
     if ctx.updater:
         ctx.updater.update()
 
@@ -265,7 +284,7 @@ def readvid(ctx: Context, stream):
         if ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx):
             ctx.net_tx.tx(stream, vbuf, ctx.buf_type == 'drm')
 
-        cap.queue(vbuf)
+        queue_buf(ctx, stream, vbuf)
 
 
 def readkey(ctx):
@@ -288,7 +307,9 @@ def run(ctx: Context):
     if ctx.use_display:
         ctx.kms_ctx.register_selector(sel)
     for stream in ctx.streams:
-        sel.register(stream['cap'].fd, selectors.EVENT_READ, lambda data=stream: readvid(ctx, data))
+        sel.register(stream['cap'].fd,
+                     selectors.EVENT_READ | selectors.EVENT_WRITE,
+                     lambda data=stream: readvid(ctx, data))
 
     if not ctx.use_ipython:
         while True:
