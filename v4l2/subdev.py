@@ -130,11 +130,7 @@ class SubDevice:
         sel.target = target
         sel.flags = 0
 
-        try:
-            fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_SELECTION, sel, True)
-        except OSError as e:
-            if e.errno == errno.ENOTTY:
-                return v4l2.uapi.v4l2_rect()
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_SELECTION, sel, True)
 
         return sel.r
 

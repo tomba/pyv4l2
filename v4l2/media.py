@@ -123,6 +123,10 @@ class MediaPad(MediaObject):
     def is_internal(self):
         return (self.media_pad.flags & v4l2.uapi.MEDIA_PAD_FL_INTERNAL) != 0
 
+    @property
+    def flags(self) -> MediaPadFlag:
+        return MediaPadFlag(self.media_pad.flags)
+
 
 class MediaLink(MediaObject):
     def __init__(self, md, media_link: v4l2.uapi.media_v2_link) -> None:
@@ -268,3 +272,9 @@ class MediaLinkFlag(IntFlag):
     ENABLED = v4l2.uapi.MEDIA_LNK_FL_ENABLED
     IMMUTABLE = v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE
     DYNAMIC = v4l2.uapi.MEDIA_LNK_FL_DYNAMIC
+
+class MediaPadFlag(IntFlag):
+    SINK = v4l2.uapi.MEDIA_PAD_FL_SINK
+    SOURCE = v4l2.uapi.MEDIA_PAD_FL_SOURCE
+    MUST_CONNECT = v4l2.uapi.MEDIA_PAD_FL_MUST_CONNECT
+    INTERNAL = v4l2.uapi.MEDIA_PAD_FL_INTERNAL
