@@ -477,7 +477,21 @@ class MetaOutputStreamer(CaptureStreamer):
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYBUF, v4l2buf, True)
 
             vbuf.offset = v4l2buf.m.offset
+            vbuf.buffer_size = v4l2buf.length
 
+    def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
+        self.set_queue_size(len(dmabuf_fds))
+
+        self.buffers = []
+
+        for i,fd in enumerate(dmabuf_fds):
+            buf = VideoBuffer(v4l2.MemType.DMABUF)
+            buf.index = i
+            buf.fd = fd
+            buf.fourcc = self.fourcc
+            buf.payload_size = self.size
+            buf.buffer_size = self.size
+            self.buffers.append(buf)
 
     def queue(self, vbuf: VideoBuffer):
         assert(vbuf in self.buffers)
