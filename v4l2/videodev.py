@@ -501,6 +501,7 @@ class MetaOutputStreamer(CaptureStreamer):
         v4l2buf.type = self.buf_type.value
         v4l2buf.memory = vbuf.mem_type.value
         v4l2buf.index = vbuf.index
+        v4l2buf.bytesused = self.size
         if vbuf.mem_type == v4l2.MemType.DMABUF:
             v4l2buf.m.fd = vbuf.fd
 
