@@ -29,47 +29,51 @@ def print_routes(subdev):
         for r in routes:
             print('    {}/{} -> {}/{}'.format(r.sink_pad, r.sink_stream, r.source_pad, r.source_stream))
 
+def print_videodev_pad(videodev):
+    try:
+        fmt = videodev.get_format()
 
-def print_streams(subdev, videodev, pad, streams):
-    for s in streams:
-        fmt = None
-        err = ''
-
-        if subdev:
-            try:
-                fmt = subdev.get_format(pad.index, s)
-                f = fmt.format
-                try:
-                    bfmt = v4l2.BusFormat(f.code).name
-                except ValueError:
-                    bfmt = f'0x{f.code:x}'
-
-                fmt = f'{f.width}✕{f.height}/{bfmt} field:{f.field} colorspace:{f.colorspace} quantization:{f.quantization} xfer:{f.xfer_func} flags:{f.flags}'
-            except Exception as e:
-                fmt = None
-                err = e
-        elif videodev:
-            try:
-                fmt = videodev.get_format()
-
-                if fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-                    f = fmt.fmt.pix_mp
-                    fmt = f'{f.width}x{f.height}-{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
-                elif fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE:
-                    f = fmt.fmt.pix
-                    fmt = f'{f.width}x{f.height}-{v4l2.fourcc_to_str(f.pixelformat)}'
-            except Exception as e:
-                fmt = None
-                err = repr(e)
-
-        if err:
-            print('    Stream{} <{}>'.format(s, err))
+        if fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+            f = fmt.fmt.pix_mp
+            fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
+        elif fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE:
+            f = fmt.fmt.pix
+            fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)}'
+        elif fmt.type == v4l2.BufType.META_CAPTURE.value or fmt.type == v4l2.BufType.META_OUTPUT.value:
+            f = fmt.fmt.meta
+            fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
         else:
-            print('    Stream{} {}'.format(s, fmt))
+            print("XXXXX", fmt.type)
 
-        if subdev:
-            print_selection(subdev, pad)
+        print(f'    {fmt}')
+    except OSError as e:
+        if e.errno != errno.ENOTTY:
+            print(f'    <{e}>')
 
+def print_streams(subdev, pad, streams):
+    for s in streams:
+        try:
+            fmt = subdev.get_format(pad.index, s)
+            f = fmt.format
+
+            try:
+                bfmt = v4l2.BusFormat(f.code).name
+            except ValueError:
+                bfmt = f'0x{f.code:x}'
+
+            print(f'    Stream{s} {f.width}✕{f.height}/{bfmt} field:{f.field} colorspace:{f.colorspace} quantization:{f.quantization} xfer:{f.xfer_func} flags:{f.flags}')
+        except OSError as e:
+            if e.errno != errno.ENOTTY:
+                print(f'    Stream{s} <{e}>')
+
+        try:
+            ival = subdev.get_frame_interval(pad.index, s)
+            print(f'            Interval {ival[0]}/{ival[1]} = {ival[1] / ival[0]} fps')
+        except OSError as e:
+            if e.errno != errno.ENOTTY:
+                print(f'            Interval {e}')
+
+        print_selection(subdev, pad)
 
 def print_pads(ent, subdev, videodev):
     if subdev:
@@ -98,7 +102,11 @@ def print_pads(ent, subdev, videodev):
 
         streams = sorted(streams)
 
-        print_streams(subdev, videodev, pad, streams)
+        if videodev:
+            print_videodev_pad(videodev)
+
+        if subdev:
+            print_streams(subdev, pad, streams)
 
 
 def main():
