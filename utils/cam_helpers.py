@@ -63,6 +63,8 @@ def embedded_fourcc_to_bytes_per_pixel(fmt):
         return 8
     elif fmt == v4l2.MetaFormat.RPI_FE_CFG:
         return 8
+    elif fmt == v4l2.MetaFormat.RPI_FE_STATS:
+        return 8
     else:
         raise NotImplementedError(f'Unsupported fmt {fmt.name}')
 

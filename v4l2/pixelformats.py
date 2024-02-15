@@ -251,6 +251,7 @@ class MetaFormat(IntEnum):
     # XXX deprecated rpi format
     SENSOR_DATA = v4l2.uapi.v4l2_fourcc('S', 'E', 'N', 'S')
     RPI_FE_CFG = v4l2.uapi.v4l2_fourcc('R', 'P', 'F', 'C')
+    RPI_FE_STATS = v4l2.uapi.v4l2_fourcc('R', 'P', 'F', 'S')
 
 class PixelFormatPlaneInfo(NamedTuple):
     bitspp: int
@@ -389,6 +390,10 @@ formats = (
                         ( ( 8, 1, 1 ), ),
                     ),
     ( MetaFormat.RPI_FE_CFG,
+                        PixelColorType.UNDEFINED,
+                        ( ( 8, 1, 1 ), ),
+                    ),
+    ( MetaFormat.RPI_FE_STATS,
                         PixelColorType.UNDEFINED,
                         ( ( 8, 1, 1 ), ),
                     ),

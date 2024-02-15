@@ -91,15 +91,16 @@ class VideoDevice:
         raise FileNotFoundError(f'No video device "{key}" = "{value}" found')
 
     def get_format(self):
-        if not self.has_capture:
-            raise NotImplementedError()
-
         fmt = v4l2.uapi.v4l2_format()
 
         if self.has_mplane_capture:
             fmt.type = v4l2.BufType.VIDEO_CAPTURE_MPLANE.value
         elif self.has_capture:
             fmt.type = v4l2.BufType.VIDEO_CAPTURE.value
+        elif self.has_meta_capture:
+            fmt.type = v4l2.BufType.META_CAPTURE.value
+        elif self.has_meta_output:
+            fmt.type = v4l2.BufType.META_OUTPUT.value
         else:
             raise NotImplementedError()
 

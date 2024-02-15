@@ -145,7 +145,7 @@ class Receiver(QtWidgets.QWidget):
 
         label = self.labels[idx]
 
-        if fmt in [ "GENERIC_8", "GENERIC_CSI2_10", "GENERIC_CSI2_12", "SENSOR_DATA", "RPI_FE_CFG" ]:
+        if fmt in [ "GENERIC_8", "GENERIC_CSI2_10", "GENERIC_CSI2_12", "SENSOR_DATA", "RPI_FE_CFG", "RPI_FE_STATS" ]:
             meta_to_pix(fmt, w, h, bytesperline, self.data_buffer)
         else:
             pix = data_to_pix(fmt, w, h, bytesperline, self.data_buffer)
