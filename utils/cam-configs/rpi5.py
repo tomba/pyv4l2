@@ -27,6 +27,7 @@ meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
 meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)
 
 meta_fmt_fe_config = (ctypes.sizeof(pisp.pisp_fe_config), 1, v4l2.MetaFormat.RPI_FE_CFG)
+meta_fmt_fe_stats = (ctypes.sizeof(pisp.pisp_statistics), 1, v4l2.MetaFormat.RPI_FE_STATS)
 
 meta_mbus_fmt_imx219_legacy = (16384, 1, v4l2.BusFormat.SENSOR_DATA)
 meta_fmt_pix_imx219_legacy = (16384, 1, v4l2.MetaFormat.SENSOR_DATA)
@@ -64,7 +65,7 @@ configurations["cam0"] = {
 
     "devices": [
         {
-            "entity": "rp1-cfe-csi2_ch0",
+            "entity": "rp1-cfe-csi2-ch0",
             "fmt": fmt_pix_imx219,
             "embedded": False,
             "kms-fourcc": kms.PixelFormat.RGB565,
@@ -73,7 +74,7 @@ configurations["cam0"] = {
 
     "links": [
         { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
-        { "src": ("csi2", 1), "dst": ("rp1-cfe-csi2_ch0", 0) },
+        { "src": ("csi2", 1), "dst": ("rp1-cfe-csi2-ch0", 0) },
     ],
 }
 
@@ -104,7 +105,7 @@ configurations["cam0-meta"] = {
 
     "devices": [
         {
-            "entity": "rp1-cfe-csi2_ch1",
+            "entity": "rp1-cfe-csi2-ch1",
             "fmt": meta_fmt_pix_imx219,
             "embedded": True,
             "display": True,
@@ -114,7 +115,7 @@ configurations["cam0-meta"] = {
 
     "links": [
         { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
-        { "src": ("csi2", 2), "dst": ("rp1-cfe-csi2_ch1", 0) },
+        { "src": ("csi2", 2), "dst": ("rp1-cfe-csi2-ch1", 0) },
     ],
 }
 
@@ -155,7 +156,7 @@ configurations["cam0-fe0"] = {
 
     "devices": [
         {
-            "entity": "rp1-cfe-fe_image0",
+            "entity": "rp1-cfe-fe-image0",
             "fmt": fmt_pix_imx219_fe,
             "embedded": False,
             "kms-fourcc": kms.PixelFormat.RGB565,
@@ -165,7 +166,7 @@ configurations["cam0-fe0"] = {
     "links": [
         { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
         { "src": ("csi2", 1), "dst": ("pisp-fe", 0) },
-        { "src": ("pisp-fe", 2), "dst": ("rp1-cfe-fe_image0", 0) },
+        { "src": ("pisp-fe", 2), "dst": ("rp1-cfe-fe-image0", 0) },
     ],
 }
 
@@ -205,7 +206,7 @@ configurations["cam0-fe1"] = {
 
     "devices": [
         {
-            "entity": "rp1-cfe-fe_image1",
+            "entity": "rp1-cfe-fe-image1",
             "fmt": fmt_pix_imx219_fe,
             "embedded": False,
             "kms-fourcc": kms.PixelFormat.RGB565,
@@ -215,14 +216,14 @@ configurations["cam0-fe1"] = {
     "links": [
         { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
         { "src": ("csi2", 1), "dst": ("pisp-fe", 0) },
-        { "src": ("pisp-fe", 3), "dst": ("rp1-cfe-fe_image1", 0) },
+        { "src": ("pisp-fe", 3), "dst": ("rp1-cfe-fe-image1", 0) },
     ],
 }
 
 configurations["cam0-fe-config"] = {
     "devices": [
         {
-            "entity": "rp1-cfe-fe_config",
+            "entity": "rp1-cfe-fe-config",
             "fmt": meta_fmt_fe_config,
             "embedded": True,
             "display": False,
@@ -230,10 +231,24 @@ configurations["cam0-fe-config"] = {
     ],
 
     "links": [
-        { "src": ("rp1-cfe-fe_config", 0), "dst": ("pisp-fe", 1) },
+        { "src": ("rp1-cfe-fe-config", 0), "dst": ("pisp-fe", 1) },
     ],
 }
 
+configurations["cam0-fe-stats"] = {
+    "devices": [
+        {
+            "entity": "rp1-cfe-fe-stats",
+            "fmt": meta_fmt_fe_stats,
+            "embedded": True,
+            "display": False,
+        },
+    ],
+
+    "links": [
+        { "src": ("pisp-fe", 4), "dst": ("rp1-cfe-fe-stats", 0) },
+    ],
+}
 
 configurations["cam0-legacy"] = {
     'media': ('rp1-cfe', 'model'),
@@ -258,7 +273,7 @@ configurations["cam0-legacy"] = {
 
     "devices": [
         {
-            "entity": "rp1-cfe-csi2_ch0",
+            "entity": "rp1-cfe-csi2-ch0",
             "fmt": fmt_pix_imx219,
             "embedded": False,
             "kms-fourcc": kms.PixelFormat.RGB565,
@@ -267,7 +282,7 @@ configurations["cam0-legacy"] = {
 
     "links": [
         { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
-        { "src": ("csi2", 4), "dst": ("rp1-cfe-csi2_ch0", 0) },
+        { "src": ("csi2", 4), "dst": ("rp1-cfe-csi2-ch0", 0) },
     ],
 }
 
@@ -334,7 +349,7 @@ configurations["cam0-fe0-legacy"] = {
 
     "devices": [
         {
-            "entity": "rp1-cfe-fe_image0",
+            "entity": "rp1-cfe-fe-image0",
             "fmt": fmt_pix_imx219_fe,
             "embedded": False,
             "kms-fourcc": kms.PixelFormat.RGB565,
@@ -344,7 +359,7 @@ configurations["cam0-fe0-legacy"] = {
     "links": [
         { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
         { "src": ("csi2", 4), "dst": ("pisp-fe", 0) },
-        { "src": ("pisp-fe", 2), "dst": ("rp1-cfe-fe_image0", 0) },
+        { "src": ("pisp-fe", 2), "dst": ("rp1-cfe-fe-image0", 0) },
     ],
 }
 
