@@ -97,3 +97,5 @@ class BusFormat(IntEnum):
 
     # XXX deprecated rpi format
     SENSOR_DATA = 0x77002
+
+    RBG888_1X24 = v4l2.uapi.MEDIA_BUS_FMT_RBG888_1X24

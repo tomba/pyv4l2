@@ -254,7 +254,7 @@ def to_rgb(fmt, w, h, bytesperline, data):
 
     if fmt == 'RGB24': #fmt == 'RGB888':
         rgb = data.reshape((h, w, 3))
-        rgb[:, :, [0, 1, 2]] = rgb[:, :, [2, 1, 0]]
+        rgb[:, :, [0, 1, 2]] = rgb[:, :, [0, 1, 2]]
     elif fmt == 'BGR888':
         rgb = data.reshape((h, w, 3))
     elif fmt in ['ARGB8888', 'XRGB8888']:

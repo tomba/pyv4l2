@@ -252,7 +252,7 @@ def readvid(ctx: Context, stream):
             print('{}: first frame in {:.2f} s'
                   .format(stream['dev_path'], diff))
 
-        if diff >= 5:
+        if diff >= 1:
             print('{}: {} frames in {:.2f} s, {:.2f} fps'
                   .format(stream['dev_path'], num_frames, diff, num_frames / diff))
 

@@ -168,11 +168,8 @@ class MediaLink(MediaObject):
 class MediaDevice:
     def __init__(self, name: str, key: str = 'path') -> None:
         if key != 'path':
-            try:
-                name = MediaDevice.__find_media_device_by_value(key, name)
-                key = 'path'
-            except FileNotFoundError:
-                pass
+            name = MediaDevice.__find_media_device_by_value(key, name)
+            key = 'path'
 
         self.fd = os.open(name, os.O_RDWR | os.O_NONBLOCK)
         self.__read_topology()
