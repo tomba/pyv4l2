@@ -243,6 +243,9 @@ class PixelFormat(IntEnum):
     HM12 = v4l2.uapi.V4L2_PIX_FMT_HM12
     SUNXI_TILED_NV12 = v4l2.uapi.V4L2_PIX_FMT_SUNXI_TILED_NV12
 
+    # XXX Manually added
+    VUY24 = v4l2.uapi.v4l2_fourcc('V', 'U', '2', '4')
+
 # XXX Manually added
 class MetaFormat(IntEnum):
     GENERIC_8 = v4l2.uapi.v4l2_fourcc('M', 'E', 'T', '8')
@@ -280,6 +283,11 @@ class PixelColorType(Enum):
     UNDEFINED = 3
 
 formats = (
+    # YUV 444
+    ( PixelFormat.VUY24,
+                     PixelColorType.YUV,
+                     ( ( 24, 1, 1 ), ),
+                 ),
     # YUV packed
     ( PixelFormat.UYVY,
                      PixelColorType.YUV,

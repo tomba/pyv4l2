@@ -99,3 +99,5 @@ class BusFormat(IntEnum):
     SENSOR_DATA = 0x77002
 
     RBG888_1X24 = v4l2.uapi.MEDIA_BUS_FMT_RBG888_1X24
+
+    VUY8_1X24 = 0x2024
