@@ -25,4 +25,4 @@ ${CTYPESGEN} ${CTYPESGEN_OPTS} -I${INCLUDE_PATH} -o ${OUT} ${INCLUDES}
 sed --in-place s#"return ((((dir << _IOC_DIRSHIFT) | (type << _IOC_TYPESHIFT)) | (nr << _IOC_NRSHIFT)) | (size << _IOC_SIZESHIFT))"#"return ((((dir << _IOC_DIRSHIFT) | (ord(type) << _IOC_TYPESHIFT)) | (nr << _IOC_NRSHIFT)) | (size << _IOC_SIZESHIFT))"# ${OUT}
 
 # Add pylint ignore comment
-sed --in-place s/"^def POINTER(obj):"/"def POINTER(obj): # pylint: disable=function-redefined:"/ v4l2/uapi/ctypes_preamble.py
+sed --in-place s/"^def POINTER(obj):$"/"def POINTER(obj): # pylint: disable=function-redefined:"/ v4l2/uapi/ctypes_preamble.py
