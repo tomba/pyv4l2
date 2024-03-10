@@ -204,7 +204,7 @@ def setup(ctx: Context):
         ctx.kms_ctx.init_modeset()
 
     for stream in streams:
-        print(f'{stream["dev_path"]}: stream on')
+        print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{v4l2.fourcc_to_str(stream["fourcc"])}')
         stream['cap'].stream_on()
 
     for stream in streams:
