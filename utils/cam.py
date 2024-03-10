@@ -6,6 +6,8 @@ import selectors
 import sys
 import time
 import types
+import queue
+import threading
 
 from cam_helpers import *
 from cam_pisp import *
@@ -32,6 +34,9 @@ class Context(object):
     exit: bool
 
     kms_ctx: object
+
+    net_tx_queue: queue.Queue
+    net_done_queue: queue.Queue
 
 
 def parse_args(ctx: Context):
@@ -233,6 +238,29 @@ def queue_buf(ctx: Context, stream, vbuf: v4l2.VideoBuffer):
     cap.queue(vbuf)
 
 
+def net_main(ctx):
+    while True:
+        data = ctx.net_tx_queue.get()
+
+        if not data:
+            break
+
+        stream, vbuf, is_drm = data
+
+        ctx.net_tx.tx(stream, vbuf, is_drm)
+
+        ctx.net_done_queue.put((stream, vbuf))
+
+
+def handle_sent_buffers(ctx: Context):
+    while not ctx.net_done_queue.empty():
+        stream, vbuf = ctx.net_done_queue.get()
+
+        stream['tx_buf'] = None
+
+        queue_buf(ctx, stream, vbuf)
+
+
 def readvid(ctx: Context, stream):
     if ctx.verbose:
         print('{}: event'.format(stream['dev_path']))
@@ -281,10 +309,10 @@ def readvid(ctx: Context, stream):
         # XXX with a small delay we might get more planes to the commit
         if ctx.kms_committed == False:
             ctx.kms_ctx.handle_pageflip()
+    elif ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx) and not stream['tx_buf']:
+        stream['tx_buf'] = vbuf
+        ctx.net_tx_queue.put((stream, vbuf, ctx.buf_type == 'drm'))
     else:
-        if ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx):
-            ctx.net_tx.tx(stream, vbuf, ctx.buf_type == 'drm')
-
         queue_buf(ctx, stream, vbuf)
 
 
@@ -317,6 +345,10 @@ def run(ctx: Context):
     if not ctx.use_ipython:
         while not ctx.exit:
             events = sel.select()
+
+            if ctx.tx:
+                handle_sent_buffers(ctx)
+
             for key, _ in events:
                 callback = key.data
                 callback()
@@ -347,7 +379,21 @@ def main():
 
     setup(ctx)
 
+    if ctx.tx:
+        for stream in ctx.streams:
+            stream['tx_buf'] = None
+
+        ctx.net_tx_queue = queue.Queue()
+        ctx.net_done_queue = queue.Queue()
+
+        net_thread = threading.Thread(target=net_main, args=(ctx,))
+        net_thread.start()
+
     run(ctx)
+
+    if ctx.tx:
+        ctx.net_tx_queue.put(None)
+        net_thread.join()
 
     return 0
 
