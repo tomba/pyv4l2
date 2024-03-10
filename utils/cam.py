@@ -29,6 +29,7 @@ class Context(object):
     save: bool
     tx: list[str]
     run_ipython: types.LambdaType
+    exit: bool
 
     kms_ctx: object
 
@@ -296,10 +297,12 @@ def readkey(ctx):
 
     print('Done')
     sys.stdin.readline()
-    sys.exit(0)
+    ctx.exit = True
 
 
 def run(ctx: Context):
+    ctx.exit = False
+
     sel = selectors.DefaultSelector()
 
     if not ctx.use_ipython:
@@ -312,17 +315,16 @@ def run(ctx: Context):
                      lambda data=stream: readvid(ctx, data))
 
     if not ctx.use_ipython:
-        while True:
+        while not ctx.exit:
             events = sel.select()
             for key, _ in events:
                 callback = key.data
                 callback()
-        sys.exit(0)
     else:
         ctx.run_ipython(ctx, sel)
 
 
-if __name__ == "__main__":
+def main():
     ctx = Context()
 
     parse_args(ctx)
@@ -344,4 +346,10 @@ if __name__ == "__main__":
         sys.exit(0)
 
     setup(ctx)
+
     run(ctx)
+
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
