@@ -353,7 +353,7 @@ class MPlaneCaptureStreamer(VideoCaptureStreamer):
 
 class MetaCaptureStreamer(CaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
-                 size: int, fourcc: v4l2.MetaFormat) -> None:
+                 size: int | tuple, fourcc: v4l2.MetaFormat) -> None:
         super().__init__(vdev, mem_type, buf_type)
 
         self.size = size
@@ -361,19 +361,23 @@ class MetaCaptureStreamer(CaptureStreamer):
 
         self.set_format(fourcc, size)
 
-    def set_format(self, fourcc: v4l2.MetaFormat, size):
+    def set_format(self, fourcc: v4l2.MetaFormat, size: int | tuple):
         v4lfmt = v4l2.uapi.v4l2_format()
 
         v4lfmt.type = self.buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
 
-        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
-        #bitspp = pfi.planes[0].bitspp # XXX quick hack
-
         v4lfmt.fmt.meta.dataformat = fourcc
-        v4lfmt.fmt.meta.buffersize = size
+
+        if isinstance(size, int):
+            v4lfmt.fmt.meta.buffersize = size
+        else:
+            v4lfmt.fmt.meta.width = size[0]
+            v4lfmt.fmt.meta.height = size[1]
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
+
+        self.buffersize = v4lfmt.fmt.meta.buffersize
 
     def reserve_buffers(self, num_bufs):
         self.set_queue_size(num_bufs)
@@ -384,7 +388,7 @@ class MetaCaptureStreamer(CaptureStreamer):
             buf = VideoBuffer(v4l2.MemType.MMAP)
             buf.index = i
             buf.fourcc = self.fourcc
-            buf.payload_size = self.size
+            buf.payload_size = self.buffersize
             self.buffers.append(buf)
 
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
@@ -397,7 +401,7 @@ class MetaCaptureStreamer(CaptureStreamer):
             buf.index = i
             buf.fd = fd
             buf.fourcc = self.fourcc
-            buf.payload_size = self.size
+            buf.payload_size = self.buffersize
             self.buffers.append(buf)
 
     def queue(self, vbuf: VideoBuffer):

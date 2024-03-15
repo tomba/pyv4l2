@@ -138,9 +138,15 @@ def init_viddevs(ctx: Context):
         stream['display'] = ctx.use_display and stream.get('display', True)
         stream['embedded'] = stream.get('embedded', False)
 
-        stream['w'] = stream['fmt'][0]
-        stream['h'] = stream['fmt'][1]
-        stream['fourcc'] = stream['fmt'][2]
+        if len(stream['fmt']) == 3:
+            stream['w'] = stream['fmt'][0]
+            stream['h'] = stream['fmt'][1]
+            stream['fourcc'] = stream['fmt'][2]
+        elif len(stream['fmt']) == 2:
+            stream['size'] = stream['fmt'][0]
+            stream['fourcc'] = stream['fmt'][1]
+        else:
+            raise RuntimeError()
 
         if ctx.md:
             vid_ent = ctx.md.find_entity(stream['entity'])
@@ -170,8 +176,11 @@ def init_streamer(ctx: Context):
         if not stream.get('embedded', False):
             cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['fourcc'])
         else:
-            bpp = embedded_fourcc_to_bytes_per_pixel(stream['fourcc'])
-            size = stream['w'] * stream['h'] * bpp // 8
+            if 'size' in stream:
+                size = stream['size']
+            else:
+                size = (stream['w'], stream['h'])
+
             cap = vd.get_meta_capture_streamer(mem_type, size, stream['fourcc'])
 
         stream['cap'] = cap
@@ -210,7 +219,10 @@ def setup(ctx: Context):
         ctx.kms_ctx.init_modeset()
 
     for stream in streams:
-        print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{v4l2.fourcc_to_str(stream["fourcc"])}')
+        if 'size' in stream:
+            print(f'{stream["dev_path"]}: stream on {stream["size"]}-{v4l2.fourcc_to_str(stream["fourcc"])}')
+        else:
+            print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{v4l2.fourcc_to_str(stream["fourcc"])}')
         stream['cap'].stream_on()
 
     for stream in streams:
@@ -230,7 +242,7 @@ def queue_buf(ctx: Context, stream, vbuf: v4l2.VideoBuffer):
     cap = stream['cap']
 
     if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
-        pisp_create_config(stream, cap, vbuf)
+        pisp_create_config(ctx.streams[0], cap, vbuf)
         # XXX We need to pass details about the video stream. Which one is it?
         # Let's decide it's stream 0
         pisp_create_config(ctx.streams[0], cap, vbuf)
