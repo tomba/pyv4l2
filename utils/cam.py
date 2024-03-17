@@ -141,10 +141,10 @@ def init_viddevs(ctx: Context):
         if len(stream['fmt']) == 3:
             stream['w'] = stream['fmt'][0]
             stream['h'] = stream['fmt'][1]
-            stream['fourcc'] = stream['fmt'][2]
+            stream['format'] = stream['fmt'][2]
         elif len(stream['fmt']) == 2:
             stream['size'] = stream['fmt'][0]
-            stream['fourcc'] = stream['fmt'][1]
+            stream['format'] = stream['fmt'][1]
         else:
             raise RuntimeError()
 
@@ -174,14 +174,14 @@ def init_streamer(ctx: Context):
         mem_type = v4l2.MemType.DMABUF if ctx.buf_type == 'drm' else v4l2.MemType.MMAP
 
         if not stream.get('embedded', False):
-            cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['fourcc'])
+            cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['format'])
         else:
             if 'size' in stream:
                 size = stream['size']
             else:
                 size = (stream['w'], stream['h'])
 
-            cap = vd.get_meta_capture_streamer(mem_type, size, stream['fourcc'])
+            cap = vd.get_meta_capture_streamer(mem_type, size, stream['format'])
 
         stream['cap'] = cap
 
@@ -208,7 +208,7 @@ def setup(ctx: Context):
 
         # Queue the rest to the camera
         for i in range(first_buf, stream['num_bufs']):
-            if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
+            if stream['format'] == v4l2.MetaFormat.RPI_FE_CFG:
                 # XXX We need to pass details about the video stream. Which one is it?
                 # Let's decide it's stream 0
                 pisp_create_config(streams[0], cap, cap.buffers[i])
@@ -220,9 +220,11 @@ def setup(ctx: Context):
 
     for stream in streams:
         if 'size' in stream:
-            print(f'{stream["dev_path"]}: stream on {stream["size"]}-{v4l2.fourcc_to_str(stream["fourcc"])}')
+            print(f'{stream["dev_path"]}: stream on {stream["size"]}-{stream["format"].name}')
         else:
-            print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{v4l2.fourcc_to_str(stream["fourcc"])}')
+            stride = stream["cap"].bytesperline
+            bufsize = stream["cap"].buffersize
+            print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{stream["format"].name} stride={stride} bufsize={bufsize}')
         stream['cap'].stream_on()
 
     for stream in streams:
@@ -241,7 +243,7 @@ def setup(ctx: Context):
 def queue_buf(ctx: Context, stream, vbuf: v4l2.VideoBuffer):
     cap = stream['cap']
 
-    if stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
+    if stream['format'] == v4l2.MetaFormat.RPI_FE_CFG:
         pisp_create_config(ctx.streams[0], cap, vbuf)
         # XXX We need to pass details about the video stream. Which one is it?
         # Let's decide it's stream 0

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import v4l2
-import kms
 
 ov10635_w = 1280
 ov10635_h = 720
@@ -42,6 +41,8 @@ def gen_imx390_pixel(port):
     ser_ent = f"ds90ub953 4-004{4 + port}"
 
     return {
+        'media': ('CAL', 'model'),
+
         "subdevs": [
             # Camera
             {
@@ -96,7 +97,7 @@ def gen_imx390_pixel(port):
                 "embedded": False,
                 "dev": f"/dev/video{port}",
                 "dra-plane-hack": False,
-                "kms-fourcc": kms.PixelFormat.RGB565,
+                "kms-format": v4l2.PixelFormat.RGB565,
             },
         ],
 
@@ -184,6 +185,8 @@ def gen_ov10635_pixel(port):
     ser_ent = f"ds90ub913a 4-004{4 + port}"
 
     return {
+        'media': ('CAL', 'model'),
+
         "subdevs": [
             # Camera
             {
@@ -319,6 +322,8 @@ def gen_ub953_tpg(port):
     ser_ent = f"ds90ub953 4-004{4 + port}"
 
     return {
+        'media': ('CAL', 'model'),
+
         "subdevs": [
             # Serializer
             {
@@ -362,7 +367,7 @@ def gen_ub953_tpg(port):
                 "embedded": False,
                 "dev": f"/dev/video{port}",
                 "dra-plane-hack": False,
-                "kms-fourcc": kms.PixelFormat.RGB565,
+                "kms-format": v4l2.PixelFormat.RGB565,
             },
         ],
 

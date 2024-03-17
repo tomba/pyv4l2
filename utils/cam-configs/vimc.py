@@ -11,7 +11,7 @@ mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
 
 mbus_fmt = (imx219_w, imx219_h, v4l2.BusFormat.RGB888_1X24)
-fmt_pix = (imx219_w, imx219_h, v4l2.PixelFormat.RGB24)
+fmt_pix = (imx219_w, imx219_h, v4l2.PixelFormat.BGR888)
 
 configurations = {}
 

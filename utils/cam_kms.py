@@ -39,18 +39,20 @@ class KmsContext:
                 # Hack to reserve the unscaleable GFX plane
                 res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
 
-            if not 'kms-fourcc' in stream:
-                if stream['fourcc'] == v4l2.MetaFormat.GENERIC_8:
-                    stream['kms-fourcc'] = kms.PixelFormat.RGB565
-                elif stream['fourcc'] == v4l2.MetaFormat.GENERIC_CSI2_12:
-                    stream['kms-fourcc'] = kms.PixelFormat.RGB565
-                elif stream['fourcc'] == v4l2.MetaFormat.RPI_FE_CFG:
-                    stream['kms-fourcc'] = kms.PixelFormat.RGB565
+            assert not 'kms-fourcc' in stream
+
+            if 'kms-format' in stream:
+                if isinstance(stream['kms-format'], v4l2.PixelFormat):
+                    stream['kms-format'] = kms.PixelFormat(stream['kms-format'].value.drm_fourcc)
+            else:
+                if stream['format'] == v4l2.MetaFormat.GENERIC_8:
+                    stream['kms-format'] = kms.PixelFormat.RGB565
+                elif stream['format'] == v4l2.MetaFormat.GENERIC_CSI2_12:
+                    stream['kms-format'] = kms.PixelFormat.RGB565
+                elif stream['format'] == v4l2.MetaFormat.RPI_FE_CFG:
+                    stream['kms-format'] = kms.PixelFormat.RGB565
                 else:
-                    #kms_fourcc = v4l2.pixelformat_to_drm_fourcc(stream['fourcc'])
-                    #stream['kms-fourcc'] = kms.fourcc_to_pixelformat(kms_fourcc)
-                    # XXX
-                    stream['kms-fourcc'] = stream['fourcc']
+                    stream['kms-format'] = kms.PixelFormat(stream['format'].value.drm_fourcc)
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]
@@ -88,14 +90,14 @@ class KmsContext:
 
                 display_idx += 1
 
-                plane = res.reserve_generic_plane(crtc, stream['kms-fourcc'])
+                plane = res.reserve_generic_plane(crtc, stream['kms-format'])
                 assert(plane)
                 stream['plane'] = plane
 
     def alloc_fbs(self, stream):
         fbs = []
         for i in range(stream['num_bufs']):
-            fb = kms.DumbFramebuffer(self.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-fourcc'])
+            fb = kms.DumbFramebuffer(self.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-format'])
             fbs.append(fb)
         stream['fbs'] = fbs
 

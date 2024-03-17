@@ -52,21 +52,6 @@ def link(md: v4l2.MediaDevice, source, sink):
 
     md.link_setup(link.source, link.sink, v4l2.uapi.MEDIA_LNK_FL_ENABLED)
 
-def embedded_fourcc_to_bytes_per_pixel(fmt):
-    if fmt == v4l2.MetaFormat.GENERIC_CSI2_12:
-        return 12
-    elif fmt == v4l2.MetaFormat.GENERIC_CSI2_10:
-        return 10
-    elif fmt == v4l2.MetaFormat.GENERIC_8:
-        return 8
-    elif fmt == v4l2.MetaFormat.SENSOR_DATA:
-        return 8
-    elif fmt == v4l2.MetaFormat.RPI_FE_CFG:
-        return 8
-    elif fmt == v4l2.MetaFormat.RPI_FE_STATS:
-        return 8
-    else:
-        raise NotImplementedError(f'Unsupported fmt {fmt.name}')
 
 class NetTX:
     import struct
@@ -90,21 +75,17 @@ class NetTX:
         else:
             plane_sizes = [vbuf.buffer_size, 0, 0, 0]
 
-        fmt = stream['fourcc']
-        fmt = fmt.name
+        fmt = stream['format']
 
         if stream.get('embedded', False):
-            # XXX we dont' really have 'lines' with embedded data
-            bytesperline = stream['w']
-            bpp = embedded_fourcc_to_bytes_per_pixel(stream['fourcc'])
-            bytesperline = bytesperline * bpp // 8
+            bytesperline = fmt.value.stride(stream['w'])
         else:
             bytesperline = stream['cap'].bytesperline
 
         hdr = NetTX.struct_fmt.pack(stream['id'],
                               stream['w'], stream['h'],
                               bytesperline,
-                              bytes(fmt, 'ascii'),
+                              bytes(fmt.name, 'ascii'),
                               1, *plane_sizes)
 
         self.sock.sendall(hdr)

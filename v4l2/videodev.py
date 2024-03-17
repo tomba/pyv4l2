@@ -108,26 +108,26 @@ class VideoDevice:
         return fmt
 
     def get_capture_streamer(self, mem_type: v4l2.MemType,
-                             width: int, height: int, fourcc: v4l2.PixelFormat):
+                             width: int, height: int, format: v4l2.PixelFormat):
         if not self.has_capture:
             raise NotImplementedError()
 
         if self.has_mplane_capture:
             return MPlaneCaptureStreamer(self, mem_type, v4l2.BufType.VIDEO_CAPTURE_MPLANE,
-                                         width, height, fourcc)
+                                         width, height, format)
         else:
             return SPlaneCaptureStreamer(self, mem_type, v4l2.BufType.VIDEO_CAPTURE,
-                                   width, height, fourcc)
+                                   width, height, format)
 
     def get_meta_capture_streamer(self, mem_type: v4l2.MemType,
-                                  size: int, fourcc: v4l2.MetaFormat):
+                                  size: int, format: v4l2.MetaFormat):
         if self.has_meta_capture:
             return MetaCaptureStreamer(self, mem_type, v4l2.BufType.META_CAPTURE,
-                                       size, fourcc)
+                                       size, format)
 
         if self.has_meta_output:
             return MetaOutputStreamer(self, mem_type, v4l2.BufType.META_OUTPUT,
-                                       size, fourcc)
+                                       size, format)
 
         raise NotImplementedError()
 
@@ -162,17 +162,20 @@ class CaptureStreamer():
 
 class VideoCaptureStreamer(CaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
-                 width: int, height: int, fourcc: v4l2.PixelFormat) -> None:
+                 width: int, height: int, format: v4l2.PixelFormat) -> None:
         super().__init__(vdev, mem_type, buf_type)
 
         self.width = width
         self.height = height
-        self.fourcc = fourcc
+        self.format = format
 
-        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
+        pfi = format.value
         assert(len(pfi.planes) == 1)
-        bitspp = pfi.planes[0].bitspp # XXX quick hack
-        self.bytesperline = width * bitspp // 8
+
+        #bitspp = pfi.planes[0].bitspp # XXX quick hack
+        #self.bytesperline = width * bitspp // 8
+        self.bytesperline = pfi.stride(width, plane=0)
+        self.buffersize = pfi.framesize(width, height)
 
     def reserve_buffers(self, num_bufs):
         self.set_queue_size(num_bufs)
@@ -184,7 +187,7 @@ class VideoCaptureStreamer(CaptureStreamer):
             buf.index = i
             buf.width = self.width
             buf.height = self.height
-            buf.fourcc = self.fourcc
+            buf.fourcc = self.format.value.v4l2_fourcc
             buf.payload_size = self.height * self.bytesperline
             self.buffers.append(buf)
 
@@ -199,36 +202,35 @@ class VideoCaptureStreamer(CaptureStreamer):
             buf.fd = fd
             buf.width = self.width
             buf.height = self.height
-            buf.fourcc = self.fourcc
+            buf.fourcc = self.format.value.v4l2_fourcc
             buf.payload_size = self.height * self.bytesperline
             self.buffers.append(buf)
 
 
 class SPlaneCaptureStreamer(VideoCaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
-                 width: int, height: int, fourcc: v4l2.PixelFormat) -> None:
-        super().__init__(vdev, mem_type, buf_type, width, height, fourcc)
+                 width: int, height: int, format: v4l2.PixelFormat) -> None:
+        super().__init__(vdev, mem_type, buf_type, width, height, format)
 
-        self.set_format(self.fourcc, self.width, self.height)
+        self.set_format(self.format, self.width, self.height)
 
-    def set_format(self, fourcc: v4l2.PixelFormat, width, height):
+    def set_format(self, format: v4l2.PixelFormat, width, height):
         v4lfmt = v4l2.uapi.v4l2_format()
 
         v4lfmt.type = self.buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
 
-        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
-        bitspp = pfi.planes[0].bitspp # XXX quick hack
+        pfi = format.value
 
-        v4lfmt.fmt.pix.pixelformat = fourcc
+        v4lfmt.fmt.pix.pixelformat = pfi.v4l2_fourcc
         v4lfmt.fmt.pix.width = width
         v4lfmt.fmt.pix.height = height
-        v4lfmt.fmt.pix.bytesperline = width * bitspp // 8
+        v4lfmt.fmt.pix.bytesperline = pfi.stride(width, 0)
         v4lfmt.fmt.pix.field = v4l2.uapi.V4L2_FIELD_NONE
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
 
-        assert(v4lfmt.fmt.pix.pixelformat == fourcc)
+        assert v4lfmt.fmt.pix.pixelformat == pfi.v4l2_fourcc, f'{v4lfmt.fmt.pix.pixelformat} != {pfi.v4l2_fourcc}'
         assert(v4lfmt.fmt.pix.width == width)
         assert(v4lfmt.fmt.pix.height == height)
         #assert(v4lfmt.fmt.pix.bytesperline >= width * pfi.planes[0].bitspp / 8)
@@ -268,25 +270,24 @@ class SPlaneCaptureStreamer(VideoCaptureStreamer):
 
 class MPlaneCaptureStreamer(VideoCaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type, buf_type,
-                 width: int, height: int, fourcc: v4l2.PixelFormat) -> None:
-        super().__init__(vdev, mem_type, buf_type, width, height, fourcc)
+                 width: int, height: int, format: v4l2.PixelFormat) -> None:
+        super().__init__(vdev, mem_type, buf_type, width, height, format)
 
-        self.set_format(self.fourcc, self.width, self.height)
+        self.set_format(self.format, self.width, self.height)
 
-    def set_format(self, fourcc: v4l2.PixelFormat, width, height):
+    def set_format(self, format: v4l2.PixelFormat, width, height):
         v4lfmt = v4l2.uapi.v4l2_format()
 
         v4lfmt.type = self.buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
 
-        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
-        bitspp = pfi.planes[0].bitspp # XXX quick hack
+        pfi = format.value
 
         num_planes = 1 # XXX
 
         mp = v4lfmt.fmt.pix_mp
 
-        mp.pixelformat = fourcc
+        mp.pixelformat = pfi.v4l2_fourcc
         mp.width = width
         mp.height = height
 
@@ -295,8 +296,8 @@ class MPlaneCaptureStreamer(VideoCaptureStreamer):
         for i in range(num_planes):
             p = mp.plane_fmt[i]
 
-            p.bytesperline = width * bitspp // 8
-            p.sizeimage = p.bytesperline * height # XXX / pfpi.ysub
+            p.bytesperline = pfi.stride(width, i)
+            p.sizeimage = pfi.planesize(width, height, i)
             p.field = v4l2.uapi.V4L2_FIELD_NONE
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
@@ -353,27 +354,29 @@ class MPlaneCaptureStreamer(VideoCaptureStreamer):
 
 class MetaCaptureStreamer(CaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
-                 size: int | tuple, fourcc: v4l2.MetaFormat) -> None:
+                 size: int | tuple, format: v4l2.MetaFormat) -> None:
         super().__init__(vdev, mem_type, buf_type)
 
         self.size = size
-        self.fourcc = fourcc
+        self.format = format
 
-        self.set_format(fourcc, size)
+        self.set_format(format, size)
 
-    def set_format(self, fourcc: v4l2.MetaFormat, size: int | tuple):
+    def set_format(self, format: v4l2.MetaFormat, size: int | tuple):
         v4lfmt = v4l2.uapi.v4l2_format()
 
         v4lfmt.type = self.buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
 
-        v4lfmt.fmt.meta.dataformat = fourcc
+        v4lfmt.fmt.meta.dataformat = format.value.v4l2_fourcc
 
         if isinstance(size, int):
             v4lfmt.fmt.meta.buffersize = size
+            self.bytesperline = size
         else:
             v4lfmt.fmt.meta.width = size[0]
             v4lfmt.fmt.meta.height = size[1]
+            self.bytesperline = format.value.stride(size[0])
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
 
@@ -387,7 +390,7 @@ class MetaCaptureStreamer(CaptureStreamer):
         for i in range(num_bufs):
             buf = VideoBuffer(v4l2.MemType.MMAP)
             buf.index = i
-            buf.fourcc = self.fourcc
+            buf.fourcc = self.format.value.v4l2_fourcc
             buf.payload_size = self.buffersize
             self.buffers.append(buf)
 
@@ -400,7 +403,7 @@ class MetaCaptureStreamer(CaptureStreamer):
             buf = VideoBuffer(v4l2.MemType.DMABUF)
             buf.index = i
             buf.fd = fd
-            buf.fourcc = self.fourcc
+            buf.fourcc = self.format.value.v4l2_fourcc
             buf.payload_size = self.buffersize
             self.buffers.append(buf)
 
@@ -439,24 +442,24 @@ class MetaCaptureStreamer(CaptureStreamer):
 
 class MetaOutputStreamer(CaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
-                 size: int, fourcc: v4l2.MetaFormat) -> None:
+                 size: int, format: v4l2.MetaFormat) -> None:
         super().__init__(vdev, mem_type, buf_type)
 
         self.size = size
-        self.fourcc = fourcc
+        self.format = format
 
-        self.set_format(fourcc, size)
+        self.set_format(format, size)
 
-    def set_format(self, fourcc: v4l2.MetaFormat, size):
+    def set_format(self, format: v4l2.MetaFormat, size):
         v4lfmt = v4l2.uapi.v4l2_format()
 
         v4lfmt.type = self.buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, v4lfmt, True)
 
-        pfi = v4l2.pixelformats.get_pixel_format_info(fourcc)
+        pfi = format.value
         #bitspp = pfi.planes[0].bitspp # XXX quick hack
 
-        v4lfmt.fmt.meta.dataformat = fourcc
+        v4lfmt.fmt.meta.dataformat = pfi.v4l2_fourcc
         v4lfmt.fmt.meta.buffersize = size
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
@@ -469,7 +472,7 @@ class MetaOutputStreamer(CaptureStreamer):
         for i in range(num_bufs):
             buf = VideoBuffer(v4l2.MemType.MMAP)
             buf.index = i
-            buf.fourcc = self.fourcc
+            buf.fourcc = self.format.value.v4l2_fourcc
             buf.payload_size = self.size
             self.buffers.append(buf)
 
@@ -493,7 +496,7 @@ class MetaOutputStreamer(CaptureStreamer):
             buf = VideoBuffer(v4l2.MemType.DMABUF)
             buf.index = i
             buf.fd = fd
-            buf.fourcc = self.fourcc
+            buf.fourcc = self.format.value.v4l2_fourcc
             buf.payload_size = self.size
             buf.buffer_size = self.size
             self.buffers.append(buf)

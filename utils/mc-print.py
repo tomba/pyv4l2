@@ -68,6 +68,8 @@ def print_streams(subdev, pad, streams):
 
         try:
             ival = subdev.get_frame_interval(pad.index, s)
+            if ival[0] == 0:
+                ival = (1, 0)
             print(f'            Interval {ival[0]}/{ival[1]} = {ival[1] / ival[0]} fps')
         except OSError as e:
             if e.errno != errno.ENOTTY:

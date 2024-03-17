@@ -6,7 +6,7 @@ imx219_w = 640
 imx219_h = 480
 
 mbus_fmt = (imx219_w, imx219_h, v4l2.BusFormat.RBG888_1X24)
-fmt_pix = (imx219_w, imx219_h, v4l2.PixelFormat.RGB24)
+fmt_pix = (imx219_w, imx219_h, v4l2.PixelFormat.BGR888)
 
 configurations = {}
 

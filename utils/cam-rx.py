@@ -32,6 +32,8 @@ def qt_message_handler(msg_type, msg_log_context, msg_string):
 old_msg_handler = QtCore.qInstallMessageHandler(qt_message_handler)
 
 
+NO_SKIP = True
+
 def meta_to_pix(fmt, w, h, bytesperline, data):
     prev = None
     nskip = 0
@@ -48,7 +50,7 @@ def meta_to_pix(fmt, w, h, bytesperline, data):
 
         cnt += 1
 
-        if i == prev:
+        if not NO_SKIP and i == prev:
             nskip += 1
             continue
 
