@@ -16,13 +16,13 @@ def print_selection(subdev, pad, stream, target):
             print(f'      {name}:({e})')
 
 def print_selections(subdev, pad, stream):
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_DEFAULT)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_BOUNDS)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.NATIVE_SIZE)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_BOUNDS)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_BOUNDS)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_PADDED)
 
 def print_routes(subdev):
