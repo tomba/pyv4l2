@@ -93,12 +93,20 @@ def print_pads(ent, subdev, videodev):
         if len(links) == 0 and not pad.is_internal:
             continue
 
-        print(f'  Pad{pad.index} [{pad.flags.name}]')
+        link_dir = '->' if pad.is_source else '<-'
 
-        for link in links:
+        # If there's only one link, use compact formatting
+        if len(links) == 1:
+            link = links[0]
             remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
-            dir = '->' if pad.is_source else '<-'
-            print(f'    {dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]')
+            link_fmt = f'{link_dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]'
+            print(f'  Pad{pad.index} [{pad.flags.name}] {link_fmt}')
+        else:
+            print(f'  Pad{pad.index} [{pad.flags.name}]')
+
+            for link in links:
+                remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
+                print(f'      {link_dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]')
 
         streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
 
