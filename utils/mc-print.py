@@ -4,6 +4,8 @@ import v4l2
 import v4l2.uapi
 import argparse
 import errno
+import sys
+
 
 def print_selection(subdev, pad, stream, target):
     name = target.name.lower()
@@ -15,6 +17,7 @@ def print_selection(subdev, pad, stream, target):
         if e.errno not in (errno.ENOTTY, errno.EINVAL):
             print(f'      {name}:({e})')
 
+
 def print_selections(subdev, pad, stream):
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.NATIVE_SIZE)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_BOUNDS)
@@ -25,12 +28,18 @@ def print_selections(subdev, pad, stream):
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_PADDED)
 
+
 def print_routes(subdev):
-    routes = [r for r in subdev.get_routes() if r.is_active]
-    if len(routes) > 0:
-        print('  Routing:')
-        for r in routes:
-            print('    {}/{} -> {}/{}'.format(r.sink_pad, r.sink_stream, r.source_pad, r.source_stream))
+    routes = subdev.get_routes()
+    if not routes:
+        return
+
+    print('  Routing:')
+    for r in routes:
+        print('    {}/{} -> {}/{} [{}]'.format(r.sink_pad, r.sink_stream,
+                                               r.source_pad, r.source_stream,
+                                               v4l2.RouteFlag(r.flags).name))
+
 
 def print_videodev_pad(videodev):
     try:
@@ -52,6 +61,7 @@ def print_videodev_pad(videodev):
     except OSError as e:
         if e.errno != errno.ENOTTY:
             print(f'    <{e}>')
+
 
 def print_streams(subdev, pad, streams):
     for s in streams:
@@ -80,18 +90,19 @@ def print_streams(subdev, pad, streams):
 
         print_selections(subdev, pad, s)
 
+
 def print_pads(ent, subdev, videodev, only_graph: bool):
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
     else:
-        routes = []
+        routes = None
 
     for pad in ent.pads:
         links = list([l for l in pad.links if l.is_enabled])
 
         # Don't show external pads that have no enabled links
-        if len(links) == 0 and not pad.is_internal:
-            continue
+        #if len(links) == 0 and not pad.is_internal:
+        #    continue
 
         link_dir = '->' if pad.is_source else '<-'
 
@@ -108,9 +119,9 @@ def print_pads(ent, subdev, videodev, only_graph: bool):
                 remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
                 print(f'      {link_dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]')
 
-        streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
-
-        if len(streams) == 0:
+        if routes:
+            streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
+        else:
             streams = [ 0 ]
 
         streams = sorted(streams)
@@ -122,16 +133,42 @@ def print_pads(ent, subdev, videodev, only_graph: bool):
             print_streams(subdev, pad, streams)
 
 
+def print_entity(ent, only_graph: bool):
+    print(ent.name, ent.interface.dev_path if ent.interface else '')
+
+    if ent.interface and ent.interface.is_subdev:
+        subdev = v4l2.SubDevice(ent.interface.dev_path)
+    else:
+        subdev = None
+
+    if ent.interface and ent.interface.is_video:
+        videodev = v4l2.VideoDevice(ent.interface.dev_path)
+    else:
+        videodev = None
+
+    print_pads(ent, subdev, videodev, only_graph)
+
+    if not only_graph and subdev:
+        print_routes(subdev)
+
+    print()
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--device', default='/dev/media0', help='Media device')
     parser.add_argument('-g', '--graph', action='store_true', help='Print only the graph, no streams or routing')
+    parser.add_argument('-a', '--all', action='store_true', help='Print all entitites, not just linked ones')
     parser.add_argument('pattern', nargs='?', help='Entity pattern to show')
     args = parser.parse_args()
 
     md = v4l2.MediaDevice(args.device)
 
     if args.pattern:
+        if args.all:
+            print("Entity pattern and --all cannot be used at the same time")
+            return -1
+
         pat = args.pattern.lower()
 
         entities = [ent for ent in md.entities if pat in ent.name.lower() or pat in (ent.interface.dev_path if ent.interface else '')]
@@ -157,34 +194,20 @@ def main():
 
         printed.add(ent)
 
-        links = flatten([ p.links for p in ent.pads if p.is_source ])
-
         if recurse:
-            print_queue += [ l.sink.entity for l in links ]
+            if args.all:
+                links = flatten([ p.links for p in ent.pads ])
 
-        pads_with_links = any([p for p in ent.pads if any([l for l in p.links if l.is_enabled])])
-        if not pads_with_links:
-            continue
+                print_queue += [ l.sink.entity for l in links ]
+                print_queue += [ l.source.entity for l in links ]
+            else:
+                links = flatten([ p.links for p in ent.pads if p.is_source ])
+                links = [l for l in links if l.is_enabled]
 
-        print(ent.name, ent.interface.dev_path if ent.interface else '')
+                print_queue += [ l.sink.entity for l in links ]
 
-        if ent.interface and ent.interface.is_subdev:
-            subdev = v4l2.SubDevice(ent.interface.dev_path)
-        else:
-            subdev = None
-
-        if ent.interface and ent.interface.is_video:
-            videodev = v4l2.VideoDevice(ent.interface.dev_path)
-        else:
-            videodev = None
-
-        print_pads(ent, subdev, videodev, only_graph=args.graph)
-
-        if not args.graph and subdev:
-            print_routes(subdev)
-
-        print()
+        print_entity(ent, only_graph=args.graph)
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

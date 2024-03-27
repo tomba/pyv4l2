@@ -5,8 +5,13 @@ import errno
 import fcntl
 import os
 import v4l2.uapi
+from enum import IntFlag
 
-__all__ = [ 'Route', 'SubDevice' ]
+__all__ = [ 'RouteFlag', 'Route', 'SubDevice' ]
+
+
+class RouteFlag(IntFlag):
+    ACTIVE = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE
 
 class Route:
     def __init__(self) -> None:
