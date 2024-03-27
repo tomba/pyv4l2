@@ -80,7 +80,7 @@ def print_streams(subdev, pad, streams):
 
         print_selections(subdev, pad, s)
 
-def print_pads(ent, subdev, videodev):
+def print_pads(ent, subdev, videodev, only_graph: bool):
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
     else:
@@ -115,16 +115,17 @@ def print_pads(ent, subdev, videodev):
 
         streams = sorted(streams)
 
-        if videodev:
+        if not only_graph and videodev:
             print_videodev_pad(videodev)
 
-        if subdev:
+        if not only_graph and subdev:
             print_streams(subdev, pad, streams)
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--device', default='/dev/media0', help='media device')
+    parser.add_argument('-d', '--device', default='/dev/media0', help='Media device')
+    parser.add_argument('-g', '--graph', action='store_true', help='Print only the graph, no streams or routing')
     parser.add_argument('pattern', nargs='?', help='Entity pattern to show')
     args = parser.parse_args()
 
@@ -177,9 +178,9 @@ def main():
         else:
             videodev = None
 
-        print_pads(ent, subdev, videodev)
+        print_pads(ent, subdev, videodev, only_graph=args.graph)
 
-        if subdev:
+        if not args.graph and subdev:
             print_routes(subdev)
 
         print()
