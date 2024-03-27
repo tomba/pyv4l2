@@ -5,22 +5,25 @@ import v4l2.uapi
 import argparse
 import errno
 
-
-def print_selection(subdev, pad):
-    try:
-        r = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, pad.index)
-        print(f'    crop.bounds:({r.left},{r.top})/{r.width}✕{r.height}')
-    except OSError as e:
-        if e.errno != errno.ENOTTY:
-            print(f'    crop.bounds:({e})')
+def print_selection(subdev, pad, stream, target):
+    name = target.name.lower()
 
     try:
-        r = subdev.get_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, pad.index)
-        print(f'    crop:({r.left},{r.top})/{r.width}✕{r.height}')
+        r = subdev.get_selection(target.value, pad.index, stream)
+        print(f'      {name}:({r.left},{r.top})/{r.width}✕{r.height}')
     except OSError as e:
-        if e.errno != errno.ENOTTY:
-            print(f'    crop:({e})')
+        if e.errno not in (errno.ENOTTY, errno.EINVAL):
+            print(f'      {name}:({e})')
 
+def print_selections(subdev, pad, stream):
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_BOUNDS)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.NATIVE_SIZE)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_BOUNDS)
+    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_PADDED)
 
 def print_routes(subdev):
     routes = [r for r in subdev.get_routes() if r.is_active]
@@ -75,7 +78,7 @@ def print_streams(subdev, pad, streams):
             if e.errno != errno.ENOTTY:
                 print(f'            Interval {e}')
 
-        print_selection(subdev, pad)
+        print_selections(subdev, pad, s)
 
 def print_pads(ent, subdev, videodev):
     if subdev:
