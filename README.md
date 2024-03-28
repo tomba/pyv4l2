@@ -6,7 +6,7 @@
 
 v4l2.uapi namespace contains the kernel user-space API (uAPI).
 
-The uapi is generated with (slighly customized) ctypesgen, with the gen.sh script. Also, the v4l2/uapi/__init__.py contains some minor additions to the uapi.
+The uAPI is generated with (slighly customized) ctypesgen, with the gen.sh script. Also, the v4l2/uapi/__init__.py contains some minor additions to the uAPI.
 
 ## v4l2
 
