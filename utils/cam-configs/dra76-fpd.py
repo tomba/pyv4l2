@@ -97,7 +97,6 @@ def gen_imx390_pixel(port):
                 "embedded": False,
                 "dev": f"/dev/video{port}",
                 "dra-plane-hack": False,
-                "kms-format": v4l2.PixelFormat.RGB565,
             },
         ],
 
@@ -367,7 +366,6 @@ def gen_ub953_tpg(port):
                 "embedded": False,
                 "dev": f"/dev/video{port}",
                 "dra-plane-hack": False,
-                "kms-format": v4l2.PixelFormat.RGB565,
             },
         ],
 

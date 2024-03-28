@@ -60,7 +60,6 @@ configurations["cam0"] = {
             "fmt": vid_fmt,
             "embedded": False,
             "dra-plane-hack": False,
-            #"kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 

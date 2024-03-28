@@ -96,7 +96,6 @@ def gen_imx219_pixel(port):
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_pix_imx219,
                 'embedded': False,
-                'kms-fourcc': kms.PixelFormat.RGB565,
             },
         ],
 
@@ -165,7 +164,6 @@ def gen_imx219_meta(port):
                 'entity': f'rp1-cfe-csi2-ch{port+2}',
                 'fmt': meta_fmt_pix_imx219,
                 'embedded': True,
-                'kms-fourcc': kms.PixelFormat.RGB565,
             },
         ],
 
@@ -232,7 +230,6 @@ def gen_ub953_tpg(port):
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_tpg,
                 'embedded': False,
-                'kms-fourcc': kms.PixelFormat.RGB565,
             },
         ],
 

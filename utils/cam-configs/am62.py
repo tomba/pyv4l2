@@ -62,7 +62,6 @@ configurations["cam0"] = {
             "entity": "j721e-csi2rx",
             "fmt": fmt_pix_imx219,
             "embedded": False,
-            "kms-format": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -103,7 +102,6 @@ configurations["cam0-meta"] = {
             "fmt": meta_fmt_pix_imx219,
             "embedded": True,
             "display": True,
-            "kms-format": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -157,7 +155,6 @@ configurations["cam0-new"] = {
             "entity": "30102000.ticsi2rx context 0",
             "fmt": fmt_pix_imx219,
             "embedded": False,
-            "kms-format": kms.PixelFormat.RGB565,
         },
     ],
 

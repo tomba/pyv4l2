@@ -32,27 +32,23 @@ class KmsContext:
         display_idx = 0
 
         for stream in streams:
-            stream['kms-buf-w'] = stream['w']
-            stream['kms-buf-h'] = stream['h']
+            if 'size' in stream:
+                # It's metadata, we use RGB565 for it, so divide by 2
+                stream['kms-buf-w'] = stream['size'] // 2
+                stream['kms-buf-h'] = 1
+            else:
+                stream['kms-buf-w'] = stream['w']
+                stream['kms-buf-h'] = stream['h']
 
             if stream.get('dra-plane-hack', False):
                 # Hack to reserve the unscaleable GFX plane
                 res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
 
-            assert not 'kms-fourcc' in stream
-
-            if 'kms-format' in stream:
-                if isinstance(stream['kms-format'], v4l2.PixelFormat):
-                    stream['kms-format'] = kms.PixelFormat(stream['kms-format'].value.drm_fourcc)
+            # If we don't have a DRM fmt, just fall back to RGB565
+            if isinstance(stream['format'], v4l2.MetaFormat) or not stream['format'].value.drm_fourcc:
+                stream['kms-format'] = kms.PixelFormat.RGB565
             else:
-                if stream['format'] == v4l2.MetaFormat.GENERIC_8:
-                    stream['kms-format'] = kms.PixelFormat.RGB565
-                elif stream['format'] == v4l2.MetaFormat.GENERIC_CSI2_12:
-                    stream['kms-format'] = kms.PixelFormat.RGB565
-                elif stream['format'] == v4l2.MetaFormat.RPI_FE_CFG:
-                    stream['kms-format'] = kms.PixelFormat.RGB565
-                else:
-                    stream['kms-format'] = kms.PixelFormat(stream['format'].value.drm_fourcc)
+                stream['kms-format'] = kms.PixelFormat(stream['format'].value.drm_fourcc)
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]

@@ -1,16 +1,15 @@
 #!/usr/bin/python3
 
 import v4l2
-import kms
 import pisp
 import ctypes
 
 imx219_w = 640
 imx219_h = 480
-imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-imx219_pix_fmt = v4l2.PixelFormat.SRGGB10P
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-#imx219_pix_fmt = v4l2.PixelFormat.SRGGB8
+#imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+#imx219_pix_fmt = v4l2.PixelFormat.SRGGB10P
+imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
+imx219_pix_fmt = v4l2.PixelFormat.SRGGB8
 
 mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
@@ -20,10 +19,10 @@ fmt_pix_imx219_fe = (imx219_w, imx219_h, v4l2.PixelFormat.SRGGB16)
 
 imx219_meta_w = imx219_w
 imx219_meta_h = 2
-#imx219_meta_bus_fmt = v4l2.BusFormat.META_8
-#imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_8
-imx219_meta_bus_fmt = v4l2.BusFormat.META_10
-imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_CSI2_10
+imx219_meta_bus_fmt = v4l2.BusFormat.META_8
+imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_8
+#imx219_meta_bus_fmt = v4l2.BusFormat.META_10
+#imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_CSI2_10
 
 meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
 meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)
@@ -70,7 +69,6 @@ configurations["cam0"] = {
             "entity": "rp1-cfe-csi2-ch0",
             "fmt": fmt_pix_imx219,
             "embedded": False,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -111,7 +109,6 @@ configurations["cam0-meta"] = {
             "fmt": meta_fmt_pix_imx219,
             "embedded": True,
             "display": True,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -161,7 +158,6 @@ configurations["cam0-fe0"] = {
             "entity": "rp1-cfe-fe-image0",
             "fmt": fmt_pix_imx219_fe,
             "embedded": False,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -211,7 +207,6 @@ configurations["cam0-fe1"] = {
             "entity": "rp1-cfe-fe-image1",
             "fmt": fmt_pix_imx219_fe,
             "embedded": False,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -278,7 +273,6 @@ configurations["cam0-legacy"] = {
             "entity": "rp1-cfe-csi2-ch0",
             "fmt": fmt_pix_imx219,
             "embedded": False,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -312,7 +306,6 @@ configurations["cam0-meta-legacy"] = {
             "entity": "rp1-cfe-embedded",
             "fmt": meta_fmt_pix_imx219_legacy,
             "embedded": True,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
@@ -354,7 +347,6 @@ configurations["cam0-fe0-legacy"] = {
             "entity": "rp1-cfe-fe-image0",
             "fmt": fmt_pix_imx219_fe,
             "embedded": False,
-            "kms-fourcc": kms.PixelFormat.RGB565,
         },
     ],
 
