@@ -15,7 +15,7 @@ del t
 del _int_types
 
 
-def POINTER(obj):
+def POINTER(obj): # pylint: disable=function-redefined:
     p = ctypes.POINTER(obj)
 
     # Convert None to a real NULL pointer to work around bugs

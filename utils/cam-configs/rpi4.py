@@ -15,7 +15,7 @@ fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
 imx219_meta_w = 1024
 imx219_meta_h = 2
 imx219_meta_bus_fmt = v4l2.BusFormat.META_8
-imx219_meta_pix_fmt = v4l2.PixelFormat.META_8
+imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_8
 
 meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
 imx219_meta_h = 16

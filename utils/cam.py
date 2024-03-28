@@ -235,7 +235,7 @@ def setup(ctx: Context):
     ctx.kms_committed = False
 
     if ctx.user_script:
-        ctx.updater = ctx.user_script.Updater(subdevices)
+        ctx.updater = ctx.user_script.Updater(ctx.subdevices)
     else:
         ctx.updater = None
 
