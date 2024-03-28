@@ -12,6 +12,7 @@ __all__ = [ 'RouteFlag', 'Route', 'SubDevice' ]
 
 class RouteFlag(IntFlag):
     ACTIVE = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE
+    IMMUTABLE = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_IMMUTABLE
 
 class Route:
     def __init__(self) -> None:
@@ -24,6 +25,10 @@ class Route:
     @property
     def is_active(self):
         return (self.flags & v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE) != 0
+
+    @property
+    def is_immutable(self):
+        return (self.flags & v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_IMMUTABLE) != 0
 
     def __repr__(self) -> str:
         return f'Route({self.sink_pad}/{self.sink_stream}->{self.source_pad}/{self.source_stream} ({self.flags:#x}))'
