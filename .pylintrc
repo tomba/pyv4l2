@@ -78,34 +78,33 @@ confidence=
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=raw-checker-failed,
-        bad-inline-option,
-        locally-disabled,
-        file-ignored,
-        suppressed-message,
-        useless-suppression,
-        deprecated-pragma,
-        use-symbolic-message-instead,
+disable=
+        duplicate-code,
         missing-module-docstring,
         missing-class-docstring,
         missing-function-docstring,
-        too-many-instance-attributes,
-        redefined-builtin,
-        superfluous-parens,
+        multiple-statements,
+        line-too-long,
         too-few-public-methods,
         too-many-arguments,
         too-many-locals,
-        line-too-long,
-        C,
-        W,
-        R
+        too-many-statements,
+        too-many-instance-attributes,
+        too-many-public-methods,
+# Below warnings should possibly be fixed
+        global-statement,
+        redefined-builtin,
+        superfluous-parens,
+        invalid-name,
+        consider-using-f-string,
+        no-else-raise,
 
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
 # multiple time (only on the command line, not in the configuration file where
 # it should appear only once). See also the "--disable" option for examples.
-enable=c-extension-no-member
+enable=
 
 
 [REPORTS]
