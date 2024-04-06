@@ -30,7 +30,7 @@ CTYPESGEN_OPTS = (
 )
 
 sys.path.insert(0, CTYPESGEN_PATH)
-from ctypesgen.__main__ import main  # pylint: disable=E # type: ignore
+from ctypesgen.__main__ import main  # pylint: disable=E,C # type: ignore
 
 sys.argv = ['ctypesgen', *CTYPESGEN_OPTS, f'-I{INCLUDE_PATH}', f'-o{OUT}', *INCLUDES]
 
@@ -41,12 +41,12 @@ def replace(filename, replaces):
         pat = r[0]
         repl = r[1]
 
-        with open(filename, 'r' ) as f:
+        with open(filename, 'r', encoding='utf-8') as f:
             content = f.read()
 
         content = re.sub(pat, repl, content, count=1, flags=re.MULTILINE)
 
-        with open(filename, 'w' ) as f:
+        with open(filename, 'w', encoding='utf-8') as f:
             f.write(content)
 
 # Fix _IOC by using ord(type)
