@@ -42,25 +42,51 @@ def print_routes(subdev):
 
 
 def print_videodev_pad(videodev):
-    try:
-        fmt = videodev.get_format()
 
-        if fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
-            f = fmt.fmt.pix_mp
-            fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
-        elif fmt.type == v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE:
+    if videodev.has_capture:
+        try:
+            fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE)
             f = fmt.fmt.pix
             fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)}'
-        elif fmt.type == v4l2.BufType.META_CAPTURE.value or fmt.type == v4l2.BufType.META_OUTPUT.value:
+            print(f'    {fmt}')
+        except OSError as e:
+            if e.errno != errno.ENOTTY:
+                print(f'    <{e}>')
+
+        print(videodev.get_formats(v4l2.BufType.VIDEO_CAPTURE))
+
+    if videodev.has_mplane_capture:
+        try:
+            fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE_MPLANE)
+            f = fmt.fmt.pix_mp
+            fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
+            print(f'    {fmt}')
+        except OSError as e:
+            if e.errno != errno.ENOTTY:
+                print(f'    <{e}>')
+
+    if videodev.has_meta_capture:
+        try:
+            fmt = videodev.get_format(v4l2.BufType.META_CAPTURE)
             f = fmt.fmt.meta
             fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
-        else:
-            print("XXXXX", fmt.type)
+            print(f'    {fmt}')
+        except OSError as e:
+            if e.errno != errno.ENOTTY:
+                print(f'    <{e}>')
 
-        print(f'    {fmt}')
-    except OSError as e:
-        if e.errno != errno.ENOTTY:
-            print(f'    <{e}>')
+        print(videodev.get_formats(v4l2.BufType.META_CAPTURE))
+
+    if videodev.has_meta_output:
+        try:
+            fmt = videodev.get_format(v4l2.BufType.META_OUTPUT)
+            f = fmt.fmt.meta
+            fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
+            print(f'    {fmt}')
+        except OSError as e:
+            if e.errno != errno.ENOTTY:
+                print(f'    <{e}>')
+
 
 
 def print_streams(subdev, pad, streams):
@@ -89,6 +115,11 @@ def print_streams(subdev, pad, streams):
                 print(f'            Interval {e}')
 
         print_selections(subdev, pad, s)
+
+        codes = subdev.get_formats(pad.index, s)
+        if codes:
+            codes = str.join(' ', [c.name for c in codes])
+            print(f'      Codes: {codes}')
 
 
 def print_pads(ent, subdev, videodev, only_graph: bool):

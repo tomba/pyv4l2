@@ -3,13 +3,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (C) 2023, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
+import struct
+import sys
+import traceback
+
 from cam_rx_helpers import data_to_pix
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 import PyQt5.QtNetwork
-import struct
-import sys
-import traceback
 
 PORT = 43242
 receivers = []

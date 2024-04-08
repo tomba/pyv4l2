@@ -65,6 +65,36 @@ class SubDevice:
         except:
             self.has_streams = False
 
+    def get_formats(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+        val = v4l2.uapi.v4l2_subdev_mbus_code_enum()
+        val.pad = pad
+        val.stream = stream
+        val.which = which
+        val.index = 0
+
+        codes = []
+
+        while True:
+            try:
+                fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_ENUM_MBUS_CODE, val, True)
+            except OSError as e:
+                if e.errno == errno.EINVAL:
+                    break
+                if e.errno == errno.ENOTTY:
+                    return []
+                raise
+
+            try:
+                code = v4l2.BusFormat(val.code)
+            except TypeError:
+                code = None
+
+            codes.append(code)
+
+            val.index += 1
+
+        return codes
+
     def get_format(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
         fmt = v4l2.uapi.v4l2_subdev_format()
         fmt.pad = pad

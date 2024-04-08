@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import ctypes
+import errno
 import fcntl
-import glob
 import fnmatch
+import glob
 import os
 
 import v4l2.uapi
@@ -90,20 +91,40 @@ class VideoDevice:
 
         raise FileNotFoundError(f'No video device "{key}" = "{value}" found')
 
-    def get_format(self):
+    def get_formats(self, buf_type: v4l2.BufType):
+        fmt = v4l2.uapi.v4l2_fmtdesc()
+        fmt.type = buf_type.value
+        fmt.index = 0
+
+        fmts = []
+
+        while True:
+            try:
+                fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_ENUM_FMT, fmt, True)
+            except OSError as e:
+                if e.errno == errno.EINVAL:
+                    break
+                if e.errno == errno.ENOTTY:
+                    return []
+                raise
+
+            if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
+                f = next((f for f in v4l2.MetaFormat if f.value.v4l2_fourcc == fmt.pixelformat), None)
+            else:
+                f = next((f for f in v4l2.PixelFormat if f.value.v4l2_fourcc == fmt.pixelformat), None)
+
+            if f:
+                fmts.append(f)
+            else:
+                fmts.append(v4l2.fourcc_to_str(fmt.pixelformat))
+
+            fmt.index += 1
+
+        return fmts
+
+    def get_format(self, buf_type: v4l2.BufType):
         fmt = v4l2.uapi.v4l2_format()
-
-        if self.has_mplane_capture:
-            fmt.type = v4l2.BufType.VIDEO_CAPTURE_MPLANE.value
-        elif self.has_capture:
-            fmt.type = v4l2.BufType.VIDEO_CAPTURE.value
-        elif self.has_meta_capture:
-            fmt.type = v4l2.BufType.META_CAPTURE.value
-        elif self.has_meta_output:
-            fmt.type = v4l2.BufType.META_OUTPUT.value
-        else:
-            raise NotImplementedError()
-
+        fmt.type = buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, fmt, True)
         return fmt
 
