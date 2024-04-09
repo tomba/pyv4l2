@@ -111,12 +111,9 @@ class VideoDevice:
             if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
                 f = next((f for f in v4l2.MetaFormat if f.value.v4l2_fourcc == fmt.pixelformat), None)
             else:
-                f = next((f for f in v4l2.PixelFormat if f.value.v4l2_fourcc == fmt.pixelformat), None)
+                f = v4l2.PixelFormat.find_v4l2_fourcc_unsupported(fmt.pixelformat)
 
-            if f:
-                fmts.append(f)
-            else:
-                fmts.append(v4l2.fourcc_to_str(fmt.pixelformat))
+            fmts.append(f)
 
             fmt.index += 1
 

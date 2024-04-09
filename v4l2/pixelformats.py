@@ -3,6 +3,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import NamedTuple
 
+from v4l2.uapi import fourcc_to_str
+
 __all__ = [ 'PixelFormat', 'MetaFormat' ]
 
 def str_to_fourcc(s: str):
@@ -26,10 +28,11 @@ class PixelFormatPlaneInfo(NamedTuple):
 
 
 class PixelFormatInfo:
-    def __init__(self,
+    def __init__(self, name: str,
                  drm_fourcc: None | str, v4l2_fourcc: str,
                  bitsperpixel: int, colorencoding: PixelColorEncoding, packed: bool,
                  pixelspergroup: int, planes) -> None:
+        self.name = name
         self.drm_fourcc = str_to_fourcc(drm_fourcc) if drm_fourcc else None
         self.v4l2_fourcc = str_to_fourcc(v4l2_fourcc)
         self.bitsperpixel = bitsperpixel
@@ -37,6 +40,12 @@ class PixelFormatInfo:
         self.packed = packed
         self.pixelspergroup = pixelspergroup
         self.planes = [PixelFormatPlaneInfo(*p) for p in planes]
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f'PixelFormatInfo({self.name})'
 
     def stride(self, width: int, plane: int = 0, align: int = 1):
         if plane >= len(self.planes):
@@ -73,11 +82,24 @@ class PixelFormatInfo:
         return sum([self.planesize(width, height, i, align) for i in range(len(self.planes))])
 
 
-class PixelFormat(Enum):
+class PixelFormat:
+    @staticmethod
+    def find_v4l2_fourcc(fourcc):
+        return next(v for v in PixelFormat.__dict__.values() if isinstance(v, PixelFormatInfo) and v.v4l2_fourcc == fourcc)
+
+    @staticmethod
+    def find_v4l2_fourcc_unsupported(fourcc):
+        try:
+            return PixelFormat.find_v4l2_fourcc(fourcc)
+        except StopIteration:
+            s = fourcc_to_str(fourcc)
+            return PixelFormatInfo(f'Unsupported<{s}>', None, s,
+                                   0, PixelColorEncoding.UNDEFINED, False,
+                                   0, [])
 
     # RGB
 
-    RGB565 = PixelFormatInfo(
+    RGB565 = PixelFormatInfo('RGB565',
         'RG16', 'RGBP',
         16,
         PixelColorEncoding.RGB,
@@ -86,7 +108,7 @@ class PixelFormat(Enum):
         ( ( 2, 1 ), ),
     )
 
-    RGB888 = PixelFormatInfo(
+    RGB888 = PixelFormatInfo('RGB888',
         'RG24', 'BGR3',
         24,
         PixelColorEncoding.RGB,
@@ -94,7 +116,7 @@ class PixelFormat(Enum):
         1,
         ( ( 3, 1 ), ),
     )
-    BGR888 = PixelFormatInfo(
+    BGR888 = PixelFormatInfo('BGR888',
         'BG24', 'RGB3',
         24,
         PixelColorEncoding.RGB,
@@ -105,7 +127,7 @@ class PixelFormat(Enum):
 
     # YUV
 
-    NV12 = PixelFormatInfo(
+    NV12 = PixelFormatInfo('NV12',
         'NV12', 'NM12',
         12,
         PixelColorEncoding.YUV,
@@ -114,7 +136,7 @@ class PixelFormat(Enum):
         ( ( 2, 1 ), ( 2, 2 ), ),
     )
 
-    YUYV = PixelFormatInfo(
+    YUYV = PixelFormatInfo('YUYV',
         'YUYV', 'YUYV',
         16,
         PixelColorEncoding.YUV,
@@ -123,7 +145,7 @@ class PixelFormat(Enum):
         ( ( 4, 1 ), ),
     )
 
-    UYVY = PixelFormatInfo(
+    UYVY = PixelFormatInfo('UYVY',
         'UYVY', 'UYVY',
         16,
         PixelColorEncoding.YUV,
@@ -134,7 +156,7 @@ class PixelFormat(Enum):
 
     # RAW
 
-    SBGGR8 = PixelFormatInfo(
+    SBGGR8 = PixelFormatInfo('SBGGR8',
         None, 'BA81',
         8,
         PixelColorEncoding.RAW,
@@ -143,7 +165,7 @@ class PixelFormat(Enum):
         ( ( 2, 1 ), ),
     )
 
-    SGBRG8 = PixelFormatInfo(
+    SGBRG8 = PixelFormatInfo('SGBRG8',
         None, 'GBRG',
         8,
         PixelColorEncoding.RAW,
@@ -152,7 +174,7 @@ class PixelFormat(Enum):
         ( ( 2, 1 ), ),
     )
 
-    SGRBG8 = PixelFormatInfo(
+    SGRBG8 = PixelFormatInfo('SGRBG8',
         None, 'GRBG',
         8,
         PixelColorEncoding.RAW,
@@ -161,7 +183,7 @@ class PixelFormat(Enum):
         ( ( 2, 1 ), ),
     )
 
-    SRGGB8 = PixelFormatInfo(
+    SRGGB8 = PixelFormatInfo('SRGGB8',
         None, 'RGGB',
         8,
         PixelColorEncoding.RAW,
@@ -171,7 +193,7 @@ class PixelFormat(Enum):
     )
 
 
-    SRGGB10 = PixelFormatInfo(
+    SRGGB10 = PixelFormatInfo('SRGGB10',
         None, 'RG10',
         10,
         PixelColorEncoding.RAW,
@@ -180,7 +202,7 @@ class PixelFormat(Enum):
         ( ( 4, 1 ), ),
     )
 
-    SBGGR10 = PixelFormatInfo(
+    SBGGR10 = PixelFormatInfo('SBGGR10',
         None, 'BG10',
         10,
         PixelColorEncoding.RAW,
@@ -189,7 +211,7 @@ class PixelFormat(Enum):
         ( ( 4, 1 ), ),
     )
 
-    SRGGB10P = PixelFormatInfo(
+    SRGGB10P = PixelFormatInfo('SRGGB10P',
         None, 'pRAA',
         10,
         PixelColorEncoding.RAW,
@@ -198,7 +220,7 @@ class PixelFormat(Enum):
         ( ( 5, 1 ), ),
     )
 
-    SRGGB12 = PixelFormatInfo(
+    SRGGB12 = PixelFormatInfo('SRGGB12',
         None, 'RG12',
         12,
         PixelColorEncoding.RAW,
@@ -207,7 +229,7 @@ class PixelFormat(Enum):
         ( ( 4, 1 ), ),
     )
 
-    SRGGB16 = PixelFormatInfo(
+    SRGGB16 = PixelFormatInfo('SRGGB16',
         None, 'RG16',
         16,
         PixelColorEncoding.RAW,

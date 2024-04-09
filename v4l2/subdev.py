@@ -86,10 +86,9 @@ class SubDevice:
 
             try:
                 code = v4l2.BusFormat(val.code)
-            except TypeError:
-                code = None
-
-            codes.append(code)
+                codes.append(code)
+            except ValueError:
+                print(f'Warning: unsupported mbus format {val.code:#x}')
 
             val.index += 1
 

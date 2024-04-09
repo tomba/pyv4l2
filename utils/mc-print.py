@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
-import v4l2
-import v4l2.uapi
 import argparse
 import errno
+import textwrap
 import sys
 
+import v4l2
+import v4l2.uapi
 
 def print_selection(subdev, pad, stream, target):
     name = target.name.lower()
@@ -42,6 +43,15 @@ def print_routes(subdev):
 
 
 def print_videodev_pad(videodev):
+    def print_videodef_fmts(videodev, buftype, title):
+        fmts = videodev.get_formats(buftype)
+        if not fmts:
+            return
+        fmts = str.join(' ', [f.name for f in fmts])
+        fmts = (f'{title}: {fmts}')
+        fmts = textwrap.fill(fmts, width=100, initial_indent=' ' * 4,
+                             subsequent_indent=' ' * (4 + len(title) + 2))
+        print(fmts)
 
     if videodev.has_capture:
         try:
@@ -53,7 +63,7 @@ def print_videodev_pad(videodev):
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        print(videodev.get_formats(v4l2.BufType.VIDEO_CAPTURE))
+        print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE, 'vcap')
 
     if videodev.has_mplane_capture:
         try:
@@ -65,6 +75,8 @@ def print_videodev_pad(videodev):
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
+        print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE_MPLANE, 'vcapm')
+
     if videodev.has_meta_capture:
         try:
             fmt = videodev.get_format(v4l2.BufType.META_CAPTURE)
@@ -75,7 +87,7 @@ def print_videodev_pad(videodev):
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        print(videodev.get_formats(v4l2.BufType.META_CAPTURE))
+        print_videodef_fmts(videodev, v4l2.BufType.META_CAPTURE, 'mcap')
 
     if videodev.has_meta_output:
         try:
@@ -87,6 +99,7 @@ def print_videodev_pad(videodev):
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
+        print_videodef_fmts(videodev, v4l2.BufType.META_OUTPUT, 'mout')
 
 
 def print_streams(subdev, pad, streams):
@@ -118,8 +131,11 @@ def print_streams(subdev, pad, streams):
 
         codes = subdev.get_formats(pad.index, s)
         if codes:
-            codes = str.join(' ', [c.name for c in codes])
-            print(f'      Codes: {codes}')
+            codes = 'codes: ' + str.join(' ', [c.name for c in codes])
+
+            codes = textwrap.fill(codes, width=100, initial_indent=' ' * 6,
+                                 subsequent_indent=' ' * (7 + 6))
+            print(codes)
 
 
 def print_pads(ent, subdev, videodev, only_graph: bool):
