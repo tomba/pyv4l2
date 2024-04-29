@@ -210,7 +210,7 @@ def setup(ctx: Context):
 
         # Queue the rest to the camera
         for i in range(first_buf, stream['num_bufs']):
-            if stream['format'] == v4l2.MetaFormat.RPI_FE_CFG:
+            if stream['format'] == v4l2.MetaFormats.RPI_FE_CFG:
                 # XXX We need to pass details about the video stream. Which one is it?
                 # Let's decide it's stream 0
                 pisp_create_config(streams[0], cap, cap.buffers[i])
@@ -245,7 +245,7 @@ def setup(ctx: Context):
 def queue_buf(ctx: Context, stream, vbuf: v4l2.VideoBuffer):
     cap = stream['cap']
 
-    if stream['format'] == v4l2.MetaFormat.RPI_FE_CFG:
+    if stream['format'] == v4l2.MetaFormats.RPI_FE_CFG:
         pisp_create_config(ctx.streams[0], cap, vbuf)
         # XXX We need to pass details about the video stream. Which one is it?
         # Let's decide it's stream 0

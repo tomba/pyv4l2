@@ -5,7 +5,7 @@ from typing import NamedTuple
 
 from v4l2.uapi import fourcc_to_str
 
-__all__ = [ 'PixelFormat', 'MetaFormat' ]
+__all__ = [ 'PixelFormat', 'PixelFormats', 'MetaFormat', 'MetaFormats' ]
 
 def str_to_fourcc(s: str):
     return \
@@ -27,7 +27,7 @@ class PixelFormatPlaneInfo(NamedTuple):
     verticalsubsampling: int
 
 
-class PixelFormatInfo:
+class PixelFormat:
     def __init__(self, name: str,
                  drm_fourcc: None | str, v4l2_fourcc: str,
                  bitsperpixel: int, colorencoding: PixelColorEncoding, packed: bool,
@@ -45,7 +45,7 @@ class PixelFormatInfo:
         return self.name
 
     def __repr__(self):
-        return f'PixelFormatInfo({self.name})'
+        return f'PixelFormat({self.name})'
 
     def stride(self, width: int, plane: int = 0, align: int = 1):
         if plane >= len(self.planes):
@@ -82,24 +82,24 @@ class PixelFormatInfo:
         return sum([self.planesize(width, height, i, align) for i in range(len(self.planes))])
 
 
-class PixelFormat:
+class PixelFormats:
     @staticmethod
     def find_v4l2_fourcc(fourcc):
-        return next(v for v in PixelFormat.__dict__.values() if isinstance(v, PixelFormatInfo) and v.v4l2_fourcc == fourcc)
+        return next(v for v in PixelFormats.__dict__.values() if isinstance(v, PixelFormat) and v.v4l2_fourcc == fourcc)
 
     @staticmethod
     def find_v4l2_fourcc_unsupported(fourcc):
         try:
-            return PixelFormat.find_v4l2_fourcc(fourcc)
+            return PixelFormats.find_v4l2_fourcc(fourcc)
         except StopIteration:
             s = fourcc_to_str(fourcc)
-            return PixelFormatInfo(f'Unsupported<{s}>', None, s,
-                                   0, PixelColorEncoding.UNDEFINED, False,
-                                   0, [])
+            return PixelFormat(f'Unsupported<{s}>', None, s,
+                               0, PixelColorEncoding.UNDEFINED, False,
+                               0, [])
 
     # RGB
 
-    RGB565 = PixelFormatInfo('RGB565',
+    RGB565 = PixelFormat('RGB565',
         'RG16', 'RGBP',
         16,
         PixelColorEncoding.RGB,
@@ -108,7 +108,7 @@ class PixelFormat:
         ( ( 2, 1 ), ),
     )
 
-    RGB888 = PixelFormatInfo('RGB888',
+    RGB888 = PixelFormat('RGB888',
         'RG24', 'BGR3',
         24,
         PixelColorEncoding.RGB,
@@ -116,7 +116,7 @@ class PixelFormat:
         1,
         ( ( 3, 1 ), ),
     )
-    BGR888 = PixelFormatInfo('BGR888',
+    BGR888 = PixelFormat('BGR888',
         'BG24', 'RGB3',
         24,
         PixelColorEncoding.RGB,
@@ -127,7 +127,7 @@ class PixelFormat:
 
     # YUV
 
-    NV12 = PixelFormatInfo('NV12',
+    NV12 = PixelFormat('NV12',
         'NV12', 'NM12',
         12,
         PixelColorEncoding.YUV,
@@ -136,7 +136,7 @@ class PixelFormat:
         ( ( 2, 1 ), ( 2, 2 ), ),
     )
 
-    YUYV = PixelFormatInfo('YUYV',
+    YUYV = PixelFormat('YUYV',
         'YUYV', 'YUYV',
         16,
         PixelColorEncoding.YUV,
@@ -145,7 +145,7 @@ class PixelFormat:
         ( ( 4, 1 ), ),
     )
 
-    UYVY = PixelFormatInfo('UYVY',
+    UYVY = PixelFormat('UYVY',
         'UYVY', 'UYVY',
         16,
         PixelColorEncoding.YUV,
@@ -156,7 +156,7 @@ class PixelFormat:
 
     # RAW
 
-    SBGGR8 = PixelFormatInfo('SBGGR8',
+    SBGGR8 = PixelFormat('SBGGR8',
         None, 'BA81',
         8,
         PixelColorEncoding.RAW,
@@ -165,7 +165,7 @@ class PixelFormat:
         ( ( 2, 1 ), ),
     )
 
-    SGBRG8 = PixelFormatInfo('SGBRG8',
+    SGBRG8 = PixelFormat('SGBRG8',
         None, 'GBRG',
         8,
         PixelColorEncoding.RAW,
@@ -174,7 +174,7 @@ class PixelFormat:
         ( ( 2, 1 ), ),
     )
 
-    SGRBG8 = PixelFormatInfo('SGRBG8',
+    SGRBG8 = PixelFormat('SGRBG8',
         None, 'GRBG',
         8,
         PixelColorEncoding.RAW,
@@ -183,7 +183,7 @@ class PixelFormat:
         ( ( 2, 1 ), ),
     )
 
-    SRGGB8 = PixelFormatInfo('SRGGB8',
+    SRGGB8 = PixelFormat('SRGGB8',
         None, 'RGGB',
         8,
         PixelColorEncoding.RAW,
@@ -193,7 +193,7 @@ class PixelFormat:
     )
 
 
-    SRGGB10 = PixelFormatInfo('SRGGB10',
+    SRGGB10 = PixelFormat('SRGGB10',
         None, 'RG10',
         10,
         PixelColorEncoding.RAW,
@@ -202,7 +202,7 @@ class PixelFormat:
         ( ( 4, 1 ), ),
     )
 
-    SBGGR10 = PixelFormatInfo('SBGGR10',
+    SBGGR10 = PixelFormat('SBGGR10',
         None, 'BG10',
         10,
         PixelColorEncoding.RAW,
@@ -211,7 +211,7 @@ class PixelFormat:
         ( ( 4, 1 ), ),
     )
 
-    SRGGB10P = PixelFormatInfo('SRGGB10P',
+    SRGGB10P = PixelFormat('SRGGB10P',
         None, 'pRAA',
         10,
         PixelColorEncoding.RAW,
@@ -220,7 +220,7 @@ class PixelFormat:
         ( ( 5, 1 ), ),
     )
 
-    SRGGB12 = PixelFormatInfo('SRGGB12',
+    SRGGB12 = PixelFormat('SRGGB12',
         None, 'RG12',
         12,
         PixelColorEncoding.RAW,
@@ -229,7 +229,7 @@ class PixelFormat:
         ( ( 4, 1 ), ),
     )
 
-    SRGGB16 = PixelFormatInfo('SRGGB16',
+    SRGGB16 = PixelFormat('SRGGB16',
         None, 'RG16',
         16,
         PixelColorEncoding.RAW,
@@ -239,8 +239,9 @@ class PixelFormat:
     )
 
 
-class MetaFormatInfo:
-    def __init__(self, v4l2_fourcc: str, pixelspergroup: int, bytespergroup: int) -> None:
+class MetaFormat:
+    def __init__(self, name: str, v4l2_fourcc: str, pixelspergroup: int, bytespergroup: int) -> None:
+        self.name = name
         self.v4l2_fourcc = str_to_fourcc(v4l2_fourcc)
         self.pixelspergroup = pixelspergroup
         self.bytespergroup = bytespergroup
@@ -253,13 +254,25 @@ class MetaFormatInfo:
         return (stride + align - 1) // align * align
 
 
-class MetaFormat(Enum):
-    GENERIC_8 = MetaFormatInfo('MET8', 2, 2)
-    GENERIC_CSI2_10 = MetaFormatInfo('MC1A', 4, 5)
-    GENERIC_CSI2_12 = MetaFormatInfo('MC1C', 2, 3)
+class MetaFormats:
+    @staticmethod
+    def find_v4l2_fourcc(fourcc):
+        return next(v for v in MetaFormats.__dict__.values() if isinstance(v, MetaFormat) and v.v4l2_fourcc == fourcc)
 
-    RPI_FE_CFG = MetaFormatInfo('RPFC', 1, 1)
-    RPI_FE_STATS = MetaFormatInfo('RPFS', 1, 1)
+    @staticmethod
+    def find_v4l2_fourcc_unsupported(fourcc):
+        try:
+            return MetaFormats.find_v4l2_fourcc(fourcc)
+        except StopIteration:
+            s = fourcc_to_str(fourcc)
+            return MetaFormat(f'Unsupported<{s}>', s, 0, 0)
+
+    GENERIC_8 = MetaFormat('GENERIC_8', 'MET8', 2, 2)
+    GENERIC_CSI2_10 = MetaFormat('GENERIC_CSI2_10', 'MC1A', 4, 5)
+    GENERIC_CSI2_12 = MetaFormat('GENERIC_CSI2_12', 'MC1C', 2, 3)
+
+    RPI_FE_CFG = MetaFormat('RPI_FE_CFG', 'RPFC', 1, 1)
+    RPI_FE_STATS = MetaFormat('RPI_FE_STATS', 'RPFS', 1, 1)
 
     # XXX deprecated rpi format
-    SENSOR_DATA = MetaFormatInfo('SENS', 1, 1)
+    SENSOR_DATA = MetaFormat('SENSOR_DATA', 'SENS', 1, 1)

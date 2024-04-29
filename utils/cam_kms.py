@@ -45,10 +45,10 @@ class KmsContext:
                 res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
 
             # If we don't have a DRM fmt, just fall back to RGB565
-            if isinstance(stream['format'], v4l2.MetaFormat) or not stream['format'].value.drm_fourcc:
+            if isinstance(stream['format'], v4l2.MetaFormat) or not stream['format'].drm_fourcc:
                 stream['kms-format'] = kms.PixelFormat.RGB565
             else:
-                stream['kms-format'] = kms.PixelFormat(stream['format'].value.drm_fourcc)
+                stream['kms-format'] = kms.PixelFormat(stream['format'].drm_fourcc)
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]
