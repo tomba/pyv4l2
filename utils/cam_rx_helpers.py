@@ -164,6 +164,41 @@ def convert_raw(data, w, h, bytesperline, fmt):
     return rgb
 
 
+# https://web.archive.org/web/20180423091842/http://www.equasys.de/colorconversion.html
+
+def convert_ycbcr_bt601_limited_to_rgb(yuv):
+    offset = np.array([-16, -128, -128])
+
+    m = np.array([
+             [ 1.164, 1.164, 1.164 ],
+             [ 0, -0.392, 2.017 ],
+             [ 1.596, -0.813, 0 ],
+         ])
+
+    rgb = np.dot(yuv + offset, m)
+
+    rgb = np.clip(rgb, 0, 255)
+    rgb = rgb.astype(np.uint8)
+
+    return rgb
+
+def convert_ycbcr_bt601_full_to_rgb(yuv):
+    offset = np.array([0, -128, -128])
+
+    m = np.array([
+             [ 1, 1, 1 ],
+             [ 0, -0.343, 1.765 ],
+             [ 1.4, -0.711, 0 ],
+         ])
+
+    rgb = np.dot(yuv + offset, m)
+
+    rgb = np.clip(rgb, 0, 255)
+    rgb = rgb.astype(np.uint8)
+
+    return rgb
+
+
 def convert_yuv444_to_rgb(yuv):
     m = np.array([
         [1.0, 1.0, 1.0],
@@ -252,18 +287,27 @@ def to_rgb(fmt, w, h, bytesperline, data):
     if fmt.startswith('S'):
         return convert_raw(data, w, h, bytesperline, fmt)
 
-    if fmt == 'RGB24': #fmt == 'RGB888':
+    if fmt == 'RGB888':
         rgb = data.reshape((h, w, 3))
-        rgb[:, :, [0, 1, 2]] = rgb[:, :, [0, 1, 2]]
+        rgb = np.flip(rgb, axis=2) # Flip the components
     elif fmt == 'BGR888':
         rgb = data.reshape((h, w, 3))
     elif fmt in ['ARGB8888', 'XRGB8888']:
         rgb = data.reshape((h, w, 4))
-        rgb = np.flip(rgb, axis=2)
-        # drop alpha component
-        rgb = np.delete(rgb, np.s_[0::4], axis=2)
+        rgb = np.delete(rgb, np.s_[3::4], axis=2) # drop alpha component
+        rgb = np.flip(rgb, axis=2) # Flip the components
+    elif fmt in ['ABGR8888', 'XBGR8888']:
+        rgb = data.reshape((h, w, 4))
+        rgb = np.delete(rgb, np.s_[3::4], axis=2) # drop alpha component
+    elif fmt == 'VUY888':
+        yuv = data.reshape((h, w, 3))
+        rgb = convert_ycbcr_bt601_full_to_rgb(yuv)
+    elif fmt == 'XVUY8888':
+        yuv = data.reshape((h, w, 4))
+        yuv = np.delete(yuv, np.s_[3::4], axis=2) # drop alpha component
+        rgb = convert_ycbcr_bt601_full_to_rgb(yuv)
     else:
-        raise Exception('Unsupported format ' + fmt)
+        raise RuntimeError('Unsupported format ' + fmt)
 
     return rgb
 
@@ -275,6 +319,10 @@ def data_to_rgb(fmt, w, h, bytesperline, data):
 
 
 def rgb_to_pix(rgb):
+    # QImage doesn't seem to like a numpy view
+    if rgb.base is not None:
+        rgb = rgb.copy()
+
     w = rgb.shape[1]
     h = rgb.shape[0]
     qim = QtGui.QImage(rgb, w, h, QtGui.QImage.Format.Format_RGB888) # pylint: disable=no-member
