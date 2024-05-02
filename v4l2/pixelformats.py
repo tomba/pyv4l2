@@ -109,7 +109,8 @@ class PixelFormats:
     )
 
     RGB888 = PixelFormat('RGB888',
-        'RG24', 'BGR3',
+        'RG24',     # DRM_FORMAT_RGB888
+        'BGR3',     # V4L2_PIX_FMT_BGR24
         24,
         PixelColorEncoding.RGB,
         False,
@@ -117,12 +118,32 @@ class PixelFormats:
         ( ( 3, 1 ), ),
     )
     BGR888 = PixelFormat('BGR888',
-        'BG24', 'RGB3',
+        'BG24',     # DRM_FORMAT_BGR888
+        'RGB3',     # V4L2_PIX_FMT_RGB24
         24,
         PixelColorEncoding.RGB,
         False,
         1,
         ( ( 3, 1 ), ),
+    )
+
+    XRGB8888 = PixelFormat('XRGB8888',
+        'XR24',     # DRM_FORMAT_XRGB8888
+        'XR24',     # V4L2_PIX_FMT_XBGR32
+        32,
+        PixelColorEncoding.RGB,
+        False,
+        1,
+        ( ( 4, 1 ), ),
+    )
+    XBGR8888 = PixelFormat('XBGR8888',
+        'XB24',     # DRM_FORMAT_XBGR8888
+        'XB24',     # V4L2_PIX_FMT_RGBX32
+        32,
+        PixelColorEncoding.RGB,
+        False,
+        1,
+        ( ( 4, 1 ), ),
     )
 
     # YUV
@@ -151,6 +172,28 @@ class PixelFormats:
         PixelColorEncoding.YUV,
         False,
         2,
+        ( ( 4, 1 ), ),
+    )
+
+    # YUV 4:4:4
+
+    VUY888 = PixelFormat('VUY888',
+        'VU24',     # DRM_FORMAT_VUY888
+        'YUV3',     # V4L2_PIX_FMT_YUV24
+        24,
+        PixelColorEncoding.YUV,
+        False,
+        1,
+        ( ( 3, 1 ), ),
+    )
+
+    XVUY8888 = PixelFormat('XVUY8888',
+        'XVUY',     # DRM_FORMAT_XVUY8888
+        'YUVX',     # V4L2_PIX_FMT_YUVX32
+        32,
+        PixelColorEncoding.YUV,
+        False,
+        1,
         ( ( 4, 1 ), ),
     )
 
