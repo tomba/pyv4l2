@@ -44,6 +44,7 @@ class Context(object):
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
     parser.add_argument('config_name', help='Configuration name')
+    parser.add_argument('params', nargs='*', help='Parameters to the configuration')
     parser.add_argument('-c', '--config-only', action='store_true', default=False, help='configure only')
     parser.add_argument('-s', '--save', action='store_true', default=False, help='save frames to files')
     parser.add_argument('-d', '--display', action='store_true', default=False, help='show frames on screen')
@@ -100,7 +101,7 @@ def parse_args(ctx: Context):
         else:
             ctx.buf_type = 'v4l2'
 
-    ctx.config = read_config(args.config_name)
+    ctx.config = read_config(args.config_name, args.params)
 
 
 def init_mdev(ctx: Context):
