@@ -97,6 +97,10 @@ class PixelFormats:
                                0, PixelColorEncoding.UNDEFINED, False,
                                0, [])
 
+    @staticmethod
+    def find_by_name(name):
+        return next(v for v in PixelFormats.__dict__.values() if isinstance(v, PixelFormat) and v.name == name)
+
     # RGB
 
     RGB565 = PixelFormat('RGB565',
@@ -195,6 +199,17 @@ class PixelFormats:
         False,
         1,
         ( ( 4, 1 ), ),
+    )
+
+    # Y8
+
+    Y8 = PixelFormat('Y8',
+        None, 'GREY',
+        8,
+        PixelColorEncoding.YUV,
+        False,
+        1,
+        ( ( 1, 1 ), ),
     )
 
     # RAW
