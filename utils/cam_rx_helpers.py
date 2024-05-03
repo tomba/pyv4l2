@@ -225,7 +225,7 @@ def convert_yuyv(data, w, h):
     yuv[:, :, 1] = yuyv[:, 1::4].repeat(2, axis=1)  # U
     yuv[:, :, 2] = yuyv[:, 3::4].repeat(2, axis=1)  # V
 
-    return convert_yuv444_to_rgb(yuv)
+    return convert_ycbcr_bt601_full_to_rgb(yuv)
 
 
 def convert_uyvy(data, w, h):
@@ -238,7 +238,7 @@ def convert_uyvy(data, w, h):
     yuv[:, :, 1] = yuyv[:, 0::4].repeat(2, axis=1)  # U
     yuv[:, :, 2] = yuyv[:, 2::4].repeat(2, axis=1)  # V
 
-    return convert_yuv444_to_rgb(yuv)
+    return convert_ycbcr_bt601_full_to_rgb(yuv)
 
 
 def convert_nv12(data, w, h):
