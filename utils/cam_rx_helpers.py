@@ -210,6 +210,7 @@ def convert_yuv444_to_rgb(yuv):
     rgb[:, :, 0] -= 179.45477266423404
     rgb[:, :, 1] += 135.45870971679688
     rgb[:, :, 2] -= 226.8183044444304
+    rgb = np.clip(rgb, 0, 255)
     rgb = rgb.astype(np.uint8)
 
     return rgb
