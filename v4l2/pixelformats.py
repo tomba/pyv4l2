@@ -149,6 +149,15 @@ class PixelFormats:
         1,
         ( ( 4, 1 ), ),
     )
+    XBGR2101010 = PixelFormat('XBGR2101010',
+        'XB30',     # DRM_FORMAT_XBGR2101010
+        'RX30',     # V4L2_PIX_FMT_RGBX1010102
+        32,
+        PixelColorEncoding.RGB,
+        False,
+        1,
+        ( ( 4, 1 ), ),
+    )
 
     # YUV
 

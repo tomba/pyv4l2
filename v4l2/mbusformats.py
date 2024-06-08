@@ -103,3 +103,6 @@ class BusFormat(IntEnum):
     VUY8_1X24 = v4l2.uapi.MEDIA_BUS_FMT_VUY8_1X24
 
     CCS_EMBEDDED = v4l2.uapi.MEDIA_BUS_FMT_CCS_EMBEDDED
+
+    # XILINX
+    RBG101010_1X30 = 0x1100

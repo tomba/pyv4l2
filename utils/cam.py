@@ -43,8 +43,6 @@ class Context(object):
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
-    parser.add_argument('config_name', help='Configuration name')
-    parser.add_argument('params', nargs='*', help='Parameters to the configuration')
     parser.add_argument('-c', '--config-only', action='store_true', default=False, help='configure only')
     parser.add_argument('-s', '--save', action='store_true', default=False, help='save frames to files')
     parser.add_argument('-d', '--display', action='store_true', default=False, help='show frames on screen')
@@ -55,6 +53,8 @@ def parse_args(ctx: Context):
     parser.add_argument('-S', '--script', help='User script')
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
+    parser.add_argument('config_name', help='Configuration name')
+    parser.add_argument('params', nargs='*', help='Parameters to the configuration')
     args = parser.parse_args()
 
     ctx.verbose = args.verbose

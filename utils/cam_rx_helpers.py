@@ -307,6 +307,30 @@ def to_rgb(fmt, w, h, bytesperline, data):
         yuv = data.reshape((h, w, 4))
         yuv = np.delete(yuv, np.s_[3::4], axis=2) # drop alpha component
         rgb = convert_ycbcr_bt601_full_to_rgb(yuv)
+    elif fmt == 'XBGR2101010':
+        rgb = data.reshape((h, w * 4)) #.astype(np.uint16)
+
+        print(rgb.shape, rgb.dtype)
+
+        v = rgb.view(np.dtype('<u4'))
+
+        print('{:#x}'.format(v[0, 0]))
+
+        output = np.zeros((h, w, 3), dtype=np.uint16)
+
+        output[:, :, 0] = v & 0x3ff             # R
+        output[:, :, 1] = (v >> 10) & 0x3ff     # G
+        output[:, :, 2] = (v >> 20) & 0x3ff     # B
+
+        rgb = output
+
+        print('{}'.format(rgb[0, 0]))
+
+        rgb >>= 10 - 8
+        rgb = rgb.astype(np.uint8)
+
+        #rgb = np.delete(rgb, np.s_[3::4], axis=2) # drop alpha component
+        #rgb = np.flip(rgb, axis=2) # Flip the components
     else:
         raise RuntimeError('Unsupported format ' + fmt)
 
@@ -332,11 +356,17 @@ def rgb_to_pix(rgb):
 
 
 def data_to_pix(fmt, w, h, bytesperline, data):
+    print("SRC:", list(data[0:4]))
+
     if fmt == 'MJPEG':
         pix = QtGui.QPixmap(w, h)
         pix.loadFromData(data)
     else:
         rgb = data_to_rgb(fmt, w, h, bytesperline, data)
+
+        print("RGB:", list(rgb[0,0]))
+        #print(rgb)
+
         pix = rgb_to_pix(rgb)
 
     return pix
