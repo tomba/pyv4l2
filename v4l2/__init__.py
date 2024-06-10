@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .pixelformats import *
+from .common.pixelformats import *
 from .mbusformats import *
 from .media import *
 from .subdev import *

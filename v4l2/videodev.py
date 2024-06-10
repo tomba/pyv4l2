@@ -8,7 +8,7 @@ import glob
 import os
 
 import v4l2.uapi
-import v4l2.pixelformats
+import v4l2.common.pixelformats
 
 __all__ = [ 'VideoDevice', 'VideoBuffer' ]
 
@@ -111,7 +111,7 @@ class VideoDevice:
             if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
                 f = v4l2.MetaFormats.find_v4l2_fourcc_unsupported(fmt.pixelformat)
             else:
-                f = v4l2.PixelFormats.find_v4l2_fourcc_unsupported(fmt.pixelformat)
+                f = v4l2.common.PixelFormats.find_v4l2_fourcc_unsupported(fmt.pixelformat)
 
             fmts.append(f)
 
