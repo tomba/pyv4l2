@@ -199,6 +199,8 @@ def convert_ycbcr_bt601_full_to_rgb(yuv):
     return rgb
 
 
+# https://gist.github.com/Quasimondo/c3590226c924a06b276d606f4f189639
+
 def convert_yuv444_to_rgb(yuv):
     m = np.array([
         [1.0, 1.0, 1.0],
