@@ -8,9 +8,9 @@ import sys
 import traceback
 
 from cam_rx_helpers import data_to_pix
-from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import Qt
-import PyQt5.QtNetwork
+from PyQt6 import QtCore, QtWidgets
+from PyQt6.QtCore import Qt
+import PyQt6.QtNetwork
 
 PORT = 43242
 receivers = []
@@ -73,7 +73,7 @@ def meta_to_pix(fmt, w, h, bytesperline, data):
 
 
 class Receiver(QtWidgets.QWidget):
-    def __init__(self, socket: PyQt5.QtNetwork.QTcpSocket):
+    def __init__(self, socket: PyQt6.QtNetwork.QTcpSocket):
         super().__init__()
 
         self.name = '{}:{}'.format(socket.peerAddress().toString(), socket.peerPort())
@@ -84,7 +84,7 @@ class Receiver(QtWidgets.QWidget):
 
         self.socket.readyRead.connect(self.on_ready_read)
         self.socket.disconnected.connect(self.on_disconnected)
-        self.socket.error.connect(self.on_error)
+        self.socket.errorOccurred.connect(self.on_error)
 
         self.header_buffer = bytearray()
         self.data_buffer = bytearray()
@@ -93,8 +93,8 @@ class Receiver(QtWidgets.QWidget):
         self.state = 0
 
         self.resize(1000, 600)
-        self.setAttribute(Qt.WA_ShowWithoutActivating)
-        self.setWindowFlag(Qt.WindowStaysOnTopHint, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
+        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
 
         self.gridLayout = QtWidgets.QGridLayout()
         self.setLayout(self.gridLayout)
@@ -142,7 +142,7 @@ class Receiver(QtWidgets.QWidget):
 
         if idx not in self.labels:
             label = QtWidgets.QLabel()
-            label.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Ignored)
             self.labels[idx] = label
             self.gridLayout.addWidget(label, self.gridLayout.count() // 2, self.gridLayout.count() % 2)
 
@@ -173,7 +173,7 @@ class Receiver(QtWidgets.QWidget):
 
 
 def new_connection(tcpServer):
-    clientConnection: PyQt5.QtNetwork.QTcpSocket = tcpServer.nextPendingConnection()
+    clientConnection: PyQt6.QtNetwork.QTcpSocket = tcpServer.nextPendingConnection()
     w = Receiver(clientConnection)
     receivers.append(w)
 
@@ -188,11 +188,11 @@ if __name__ == '__main__':
     qApp = QtWidgets.QApplication(sys.argv)
     qApp.setQuitOnLastWindowClosed(False)
 
-    keynotif = QtCore.QSocketNotifier(sys.stdin.fileno(), QtCore.QSocketNotifier.Read)
+    keynotif = QtCore.QSocketNotifier(sys.stdin.fileno(), QtCore.QSocketNotifier.Type.Read)
     keynotif.activated.connect(readkey)
 
-    tcpServer = PyQt5.QtNetwork.QTcpServer(qApp)
-    tcpServer.listen(PyQt5.QtNetwork.QHostAddress('0.0.0.0'), PORT)
+    tcpServer = PyQt6.QtNetwork.QTcpServer(qApp)
+    tcpServer.listen(PyQt6.QtNetwork.QHostAddress('0.0.0.0'), PORT)
     tcpServer.newConnection.connect(lambda: new_connection(tcpServer))
 
-    sys.exit(qApp.exec_())
+    sys.exit(qApp.exec())

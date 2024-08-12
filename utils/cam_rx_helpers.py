@@ -4,7 +4,7 @@
 # Debayering code from PiCamera documentation
 
 from numpy.lib.stride_tricks import as_strided
-from PyQt5 import QtGui
+from PyQt6 import QtGui
 import numpy as np
 
 

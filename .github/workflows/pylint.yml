@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint numpy PyQt5 ipython
+        pip install pylint numpy PyQt6 ipython
         git clone --depth=1 https://github.com/tomba/pykms.git ../pykms
     - name: Analysing the code with pylint
       run: |
