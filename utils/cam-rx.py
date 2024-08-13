@@ -7,7 +7,7 @@ import struct
 import sys
 import traceback
 
-from cam_rx_helpers import data_to_pix
+from pixutils.conv.qt import data_to_pix
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
 import PyQt6.QtNetwork

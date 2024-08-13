@@ -42,13 +42,13 @@ class KmsContext:
 
             if stream.get('dra-plane-hack', False):
                 # Hack to reserve the unscaleable GFX plane
-                res.reserve_generic_plane(crtc, kms.PixelFormat.RGB565)
+                res.reserve_generic_plane(crtc, v4l2.PixelFormats.RGB565)
 
             # If we don't have a DRM fmt, just fall back to RGB565
             if isinstance(stream['format'], v4l2.MetaFormat) or not stream['format'].drm_fourcc:
-                stream['kms-format'] = kms.PixelFormat.RGB565
+                stream['kms-format'] = v4l2.PixelFormats.RGB565
             else:
-                stream['kms-format'] = kms.PixelFormat(stream['format'].drm_fourcc)
+                stream['kms-format'] = stream['format']
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]

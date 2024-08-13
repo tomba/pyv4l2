@@ -32,7 +32,7 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-init-hook='import sys; sys.path.append("."); sys.path.append("../pykms")'
+init-hook='import sys; sys.path.append("."); sys.path.append("../pykms"); sys.path.append("../pixutils")'
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.

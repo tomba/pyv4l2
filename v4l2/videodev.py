@@ -8,7 +8,6 @@ import glob
 import os
 
 import v4l2.uapi
-import v4l2.pixelformats
 
 __all__ = [ 'VideoDevice', 'VideoBuffer' ]
 
