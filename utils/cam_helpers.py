@@ -78,7 +78,7 @@ class NetTX:
         fmt = stream['format']
 
         if stream.get('embedded', False):
-            bytesperline = fmt.value.stride(stream['w'])
+            bytesperline = fmt.stride(stream['w'])
         else:
             bytesperline = stream['cap'].bytesperline
 
