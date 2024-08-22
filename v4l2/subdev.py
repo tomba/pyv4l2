@@ -4,8 +4,9 @@ import ctypes
 import errno
 import fcntl
 import os
-import v4l2.uapi
 from enum import IntFlag
+
+import v4l2.uapi
 
 __all__ = [ 'RouteFlag', 'Route', 'SubDevice' ]
 
@@ -62,7 +63,7 @@ class SubDevice:
             cap.capabilities = v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_CLIENT_CAP, cap, True)
             self.has_streams = (cap.capabilities & v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0
-        except:
+        except OSError:
             self.has_streams = False
 
     def get_formats(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
@@ -124,7 +125,7 @@ class SubDevice:
         except OSError as e:
             if e.errno == errno.ENOTTY:
                 return []
-            elif e.errno != errno.ENOSPC:
+            if e.errno != errno.ENOSPC:
                 raise
 
         routes = (v4l2.uapi.v4l2_subdev_route * routing.num_routes)()

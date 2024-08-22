@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-import glob
 from enum import Enum
 import v4l2.uapi
 
@@ -15,7 +13,7 @@ def filepath_for_major_minor(major: int, minor: int):
             path = l[len('DEVNAME='):].strip()
             return '/dev/' + path
 
-    raise Exception(f'No device-node found for ({major},{minor})')
+    raise RuntimeError(f'No device-node found for ({major},{minor})')
 
 class BufType(Enum):
     VIDEO_CAPTURE = v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE

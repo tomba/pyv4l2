@@ -196,7 +196,7 @@ class KmsContext:
             ctx.kms_committed = True
 
     def readdrm(self):
-        #print('EVENT');
+        #print('EVENT')
         for ev in self.card.read_events():
             if ev.type == kms.DrmEventType.FLIP_COMPLETE:
                 self.handle_pageflip()

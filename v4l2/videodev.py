@@ -72,7 +72,7 @@ class VideoDevice:
         for path in glob.glob('/dev/video*'):
             try:
                 fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
-            except:
+            except OSError:
                 continue
 
             try:
@@ -132,9 +132,9 @@ class VideoDevice:
         if self.has_mplane_capture:
             return MPlaneCaptureStreamer(self, mem_type, v4l2.BufType.VIDEO_CAPTURE_MPLANE,
                                          width, height, format)
-        else:
-            return SPlaneCaptureStreamer(self, mem_type, v4l2.BufType.VIDEO_CAPTURE,
-                                   width, height, format)
+
+        return SPlaneCaptureStreamer(self, mem_type, v4l2.BufType.VIDEO_CAPTURE,
+                               width, height, format)
 
     def get_meta_capture_streamer(self, mem_type: v4l2.MemType,
                                   size: int, format: v4l2.MetaFormat):

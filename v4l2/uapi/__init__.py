@@ -1,5 +1,6 @@
-from .v4l2 import *
 from enum import IntEnum
+
+from .v4l2 import *
 
 def fourcc_to_str(fourcc: int):
     return ''.join((

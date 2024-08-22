@@ -8,7 +8,7 @@ def fill_fe_config(stream, vbuf: v4l2.VideoBuffer, cfg: pisp.pisp_fe_config):
     cfg.input.format.width = stream['w']
     cfg.input.format.height = stream['h']
     cfg.input.format.stride = stream['w'] * 1  # 8 bits per pixel??
-    cfg.input.format.format = pisp.PISP_IMAGE_FORMAT_BPS_8; # | pisp.PISP_IMAGE_FORMAT_SHIFT_8
+    cfg.input.format.format = pisp.PISP_IMAGE_FORMAT_BPS_8 # | pisp.PISP_IMAGE_FORMAT_SHIFT_8
 
     ch = 0
     cfg.global_.enables |= pisp.PISP_FE_ENABLE_OUTPUT(ch)

@@ -62,7 +62,7 @@ class MediaEntity(MediaObject):
                 ifaces.append(ob)
 
         if len(ifaces) > 1:
-            raise Exception("Multiple interfaces for entity")
+            raise RuntimeError("Multiple interfaces for entity")
 
         if len(ifaces) > 0:
             self.interface = ifaces[0]
@@ -82,7 +82,7 @@ class MediaInterface(MediaObject):
         self.majorminor = (self.media_iface.unnamed_1.devnode.major, self.media_iface.unnamed_1.devnode.minor)
         self.dev_path = filepath_for_major_minor(*self.majorminor)
 
-    def _finalize(self):
+    def _finalize(self):        # pylint: disable=useless-parent-delegation
         super()._finalize()
 
     def __repr__(self) -> str:
@@ -156,13 +156,13 @@ class MediaLink(MediaObject):
     def source_pad(self) -> MediaPad:
         if isinstance(self.source, MediaPad):
             return self.source
-        raise Exception("Source is not a MediaPad")
+        raise RuntimeError("Source is not a MediaPad")
 
     @property
     def sink_pad(self) -> MediaPad:
         if isinstance(self.sink, MediaPad):
             return self.sink
-        raise Exception("Sink is not a MediaPad")
+        raise RuntimeError("Sink is not a MediaPad")
 
 
 class MediaDevice:
@@ -181,7 +181,7 @@ class MediaDevice:
         for path in glob.glob('/dev/media*'):
             try:
                 fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
-            except:
+            except OSError:
                 continue
 
             try:
@@ -228,7 +228,7 @@ class MediaDevice:
             [MediaLink(self, l) for l in self.topology.links]
 
         for o in self.objects:
-            o._finalize()
+            o._finalize()       # pylint: disable=protected-access
 
     @property
     def entities(self):
