@@ -6,7 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "pyv4l2"
 version = "0.1"
 dependencies = [
-  "git+https://github.com/tomba/pixutils.git",
+  "pykms @ git+https://github.com/tomba/pykms.git",
+  "pixutils @ git+https://github.com/tomba/pixutils.git",
 ]
 requires-python = ">=3.8"
 authors = [
