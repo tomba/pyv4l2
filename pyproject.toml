@@ -30,3 +30,6 @@ classifiers = [
 Homepage = "https://github.com/tomba/pyv4l2"
 Repository = "https://github.com/tomba/pyv4l2.git"
 "Bug Tracker" = "https://github.com/tomba/pyv4l2/issues"
+
+[tool.setuptools]
+packages = ["v4l2"]
