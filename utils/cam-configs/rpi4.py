@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 
 import v4l2
-import kms
 
 imx219_w = 1920
 imx219_h = 1080
 imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-imx219_pix_fmt = v4l2.PixelFormat.SRGGB8
+imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
 mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
@@ -15,7 +14,7 @@ fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
 imx219_meta_w = 1024
 imx219_meta_h = 2
 imx219_meta_bus_fmt = v4l2.BusFormat.META_8
-imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_8
+imx219_meta_pix_fmt = v4l2.MetaFormats.GENERIC_8
 
 meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
 imx219_meta_h = 16

@@ -7,7 +7,7 @@ configurations = {}
 fmt1 = (2400, 1600, v4l2.BusFormat.SRGGB12_1X12) # TPG output
 fmt2 = (2400, 1600, v4l2.BusFormat.YUYV8_2X8) # ISP output
 fmt3 = (1920, 1080, v4l2.BusFormat.YUYV8_2X8) # RSZ output
-vfmt = (1920, 1080, v4l2.PixelFormat.YUYV)
+vfmt = (1920, 1080, v4l2.PixelFormats.YUYV)
 
 crop1 = (0, 0, 2400, 1600) # ISP input crop
 crop2 = (0, 0, 2400, 1600) # ISP output crop

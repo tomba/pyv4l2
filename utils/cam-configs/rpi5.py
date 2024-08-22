@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
-import v4l2
-import pisp
 import ctypes
+import v4l2
+
+import pisp
 
 imx219_w = 640
 imx219_h = 480

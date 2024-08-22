@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import kms
 import v4l2
 
 # Pixel
@@ -176,7 +175,6 @@ def gen_imx219_meta(port):
     }
 
 def gen_ub953_tpg(port):
-    sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
     ser_ent = f'ds90ub953 6-004{4 + port}'
 
     tpg_w = tpg_fmts[port][0]

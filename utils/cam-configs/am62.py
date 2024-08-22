@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 
 import v4l2
-import kms
 
 imx219_w = 640
 imx219_h = 480
 imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-imx219_pix_fmt = v4l2.PixelFormat.SRGGB10
+imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
 #imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
 #imx219_pix_fmt = v4l2.PixelFormat.SRGGB8
 
@@ -14,14 +13,14 @@ mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
 
 mbus_fmt_imx219_fe = (imx219_w, imx219_h, v4l2.BusFormat.SRGGB16_1X16)
-fmt_pix_imx219_fe = (imx219_w, imx219_h, v4l2.PixelFormat.SRGGB16)
+fmt_pix_imx219_fe = (imx219_w, imx219_h, v4l2.PixelFormats.SRGGB16)
 
 imx219_meta_w = imx219_w
 imx219_meta_h = 2
 #imx219_meta_bus_fmt = v4l2.BusFormat.META_8
 #imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_8
 imx219_meta_bus_fmt = v4l2.BusFormat.META_10
-imx219_meta_pix_fmt = v4l2.MetaFormat.GENERIC_CSI2_10
+imx219_meta_pix_fmt = v4l2.MetaFormats.GENERIC_CSI2_10
 
 meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
 meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)

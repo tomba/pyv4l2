@@ -5,7 +5,7 @@ import v4l2
 sensor_fmt = (2592, 1940, v4l2.BusFormat.SRGGB12_1X12)
 isp_out_fmt = (2592, 1940, v4l2.BusFormat.YUYV8_2X8)
 resizer_out_fmt = (1920, 1080, v4l2.BusFormat.YUYV8_2X8)
-vid_fmt = (1920, 1080, v4l2.PixelFormat.YUYV)
+vid_fmt = (1920, 1080, v4l2.PixelFormats.YUYV)
 
 isp_crop = (0, 0, 2592, 1940)
 resizer_crop = (0, 0, 2592, 1940)
