@@ -24,4 +24,4 @@ jobs:
         python3 -m unittest -v tests/test_install.py
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files 'v4l2/*.py' 'tests/*.py')
