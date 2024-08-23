@@ -8,6 +8,7 @@ import sys
 import traceback
 
 from pixutils.conv.qt import data_to_pix
+from pixutils import PixelFormats, MetaFormat, MetaFormats
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
 import PyQt6.QtNetwork
@@ -35,7 +36,7 @@ old_msg_handler = QtCore.qInstallMessageHandler(qt_message_handler)
 
 NO_SKIP = True
 
-def meta_to_pix(fmt, w, h, bytesperline, data):
+def meta_to_pix(bytesperline, data):
     prev = None
     nskip = 0
     cnt = 0
@@ -87,6 +88,7 @@ class Receiver(QtWidgets.QWidget):
         self.socket.errorOccurred.connect(self.on_error)
 
         self.header_buffer = bytearray()
+        self.header_tuple = ()
         self.data_buffer = bytearray()
         self.data_size = 0
 
@@ -105,8 +107,6 @@ class Receiver(QtWidgets.QWidget):
         print("done")
 
     def on_ready_read(self):
-        qApp = QtWidgets.QApplication.instance()
-
         while self.socket.bytesAvailable():
             if self.state == 0:
                 data = self.socket.read(struct_fmt.size - len(self.header_buffer))
@@ -123,6 +123,8 @@ class Receiver(QtWidgets.QWidget):
                         self.on_buffers()
                     except Exception:
                         print(traceback.format_exc())
+                        qApp = QtWidgets.QApplication.instance()
+                        assert qApp
                         qApp.exit(-1)
                         return
 
@@ -136,21 +138,27 @@ class Receiver(QtWidgets.QWidget):
 
     def on_buffers(self):
         idx, w, h, bytesperline, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
-        fmt = fmtstr.decode('ascii')
+        try:
+            fmt = PixelFormats.find_by_name(fmtstr.decode('ascii'))
+        except StopIteration:
+            try:
+                fmt = MetaFormats.find_by_name(fmtstr.decode('ascii'))
+            except StopIteration as exc:
+                raise RuntimeError(f'Format not found: {fmtstr}') from exc
 
         print('[{}] cam{} {}x{}-{}, buflen {}, bpl {}'.format(self.name, idx, w, h, fmt, len(self.data_buffer), bytesperline))
 
-        if idx not in self.labels:
-            label = QtWidgets.QLabel()
-            label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Ignored)
-            self.labels[idx] = label
-            self.gridLayout.addWidget(label, self.gridLayout.count() // 2, self.gridLayout.count() % 2)
-
-        label = self.labels[idx]
-
-        if fmt in [ "GENERIC_8", "GENERIC_CSI2_10", "GENERIC_CSI2_12", "SENSOR_DATA", "RPI_FE_CFG", "RPI_FE_STATS" ]:
-            meta_to_pix(fmt, w, h, bytesperline, self.data_buffer)
+        if isinstance(fmt, MetaFormat):
+            meta_to_pix(bytesperline, self.data_buffer)
         else:
+            if idx not in self.labels:
+                label = QtWidgets.QLabel()
+                label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Ignored)
+                self.labels[idx] = label
+                self.gridLayout.addWidget(label, self.gridLayout.count() // 2, self.gridLayout.count() % 2)
+
+            label = self.labels[idx]
+
             pix = data_to_pix(fmt, w, h, bytesperline, self.data_buffer)
 
             # pylint: disable=no-member
@@ -180,11 +188,11 @@ def new_connection(tcpServer):
 
 def readkey():
     qApp = QtWidgets.QApplication.instance()
+    assert qApp
     sys.stdin.readline()
     qApp.quit()
 
-
-if __name__ == '__main__':
+def main():
     qApp = QtWidgets.QApplication(sys.argv)
     qApp.setQuitOnLastWindowClosed(False)
 
@@ -195,4 +203,7 @@ if __name__ == '__main__':
     tcpServer.listen(PyQt6.QtNetwork.QHostAddress('0.0.0.0'), PORT)
     tcpServer.newConnection.connect(lambda: new_connection(tcpServer))
 
-    sys.exit(qApp.exec())
+    return qApp.exec()
+
+if __name__ == '__main__':
+    sys.exit(main())
