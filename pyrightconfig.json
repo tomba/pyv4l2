@@ -1,0 +1,9 @@
+{
+	"exclude": [
+		"v4l2/uapi",
+		"extra"
+	],
+	"extraPaths": [
+		"../pixutils"
+	],
+}
