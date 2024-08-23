@@ -4,6 +4,7 @@
 		"extra"
 	],
 	"extraPaths": [
+		"../pykms",
 		"../pixutils"
-	],
+	]
 }
