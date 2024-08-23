@@ -1,4 +1,4 @@
-name: Pylint
+name: CI
 
 on: [push]
 
@@ -8,20 +8,26 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+        cache: "pip"
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -e .
         pip install pylint numpy PyQt6 ipython
+
     - name: Test with unittest
       run: |
         python3 -m unittest -v tests/test_install.py
+
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files 'v4l2/*.py' 'tests/*.py')
