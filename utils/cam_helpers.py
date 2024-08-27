@@ -3,15 +3,18 @@ import importlib
 import mmap
 import os
 import socket
+import struct
 import sys
 import typing
 from typing import TYPE_CHECKING
 
+from pixutils import MetaFormat
 import v4l2
 import v4l2.uapi
 
 if TYPE_CHECKING:
     from .cam import Context
+    import kms
 
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
@@ -19,14 +22,12 @@ def disable_all_links(md: v4l2.MediaDevice):
         for l in ent.pad_links:
             if l.is_immutable:
                 continue
-            #print((l.sink, l.sink_pad), (l.source, l.source_pad))
-            l.enabled = False
-            md.link_setup(l.source, l.sink, 0)
-            #ent.setup_link(l)
+            #print(l)
+            l.disable()
 
 
 # Enable link between (src_ent, src_pad) -> (sink_ent, sink_pad)
-def link(md: v4l2.MediaDevice, source, sink):
+def enable_link(source, sink):
     src_ent = source[0]
     sink_ent = sink[0]
 
@@ -42,8 +43,8 @@ def link(md: v4l2.MediaDevice, source, sink):
             link = l
             break
 
-    if link == None:
-        raise Exception('Failed to find link between', source, sink)
+    if link is None:
+        raise RuntimeError('Failed to find link between', source, sink)
 
     #if link.is_enabled:
     #    return
@@ -56,14 +57,12 @@ def link(md: v4l2.MediaDevice, source, sink):
     link.enabled = True
     #src_ent.setup_link(link)
 
-    md.link_setup(link.source, link.sink, v4l2.uapi.MEDIA_LNK_FL_ENABLED)
+    link.enable()
 
 
 class NetTX:
-    import struct
-
-    # ctx-idx, width, height, bytesperline, format, num-planes, plane1, plane2, plane3, plane4
-    struct_fmt = struct.Struct('<IIII16pI4I')
+    # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
+    struct_fmt = struct.Struct('<III4I16pI4I')
 
     def __init__(self) -> None:
         HOST, PORT = '192.168.88.20', 43242
@@ -74,34 +73,38 @@ class NetTX:
     def tx(self, stream, vbuf, is_drm):
         cap = stream['cap']
 
-        if is_drm:
-            fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
-            assert(fb != None)
-            plane_sizes = [fb.size(0), 0, 0, 0]
-        else:
-            plane_sizes = [vbuf.buffer_size, 0, 0, 0]
+        plane_sizes = cap.buffersizes
+        strides = cap.strides
+
+        # Extend lists to 4 elements
+        plane_sizes.extend(0 for _ in range(4 - len(plane_sizes)))
+        strides.extend(0 for _ in range(4 - len(strides)))
 
         fmt = stream['format']
 
-        if stream.get('embedded', False):
-            bytesperline = fmt.stride(stream['w'])
+        if isinstance(fmt, MetaFormat):
+            num_planes = 1
         else:
-            bytesperline = stream['cap'].bytesperline
+            num_planes = len(fmt.planes)
 
         hdr = NetTX.struct_fmt.pack(stream['id'],
                               stream['w'], stream['h'],
-                              bytesperline,
+                              *strides,
                               bytes(fmt.name, 'ascii'),
-                              1, *plane_sizes)
+                              num_planes,
+                              *plane_sizes)
 
         self.sock.sendall(hdr)
 
         if is_drm:
+            fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
+            assert fb is not None
+
             with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
                 self.sock.sendall(b)
         else:
             # Need PROT_WRITE to be able to read fe-config buffers
-            with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE,
+            with mmap.mmap(cap.fd, cap.framesize, mmap.MAP_SHARED, mmap.PROT_READ | mmap.PROT_WRITE,
                            offset=vbuf.offset) as b:
                 self.sock.sendall(b)
 
@@ -186,19 +189,17 @@ def setup_links(ctx: Context, config):
 
         try:
             source_ent = md.find_entity(source_ent)
-            if source_ent == None:
-                print('Failed to find entity', l['src'])
-                exit(-1)
+            if source_ent is None:
+                raise RuntimeError(f'Failed to find entity {l["src"]}')
 
             sink_ent = md.find_entity(sink_ent)
-            if sink_ent == None:
-                print('Failed to find entity', l['dst'])
-                exit(-1)
+            if sink_ent is None:
+                raise RuntimeError(f'Failed to find entity {l["dst"]}')
 
             if ctx.verbose:
                 print(f'Link {source_ent.name} -> {sink_ent.name}')
 
-            link(md, (source_ent, source_pad), (sink_ent, sink_pad))
+            enable_link((source_ent, source_pad), (sink_ent, sink_pad))
         except Exception as e:
             print('Failed to link {} -> {}'.format((source_ent, source_pad), (sink_ent, sink_pad)))
             raise e
@@ -279,8 +280,7 @@ def save_fb_to_file(stream, is_drm, fb_or_vbuf):
     print('save to ' + filename)
 
     if is_drm:
-        import kms
-        fb = typing.cast(kms.DumbFramebuffer, fb_or_vbuf)
+        fb: kms.DumbFramebuffer = fb_or_vbuf
 
         with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
             with open(filename, 'wb') as f:

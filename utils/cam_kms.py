@@ -92,9 +92,15 @@ class KmsContext:
 
     def alloc_fbs(self, stream):
         fbs = []
+        cap = stream['cap']
         for i in range(stream['num_bufs']):
             fb = kms.DumbFramebuffer(self.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-format'])
             fbs.append(fb)
+
+            for i in range(len(cap.format.planes)):
+                assert cap.strides[i] == fb.planes[i].pitch
+                assert cap.buffersizes[i] == fb.planes[i].size
+
         stream['fbs'] = fbs
 
     def setup_stream(self, stream):
@@ -172,7 +178,7 @@ class KmsContext:
 
                 # XXX we should just track the vbufs in streams, instead of looking
                 # for the vbuf based on the drm fb
-                vbuf = next(vbuf for vbuf in cap.buffers if vbuf.fd == fb.fd(0))
+                vbuf = next(vbuf for vbuf in cap.vbuffers if vbuf.fd == fb.fd(0))
 
                 cap.queue(vbuf)
                 stream['kms_old_fb'] = None

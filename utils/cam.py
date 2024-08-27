@@ -13,6 +13,7 @@ import threading
 
 from cam_helpers import *
 import v4l2
+from v4l2.videodev import VideoCaptureStreamer
 
 
 class Context(object):
@@ -223,9 +224,9 @@ def setup(ctx: Context):
                 from cam_pisp import pisp_create_config
                 # XXX We need to pass details about the video stream. Which one is it?
                 # Let's decide it's stream 0
-                pisp_create_config(streams[0], cap, cap.buffers[i])
+                pisp_create_config(streams[0], cap, cap.vbuffers[i])
 
-            cap.queue(cap.buffers[i])
+            cap.queue(cap.vbuffers[i])
 
     if ctx.use_display:
         ctx.kms_ctx.init_modeset()
@@ -234,9 +235,10 @@ def setup(ctx: Context):
         if 'size' in stream:
             print(f'{stream["dev_path"]}: stream on {stream["size"]}-{stream["format"].name}')
         else:
-            stride = stream["cap"].bytesperline
-            bufsize = stream["cap"].buffersize
-            print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{stream["format"].name} stride={stride} bufsize={bufsize}')
+            streamer: VideoCaptureStreamer = stream["cap"]
+            strides = '/'.join(map(str, streamer.strides))
+            bufsizes = '/'.join(map(str, streamer.buffersizes))
+            print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{stream["format"].name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
         stream['cap'].stream_on()
 
     for stream in streams:

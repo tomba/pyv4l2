@@ -164,6 +164,24 @@ class MediaLink(MediaObject):
             return self.sink
         raise RuntimeError("Sink is not a MediaPad")
 
+    def enable(self):
+        self._setup(v4l2.uapi.MEDIA_LNK_FL_ENABLED)
+
+    def disable(self):
+        self._setup(0)
+
+    def _setup(self, flags):
+        desc = v4l2.uapi.media_link_desc()
+        desc.source.entity = self.source_pad.entity.id
+        desc.source.index = self.source_pad.index
+        desc.sink.entity = self.sink_pad.entity.id
+        desc.sink.index = self.sink_pad.index
+        desc.flags = flags
+
+        fcntl.ioctl(self.md.fd, v4l2.uapi.MEDIA_IOC_SETUP_LINK, desc, False)
+
+        self.flags = flags
+
 
 class MediaDevice:
     def __init__(self, name: str, key: str = 'path') -> None:
@@ -248,16 +266,6 @@ class MediaDevice:
 
     def find_id(self, id) -> MediaObject | None:
         return next((o for o in self.objects if o.id == id), None)
-
-    def link_setup(self, source: MediaPad, sink: MediaPad, flags):
-        desc = v4l2.uapi.media_link_desc()
-        desc.source.entity = source.entity.id
-        desc.source.index = source.index
-        desc.sink.entity = sink.entity.id
-        desc.sink.index = sink.index
-        desc.flags = flags
-
-        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_SETUP_LINK, desc, False)
 
     def find_entity(self, name):
         for e in self.entities:

@@ -103,3 +103,14 @@ class BusFormat(IntEnum):
     VUY8_1X24 = v4l2.uapi.MEDIA_BUS_FMT_VUY8_1X24
 
     CCS_EMBEDDED = v4l2.uapi.MEDIA_BUS_FMT_CCS_EMBEDDED
+
+    # Xilinx non-upstream (?) formats
+    VYYUYY8_1X24      = 0x2100
+    VYYUYY10_4X20     = 0x2101
+    VUY10_1X30        = 0x2102
+    UYYVYY12_4X24     = 0x2103
+    VUY12_1X36        = 0x2104
+    Y16_1X16          = 0x2105
+    UYYVYY16_4X32     = 0x2106
+    VUY16_1X48        = 0x2107
+    UYVY16_2X32       = 0x2108

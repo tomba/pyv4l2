@@ -16,7 +16,8 @@ import PyQt6.QtNetwork
 PORT = 43242
 receivers = []
 
-struct_fmt = struct.Struct('<IIII16pI4I')
+# ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
+struct_fmt = struct.Struct('<III4I16pI4I')
 
 # Loading MJPEG to a QPixmap produces corrupt JPEG data warnings. Ignore these.
 def qt_message_handler(msg_type, msg_log_context, msg_string):
@@ -130,14 +131,15 @@ class Receiver(QtWidgets.QWidget):
 
     def on_header(self):
         self.header_tuple = struct_fmt.unpack_from(self.header_buffer)
-        idx, w, h, bytesperline, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
+        *_, p0, p1, p2, p3 = self.header_tuple
         self.data_size = p0 + p1 + p2 + p3
         self.header_buffer = bytearray()
 
         self.state = 1
 
     def on_buffers(self):
-        idx, w, h, bytesperline, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
+        idx, w, h, s0,s1,s2,s3, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
+        bytesperline = s0
         try:
             fmt = PixelFormats.find_by_name(fmtstr.decode('ascii'))
         except StopIteration:
