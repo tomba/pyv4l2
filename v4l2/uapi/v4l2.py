@@ -4430,6 +4430,8 @@ def _IOW(type, nr, size):
 def _IOWR(type, nr, size):
     return (_IOC ((_IOC_READ | _IOC_WRITE), type, nr, (_IOC_TYPECHECK (size))))
 
+def PUB(type, nr, size):
+    return _IOWR(type, nr, size)
 
 VIDEO_MAX_FRAME = 32
 
