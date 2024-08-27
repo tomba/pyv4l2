@@ -245,7 +245,7 @@ def configure_subdevs(ctx: Context, config):
 
         # Configure streams
         for p in e.get('pads', []):
-            if type(p['pad']) == tuple:
+            if isinstance(p['pad'], tuple):
                 pad, stream = p['pad']
             else:
                 pad = p['pad']
