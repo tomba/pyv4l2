@@ -5523,6 +5523,8 @@ def _IOW(type, nr, size):
 def _IOWR(type, nr, size):
     return (_IOC ((_IOC_READ | _IOC_WRITE), type, nr, (_IOC_TYPECHECK (size))))
 
+def PUB(type, nr, size):
+    return _IOWR(type, nr, size)
 
 V4L2_CTRL_CLASS_USER = 0x00980000
 
