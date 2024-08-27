@@ -147,7 +147,78 @@ class SubDevice:
         fmt.format.field = v4l2.uapi.V4L2_FIELD_NONE
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_FMT, fmt, True)
 
+    def _get_routes_legacy(self, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
+        from ctypes import Structure, c_uint32, c_uint64
+
+        class v4l2_subdev_routing_legacy(Structure):
+            _fields_ = [
+                ('which', c_uint32),
+                ('num_routes', c_uint32),
+                ('routes', c_uint64),
+                ('reserved', c_uint32 * int(6)),
+            ]
+
+        VIDIOC_SUBDEV_G_ROUTING_LEGACY = (v4l2.uapi.PUB ('V', 38, v4l2_subdev_routing_legacy))
+
+        routing = v4l2_subdev_routing_legacy()
+        routing.which = which
+
+        try:
+            fcntl.ioctl(self.fd, VIDIOC_SUBDEV_G_ROUTING_LEGACY, routing, True)
+        except OSError as e:
+            if e.errno == errno.ENOTTY:
+                return []
+            if e.errno != errno.ENOSPC:
+                raise
+
+        routes = (v4l2.uapi.v4l2_subdev_route * routing.num_routes)()
+        routing.routes = ctypes.addressof(routes)
+        routing.len_routes = routing.num_routes
+
+        try:
+            fcntl.ioctl(self.fd, VIDIOC_SUBDEV_G_ROUTING_LEGACY, routing, True)
+        except OSError as e:
+            if e.errno == errno.ENOTTY:
+                routes = (v4l2.uapi.v4l2_subdev_route * 0)()
+            else:
+                raise
+
+        routes = [Route.from_v4l2_subdev_route(r) for r in routes]
+
+        return routes
+
+
+    def _set_routes_legacy(self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
+        from ctypes import Structure, c_uint32, c_uint64
+
+        class v4l2_subdev_routing_legacy(Structure):
+            _fields_ = [
+                ('which', c_uint32),
+                ('num_routes', c_uint32),
+                ('routes', c_uint64),
+                ('reserved', c_uint32 * int(6)),
+            ]
+
+        VIDIOC_SUBDEV_S_ROUTING_LEGACY = (v4l2.uapi.PUB ('V', 39, v4l2_subdev_routing_legacy))
+
+        kroutes = (v4l2.uapi.v4l2_subdev_route * len(routes))()
+        for i,route in enumerate(routes):
+            kroutes[i] = route.to_v4l2_subdev_route()
+
+        routing = v4l2_subdev_routing_legacy()
+        routing.which = which
+        routing.num_routes = len(routes)
+        routing.routes = ctypes.addressof(kroutes)
+
+        fcntl.ioctl(self.fd, VIDIOC_SUBDEV_S_ROUTING_LEGACY, routing, True)
+
+        routes = [Route.from_v4l2_subdev_route(kroutes[idx]) for idx in range(routing.num_routes)]
+
+        return routes
+
     def get_routes(self, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
+        #return self._get_routes_legacy(which)
+
         routing = v4l2.uapi.v4l2_subdev_routing()
         routing.which = which
 
@@ -176,6 +247,8 @@ class SubDevice:
         return routes
 
     def set_routes(self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
+        #return self._set_routes_legacy(routes, which)
+
         # Allocate extra space for return routes
         kroutes = (v4l2.uapi.v4l2_subdev_route * 16)()
         for i,route in enumerate(routes):
