@@ -1,11 +1,17 @@
+from __future__ import annotations
 import importlib
 import mmap
 import os
 import socket
 import sys
 import typing
+from typing import TYPE_CHECKING
+
 import v4l2
 import v4l2.uapi
+
+if TYPE_CHECKING:
+    from .cam import Context
 
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
@@ -171,7 +177,9 @@ def read_config(config_name, params):
 #
 
 # Setup links
-def setup_links(md, config):
+def setup_links(ctx: Context, config):
+    md = ctx.md
+
     for l in config.get('links', []):
         source_ent, source_pad = l['src']
         sink_ent, sink_pad = l['dst']
@@ -187,13 +195,18 @@ def setup_links(md, config):
                 print('Failed to find entity', l['dst'])
                 exit(-1)
 
+            if ctx.verbose:
+                print(f'Link {source_ent.name} -> {sink_ent.name}')
+
             link(md, (source_ent, source_pad), (sink_ent, sink_pad))
         except Exception as e:
             print('Failed to link {} -> {}'.format((source_ent, source_pad), (sink_ent, sink_pad)))
             raise e
 
 # Configure entities
-def configure_subdevs(md, config):
+def configure_subdevs(ctx: Context, config):
+    md = ctx.md
+
     subdevices = {}
 
     for e in config.get('subdevs', []):
@@ -201,6 +214,9 @@ def configure_subdevs(md, config):
         assert ent
         subdev = v4l2.SubDevice(ent.interface.dev_path)
         assert subdev, f'no subdev for entity {ent}'
+
+        if ctx.verbose:
+            print(f'Configuring {ent.name}')
 
         subdevices[ent.name] = subdev
 

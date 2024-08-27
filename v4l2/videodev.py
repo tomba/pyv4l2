@@ -13,6 +13,7 @@ __all__ = [ 'VideoDevice', 'VideoBuffer' ]
 
 class VideoDevice:
     def __init__(self, dev_path: str) -> None:
+        self.dev_path = dev_path
         self.fd = os.open(dev_path, os.O_RDWR | os.O_NONBLOCK)
         assert(self.fd != -1)
 

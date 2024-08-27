@@ -116,7 +116,7 @@ def init_links(ctx: Context):
 
     disable_all_links(ctx.md)
 
-    setup_links(ctx.md, ctx.config)
+    setup_links(ctx, ctx.config)
 
 
 def init_subdevs(ctx: Context):
@@ -124,7 +124,7 @@ def init_subdevs(ctx: Context):
         ctx.subdevices = None
         return
 
-    ctx.subdevices = configure_subdevs(ctx.md, ctx.config)
+    ctx.subdevices = configure_subdevs(ctx, ctx.config)
 
 
 def init_viddevs(ctx: Context):
@@ -157,10 +157,16 @@ def init_viddevs(ctx: Context):
             if not 'dev_path' in stream:
                 stream['dev_path'] = vid_ent.interface.dev_path
 
+            if ctx.verbose:
+                print(f'Configuring {vid_ent.name} ({stream["dev_path"]})')
+
             vd = v4l2.VideoDevice(vid_ent.interface.dev_path)
         else:
             dev_path = v4l2.VideoDevice.find_video_device(*stream['device'])
             stream['dev_path'] = dev_path
+
+            if ctx.verbose:
+                print(f'Configuring {dev_path}')
 
             vd = v4l2.VideoDevice(dev_path)
 
@@ -172,6 +178,9 @@ def init_streamer(ctx: Context):
 
     for stream in streams:
         vd = stream['dev']
+
+        if ctx.verbose:
+            print(f'Configuring streamer {vd.dev_path}')
 
         mem_type = v4l2.MemType.DMABUF if ctx.buf_type == 'drm' else v4l2.MemType.MMAP
 
