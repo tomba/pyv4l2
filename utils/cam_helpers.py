@@ -238,6 +238,9 @@ def configure_subdevs(ctx: Context, config):
                 routes.append(route)
 
             if len(routes) > 0:
+                if ctx.verbose:
+                    print(f'  Routes {routes}')
+
                 try:
                     subdev.set_routes(routes)
                 except Exception as e:
@@ -256,7 +259,7 @@ def configure_subdevs(ctx: Context, config):
             try:
                 subdev.set_format(pad, stream, w, h, fmt)
             except Exception as e:
-                print('Failed to set format for {}'.format(ent))
+                print(f'Failed to set format for {ent}:{pad}/{stream}: {w}x{h}-{fmt}')
                 raise e
 
             if 'crop.bounds' in p:
