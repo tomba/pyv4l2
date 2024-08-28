@@ -1,4 +1,4 @@
-[![Lint Status](https://github.com/tomba/pyv4l2/actions/workflows/pylint.yml/badge.svg)](https://github.com/tomba/pyv4l2/actions/workflows/pylint.yml)
+[![Lint Status](https://github.com/tomba/pyv4l2/actions/workflows/ci.yml/badge.svg)](https://github.com/tomba/pyv4l2/actions/workflows/ci.yml)
 
 # Pure-Python Linux kernel Video4Linux2 (V4L2) bindings
 
