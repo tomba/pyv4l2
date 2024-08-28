@@ -108,12 +108,44 @@ class VideoDevice:
                     return []
                 raise
 
-            if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
-                f = v4l2.MetaFormats.find_v4l2_fourcc_unsupported(fmt.pixelformat)
-            else:
-                f = v4l2.PixelFormats.find_v4l2_fourcc_unsupported(fmt.pixelformat)
+            try:
+                if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
+                    f = v4l2.MetaFormats.find_v4l2_fourcc(fmt.pixelformat)
+                else:
+                    f = v4l2.PixelFormats.find_v4l2_fourcc(fmt.pixelformat)
+                fmts.append(f)
+            except StopIteration:
+                pass
 
-            fmts.append(f)
+            fmt.index += 1
+
+        return fmts
+
+    # Get formats that the pyv4l2 does not support, as a list of fourcc strings
+    def get_unsupported_formats(self, buf_type: v4l2.BufType) -> list[str]:
+        fmt = v4l2.uapi.v4l2_fmtdesc()
+        fmt.type = buf_type.value
+        fmt.index = 0
+
+        fmts = []
+
+        while True:
+            try:
+                fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_ENUM_FMT, fmt, True)
+            except OSError as e:
+                if e.errno == errno.EINVAL:
+                    break
+                if e.errno == errno.ENOTTY:
+                    return []
+                raise
+
+            try:
+                if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
+                    v4l2.MetaFormats.find_v4l2_fourcc(fmt.pixelformat)
+                else:
+                    v4l2.PixelFormats.find_v4l2_fourcc(fmt.pixelformat)
+            except StopIteration:
+                fmts.append(v4l2.fourcc_to_str(fmt.pixelformat))
 
             fmt.index += 1
 

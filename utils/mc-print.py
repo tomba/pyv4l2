@@ -45,9 +45,17 @@ def print_routes(subdev):
 def print_videodev_pad(videodev):
     def print_videodef_fmts(videodev, buftype, title):
         fmts = videodev.get_formats(buftype)
+        fmts = [f.name for f in fmts]
+
+        unsupported_fmts = videodev.get_unsupported_formats(buftype)
+        unsupported_fmts = [f"'{f}'" for f in unsupported_fmts]
+
+        fmts += unsupported_fmts
+
         if not fmts:
             return
-        fmts = str.join(' ', [f.name for f in fmts])
+
+        fmts = ' '.join(fmts)
         fmts = (f'{title}: {fmts}')
         fmts = textwrap.fill(fmts, width=100, initial_indent=' ' * 4,
                              subsequent_indent=' ' * (4 + len(title) + 2))
