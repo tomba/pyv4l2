@@ -24,3 +24,7 @@ utils directory contains miscallaneous more-or-less under-work utilities:
 ## License
 
 This project is covered by the [LGPL-3.0](LICENSE.md) license.
+
+## Install
+
+`pip install git+https://github.com/tomba/pyv4l2.git`
