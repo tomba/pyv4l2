@@ -138,8 +138,15 @@ def print_streams(subdev, pad, streams):
         print_selections(subdev, pad, s)
 
         codes = subdev.get_formats(pad.index, s)
+        codes = [c.name for c in codes]
+
+        unsuported_codes = subdev.get_unsupported_formats(pad.index, s)
+        unsuported_codes = [f'{f:#x}' for f in unsuported_codes]
+
+        codes += unsuported_codes
+
         if codes:
-            codes = 'codes: ' + str.join(' ', [c.name for c in codes])
+            codes = 'codes: ' + str.join(' ', codes)
 
             codes = textwrap.fill(codes, width=100, initial_indent=' ' * 6,
                                  subsequent_indent=' ' * (7 + 6))

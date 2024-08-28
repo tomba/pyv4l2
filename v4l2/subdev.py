@@ -89,7 +89,35 @@ class SubDevice:
                 code = v4l2.BusFormat(val.code)
                 codes.append(code)
             except ValueError:
-                print(f'Warning: unsupported mbus format {val.code:#x}')
+                pass
+
+            val.index += 1
+
+        return codes
+
+    def get_unsupported_formats(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+        val = v4l2.uapi.v4l2_subdev_mbus_code_enum()
+        val.pad = pad
+        val.stream = stream
+        val.which = which
+        val.index = 0
+
+        codes = []
+
+        while True:
+            try:
+                fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_ENUM_MBUS_CODE, val, True)
+            except OSError as e:
+                if e.errno == errno.EINVAL:
+                    break
+                if e.errno == errno.ENOTTY:
+                    return []
+                raise
+
+            try:
+                v4l2.BusFormat(val.code)
+            except ValueError:
+                codes.append(val.code)
 
             val.index += 1
 
