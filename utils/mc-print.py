@@ -42,10 +42,10 @@ def print_routes(subdev):
                                                v4l2.RouteFlag(r.flags).name))
 
 
-def print_videodev_pad(videodev):
-    def print_videodef_fmts(videodev, buftype, title):
+def print_videodev_pad(videodev, print_supported):
+    def print_videodef_fmts(videodev, buftype, title,):
         fmts = videodev.get_formats(buftype)
-        fmts = [f.name for f in fmts]
+        fmts = [f'{f.name} (\'{v4l2.fourcc_to_str(f.v4l2_fourcc)}\')' for f in fmts]
 
         unsupported_fmts = videodev.get_unsupported_formats(buftype)
         unsupported_fmts = [f"'{f}'" for f in unsupported_fmts]
@@ -66,51 +66,55 @@ def print_videodev_pad(videodev):
             fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE)
             f = fmt.fmt.pix
             fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)}'
-            print(f'    {fmt}')
+            print(f'    vcap: {fmt}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE, 'vcap')
+        if print_supported:
+            print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE, 'vcap')
 
     if videodev.has_mplane_capture:
         try:
             fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE_MPLANE)
             f = fmt.fmt.pix_mp
             fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
-            print(f'    {fmt}')
+            print(f'    vcapm: {fmt}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE_MPLANE, 'vcapm')
+        if print_supported:
+            print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE_MPLANE, 'vcapm')
 
     if videodev.has_meta_capture:
         try:
             fmt = videodev.get_format(v4l2.BufType.META_CAPTURE)
             f = fmt.fmt.meta
             fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
-            print(f'    {fmt}')
+            print(f'    mcap: {fmt}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        print_videodef_fmts(videodev, v4l2.BufType.META_CAPTURE, 'mcap')
+        if print_supported:
+            print_videodef_fmts(videodev, v4l2.BufType.META_CAPTURE, 'mcap')
 
     if videodev.has_meta_output:
         try:
             fmt = videodev.get_format(v4l2.BufType.META_OUTPUT)
             f = fmt.fmt.meta
             fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
-            print(f'    {fmt}')
+            print(f'    mout: {fmt}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        print_videodef_fmts(videodev, v4l2.BufType.META_OUTPUT, 'mout')
+        if print_supported:
+            print_videodef_fmts(videodev, v4l2.BufType.META_OUTPUT, 'mout')
 
 
-def print_streams(subdev, pad, streams):
+def print_streams(subdev, pad, streams, print_supported):
     for s in streams:
         try:
             fmt = subdev.get_format(pad.index, s)
@@ -137,23 +141,24 @@ def print_streams(subdev, pad, streams):
 
         print_selections(subdev, pad, s)
 
-        codes = subdev.get_formats(pad.index, s)
-        codes = [c.name for c in codes]
+        if print_supported:
+            codes = subdev.get_formats(pad.index, s)
+            codes = [c.name for c in codes]
 
-        unsuported_codes = subdev.get_unsupported_formats(pad.index, s)
-        unsuported_codes = [f'{f:#x}' for f in unsuported_codes]
+            unsuported_codes = subdev.get_unsupported_formats(pad.index, s)
+            unsuported_codes = [f'{f:#x}' for f in unsuported_codes]
 
-        codes += unsuported_codes
+            codes += unsuported_codes
 
-        if codes:
-            codes = 'codes: ' + str.join(' ', codes)
+            if codes:
+                codes = 'codes: ' + str.join(' ', codes)
 
-            codes = textwrap.fill(codes, width=100, initial_indent=' ' * 6,
-                                 subsequent_indent=' ' * (7 + 6))
-            print(codes)
+                codes = textwrap.fill(codes, width=100, initial_indent=' ' * 6,
+                                     subsequent_indent=' ' * (7 + 6))
+                print(codes)
 
 
-def print_pads(ent, subdev, videodev, only_graph: bool):
+def print_pads(ent, subdev, videodev, only_graph: bool, print_supported):
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
     else:
@@ -189,13 +194,13 @@ def print_pads(ent, subdev, videodev, only_graph: bool):
         streams = sorted(streams)
 
         if not only_graph and videodev:
-            print_videodev_pad(videodev)
+            print_videodev_pad(videodev, print_supported)
 
         if not only_graph and subdev:
-            print_streams(subdev, pad, streams)
+            print_streams(subdev, pad, streams, print_supported)
 
 
-def print_entity(ent, only_graph: bool):
+def print_entity(ent, only_graph: bool, print_supported):
     print(ent.name, ent.interface.dev_path if ent.interface else '')
 
     if ent.interface and ent.interface.is_subdev:
@@ -208,7 +213,7 @@ def print_entity(ent, only_graph: bool):
     else:
         videodev = None
 
-    print_pads(ent, subdev, videodev, only_graph)
+    print_pads(ent, subdev, videodev, only_graph, print_supported)
 
     if not only_graph and subdev:
         print_routes(subdev)
@@ -220,6 +225,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--device', default='/dev/media0', help='Media device')
     parser.add_argument('-g', '--graph', action='store_true', help='Print only the graph, no streams or routing')
+    parser.add_argument('-s', '--supported', action='store_true', help='Print also supported formats')
     parser.add_argument('-a', '--all', action='store_true', help='Print all entitites, not just linked ones')
     parser.add_argument('pattern', nargs='?', help='Entity pattern to show')
     args = parser.parse_args()
@@ -268,7 +274,7 @@ def main():
 
                 print_queue += [ l.sink.entity for l in links ]
 
-        print_entity(ent, only_graph=args.graph)
+        print_entity(ent, only_graph=args.graph, print_supported=args.supported)
 
 
 if __name__ == '__main__':
