@@ -8,7 +8,6 @@ import sys
 import typing
 from typing import TYPE_CHECKING
 
-from pixutils import MetaFormat
 import v4l2
 import v4l2.uapi
 
@@ -82,7 +81,7 @@ class NetTX:
 
         fmt = stream['format']
 
-        if isinstance(fmt, MetaFormat):
+        if isinstance(fmt, v4l2.MetaFormat):
             num_planes = 1
         else:
             num_planes = len(fmt.planes)

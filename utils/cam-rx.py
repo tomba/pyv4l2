@@ -8,7 +8,7 @@ import sys
 import traceback
 
 from pixutils.conv.qt import buffer_to_pix
-from pixutils import PixelFormats, MetaFormat, MetaFormats
+from pixutils.formats import PixelFormats, MetaFormat, MetaFormats
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
 import PyQt6.QtNetwork
