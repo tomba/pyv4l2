@@ -1,18 +1,12 @@
 #!/usr/bin/python3
 
-import v4l2
+import argparse
 import errno
+import sys
 
-dot = []
+import v4l2
 
-dot += [
-    'digraph "media-graph" {',
-    '    compound=true',
-    '    graph [rankdir=LR]',
-    '    node [shape=Mrecord]',
-]
-
-def add_entity(entity_id: int, entity_label: str,
+def add_entity(dot, entity_id: int, entity_label: str,
                sink_pads, source_pads,
                routes):
     dot.append(f'    subgraph cluster_e{entity_id} {{')
@@ -47,21 +41,8 @@ def add_entity(entity_id: int, entity_label: str,
 
     dot.append('    }')
 
-def add_link(source_entity, source_pad, source_stream,
-             sink_entity, sink_pad, sink_stream,
-             tooltip, is_enabled):
-    attrs = []
-    attrs.append(f'tooltip="{tooltip}"')
-    if not is_enabled:
-        attrs.append('style=dashed')
-    attrs = '[' + str.join(' ', attrs) + ']'
-    dot.append(f'        e{source_entity}p{source_pad}:p{source_pad}s{source_stream} -> e{sink_entity}p{sink_pad}:p{sink_pad}s{sink_stream} {attrs}')
 
-def mc_work():
-    md = v4l2.MediaDevice('/dev/media0')
-
-    entities = list(md.entities)
-
+def add_entities(dot, entities):
     for entity in entities:
         if entity.interface and entity.interface.is_subdev:
             subdev = v4l2.SubDevice(entity.interface.dev_path)
@@ -86,87 +67,129 @@ def mc_work():
         else:
             routes = []
 
-        add_entity(entity.id, entity.name,
+        add_entity(dot,
+                   entity.id, entity.name,
                    sink_pads,
                    source_pads,
                    routes)
 
-    for entity in entities:
-        src_name = f'entity{entity.id}'
 
+def add_connection(dot, source_entity, source_pad, source_stream,
+                   sink_entity, sink_pad, sink_stream,
+                   tooltip, is_enabled):
+    attrs = []
+    attrs.append(f'tooltip="{tooltip}"')
+    if not is_enabled:
+        attrs.append('style=dashed')
+    attrs = '[' + str.join(' ', attrs) + ']'
+    dot.append(f'        e{source_entity}p{source_pad}:p{source_pad}s{source_stream} -> e{sink_entity}p{sink_pad}:p{sink_pad}s{sink_stream} {attrs}')
+
+
+def add_connections_for_link(dot, entity, pad, l):
+    remote_pad = l.sink_pad
+    remote_entity = remote_pad.entity
+
+    if entity.interface and entity.interface.is_subdev:
+        subdev = v4l2.SubDevice(entity.interface.dev_path)
+    else:
+        subdev = None
+
+    if subdev:
+        routes = [r for r in subdev.get_routes() if r.is_active]
+    else:
+        routes = []
+
+    streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
+
+    if len(streams) == 0:
+        streams = [ 0 ]
+
+    if remote_entity.interface and remote_entity.interface.is_subdev:
+        remote_subdev = v4l2.SubDevice(remote_entity.interface.dev_path)
+        routes = [r for r in remote_subdev.get_routes() if r.is_active]
+
+        remote_streams = set()
+
+        for r in routes:
+            if r.sink_pad == remote_pad.index:
+                remote_streams.add(r.sink_stream)
+
+        if len(remote_streams) == 0:
+            remote_streams = set([0])
+
+    else:
+        remote_streams = set([0])
+
+    for stream in streams:
+        if subdev:
+            try:
+                fmt = subdev.get_format(pad.index, stream)
+                f = fmt.format
+
+                try:
+                    bfmt = v4l2.BusFormat(f.code).name
+                except ValueError:
+                    bfmt = f'0x{f.code:x}'
+
+                fmt = f'Stream{stream}\n{f.width}x{f.height}/{bfmt}\nfield:{f.field}\ncolorspace:{f.colorspace}\nquantization:{f.quantization}\nxfer:{f.xfer_func}\nflags:{f.flags}'
+            except OSError as e:
+                if e.errno != errno.ENOTTY:
+                    fmt = f'Stream{stream}\n{e}'
+                else:
+                    fmt = ''
+        else:
+            fmt = ''
+
+        if stream not in remote_streams:
+            continue
+
+        add_connection(dot, entity.id, pad.index, stream,
+                 remote_entity.id, remote_pad.index, stream,
+                 fmt, l.is_enabled)
+
+
+def add_connections(dot, entities):
+    for entity in entities:
         for pad in [p for p in entity.pads if p.is_source]:
             for l in pad.links:
-                remote_pad = l.sink_pad
-                remote_entity = remote_pad.entity
-
-                sink_name = f'entity{remote_entity.id}'
-
-                if entity.interface and entity.interface.is_subdev:
-                    subdev = v4l2.SubDevice(entity.interface.dev_path)
-                else:
-                    subdev = None
-
-                if subdev:
-                    routes = [r for r in subdev.get_routes() if r.is_active]
-                else:
-                    routes = []
-
-                streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
-
-                if len(streams) == 0:
-                    streams = [ 0 ]
-
-                if remote_entity.interface and remote_entity.interface.is_subdev:
-                    remote_subdev = v4l2.SubDevice(remote_entity.interface.dev_path)
-                    routes = [r for r in remote_subdev.get_routes() if r.is_active]
-
-                    remote_streams = set()
-
-                    for r in routes:
-                        if r.sink_pad == remote_pad.index:
-                            remote_streams.add(r.sink_stream)
-
-                    if len(remote_streams) == 0:
-                        remote_streams = set([0])
-
-                else:
-                    remote_streams = set([0])
-
-                for stream in streams:
-                    if subdev:
-                        try:
-                            fmt = subdev.get_format(pad.index, stream)
-                            f = fmt.format
-
-                            try:
-                                bfmt = v4l2.BusFormat(f.code).name
-                            except ValueError:
-                                bfmt = f'0x{f.code:x}'
-
-                            fmt = f'Stream{stream}\n{f.width}x{f.height}/{bfmt}\nfield:{f.field}\ncolorspace:{f.colorspace}\nquantization:{f.quantization}\nxfer:{f.xfer_func}\nflags:{f.flags}'
-                        except OSError as e:
-                            if e.errno != errno.ENOTTY:
-                                fmt = f'Stream{stream}\n{e}'
-                            else:
-                                fmt = ''
-                    else:
-                        fmt = ''
-
-                    if stream not in remote_streams:
-                        continue
-
-                    add_link(entity.id, pad.index, stream,
-                             remote_entity.id, remote_pad.index, stream,
-                             fmt, l.is_enabled)
+                add_connections_for_link(dot, entity, pad, l)
 
 
-mc_work()
+def add_media_device(dot, md):
+    entities = list(md.entities)
+
+    add_entities(dot, entities)
+    add_connections(dot, entities)
 
 
-dot.append('}')
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--device', default='/dev/media0', help='Media device')
+    args = parser.parse_args()
 
-#for l in dot:
-#    print(l)
+    md = v4l2.MediaDevice(args.device)
 
-with open('media.dot', 'w', encoding='ascii') as f:
-    f.writelines([l + '\n' for l in dot])
+    dot = []
+
+    dot += [
+        'digraph "media-graph" {',
+        '    compound=true',
+        '    graph [rankdir=LR]',
+        '    node [shape=Mrecord]',
+    ]
+
+    add_media_device(dot, md)
+
+    dot.append('}')
+
+    #for l in dot:
+    #    print(l)
+
+    with open('media.dot', 'w', encoding='ascii') as f:
+        f.writelines([l + '\n' for l in dot])
+
+    print('Write media graph to "media.dot"')
+
+
+if __name__ == '__main__':
+    sys.exit(main())
