@@ -11,12 +11,17 @@ import types
 import queue
 import threading
 
-from cam_helpers import *
+from typing import TYPE_CHECKING
+
+from cam_helpers import read_config, NetTX, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
+
 import v4l2
 from v4l2.videodev import VideoCaptureStreamer
 
+if TYPE_CHECKING:
+    from .cam_kms import KmsContext
 
-class Context(object):
+class Context:
     verbose: bool
     config: dict
     use_ipython: bool
@@ -31,12 +36,13 @@ class Context(object):
     config_only: bool
     delay: int
     save: bool
-    tx: list[str]
+    tx: None | list[str]
     run_ipython: types.LambdaType
     exit: bool
 
-    kms_ctx: object
+    kms_ctx: KmsContext
 
+    net_tx: None | NetTX
     net_tx_queue: queue.Queue
     net_done_queue: queue.Queue
 
@@ -336,7 +342,7 @@ def readvid(ctx: Context, stream):
         #print(f'Buf from {stream['dev_path']}: kms_fb_queue {len(stream['kms_fb_queue'])}, commit ongoing {kms_committed}')
 
         # XXX with a small delay we might get more planes to the commit
-        if ctx.kms_committed == False:
+        if not ctx.kms_committed:
             ctx.kms_ctx.handle_pageflip()
     elif ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx) and not stream['tx_buf']:
         stream['tx_buf'] = vbuf
