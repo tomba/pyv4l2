@@ -7,7 +7,7 @@ import struct
 import sys
 import traceback
 
-from pixutils.conv.qt import data_to_pix
+from pixutils.conv.qt import buffer_to_pix
 from pixutils import PixelFormats, MetaFormat, MetaFormats
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
@@ -161,7 +161,7 @@ class Receiver(QtWidgets.QWidget):
 
             label = self.labels[idx]
 
-            pix = data_to_pix(fmt, w, h, bytesperline, self.data_buffer)
+            pix = buffer_to_pix(fmt, w, h, bytesperline, self.data_buffer)
 
             # pylint: disable=no-member
             pix = pix.scaled(label.width(), label.height(), Qt.AspectRatioMode.KeepAspectRatio,
