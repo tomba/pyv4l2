@@ -276,6 +276,7 @@ def main():
 
         print_entity(ent, only_graph=args.graph, print_supported=args.supported)
 
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main())

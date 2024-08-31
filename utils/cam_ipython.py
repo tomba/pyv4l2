@@ -1,7 +1,9 @@
-import IPython
-from traitlets.config import Config
 import time
 import selectors
+
+import IPython
+from traitlets.config import Config
+from pygments.token import Token
 
 import v4l2
 import v4l2.uapi
@@ -25,12 +27,7 @@ def run_ipython(ctx, sel):
 
         sel.unregister(fd)
 
-    import IPython
-    from traitlets.config import Config
-
     IPython.terminal.pt_inputhooks.register('mygui', inputhook)
-
-    from pygments.token import Token
 
     class MyPrompt(IPython.terminal.prompts.Prompts):
         def in_prompt_tokens(self, cli=None):

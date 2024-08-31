@@ -328,7 +328,7 @@ def readvid(ctx: Context, stream):
 
     if ctx.buf_type == 'drm':
         fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
-        assert(fb != None)
+        assert fb is not None
 
     if ctx.save:
         save_fb_to_file(stream, ctx.buf_type == 'drm', fb if ctx.buf_type == 'drm' else vbuf)
