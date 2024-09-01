@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import IntFlag
 import ctypes
 import fcntl
 import weakref
@@ -9,6 +8,7 @@ import glob
 import fnmatch
 import v4l2.uapi
 from .helpers import filepath_for_major_minor
+from .enums import MediaEntityFunction, MediaLinkFlag, MediaPadFlag, MediaInterfaceType
 
 __all__ = [
     'MediaObject', 'MediaEntity', 'MediaInterface', 'MediaPad', 'MediaLink',
@@ -41,7 +41,7 @@ class MediaEntity(MediaObject):
         super().__init__(md, media_entity.id)
         self.media_entity = media_entity
         self.name = media_entity.name.decode('ascii')
-        self.function = media_entity.function
+        self.function = MediaEntityFunction(media_entity.function)
         self.flags = media_entity.flags
         self.pads: list['MediaPad'] = None # type: ignore
         self.interface: 'MediaInterface' = None # type: ignore
@@ -81,6 +81,7 @@ class MediaInterface(MediaObject):
         self.media_iface = media_iface
         self.majorminor = (self.media_iface.unnamed_1.devnode.major, self.media_iface.unnamed_1.devnode.minor)
         self.dev_path = filepath_for_major_minor(*self.majorminor)
+        self.intf_type = MediaInterfaceType(self.media_iface.intf_type)
 
     def _finalize(self):        # pylint: disable=useless-parent-delegation
         super()._finalize()
@@ -190,6 +191,7 @@ class MediaDevice:
             key = 'path'
 
         self.fd = os.open(name, os.O_RDWR | os.O_NONBLOCK)
+        self.__read_device_info()
         self.__read_topology()
 
         weakref.finalize(self, os.close, self.fd)
@@ -219,6 +221,26 @@ class MediaDevice:
         mdi = v4l2.uapi.media_device_info()
         fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_DEVICE_INFO, mdi, True)
         return mdi
+
+    @staticmethod
+    def __decode_kernel_version(v: int):
+        a = (v >> 16) & 0xff
+        b = (v >> 8) & 0xff
+        c = v & 0xff
+        return (a, b, c)
+
+    def __read_device_info(self):
+        mdi = v4l2.uapi.media_device_info()
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_DEVICE_INFO, mdi, True)
+
+        self.driver = mdi.driver.decode()
+        self.model = mdi.model.decode()
+        self.serial = mdi.serial.decode()
+        self.bus_info = mdi.bus_info.decode()
+        self.media_version = MediaDevice.__decode_kernel_version(mdi.media_version)
+        self.hw_revision = mdi.hw_revision
+        self.driver_version = MediaDevice.__decode_kernel_version(mdi.driver_version)
+
 
     def __read_topology(self):
         topology = v4l2.uapi.media_v2_topology()
@@ -272,14 +294,3 @@ class MediaDevice:
             if fnmatch.fnmatch(e.name, name):
                 return e
         return None
-
-class MediaLinkFlag(IntFlag):
-    ENABLED = v4l2.uapi.MEDIA_LNK_FL_ENABLED
-    IMMUTABLE = v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE
-    DYNAMIC = v4l2.uapi.MEDIA_LNK_FL_DYNAMIC
-
-class MediaPadFlag(IntFlag):
-    SINK = v4l2.uapi.MEDIA_PAD_FL_SINK
-    SOURCE = v4l2.uapi.MEDIA_PAD_FL_SOURCE
-    MUST_CONNECT = v4l2.uapi.MEDIA_PAD_FL_MUST_CONNECT
-    INTERNAL = v4l2.uapi.MEDIA_PAD_FL_INTERNAL

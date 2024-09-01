@@ -201,7 +201,15 @@ def print_pads(ent, subdev, videodev, only_graph: bool, print_supported):
 
 
 def print_entity(ent, only_graph: bool, print_supported):
-    print(ent.name, ent.interface.dev_path if ent.interface else '')
+    print(f'Entity {ent.id}: \'{ent.name}\', Function: {ent.function.name}', end='')
+    if ent.interface:
+        print(f', Interface: {ent.interface.intf_type.name}', end='')
+        if ent.interface.dev_path:
+            print(f', Path: {ent.interface.dev_path}')
+        else:
+            print()
+    else:
+        print()
 
     if ent.interface and ent.interface.is_subdev:
         subdev = v4l2.SubDevice(ent.interface.dev_path)
@@ -251,6 +259,9 @@ def main():
         recurse = True
 
     flatten = lambda t: [item for sublist in t for item in sublist]
+
+    print(f'Driver: {md.driver}, Model: {md.model}, Bus info: {md.bus_info}')
+    print()
 
     printed = set()
 
