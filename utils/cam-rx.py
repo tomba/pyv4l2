@@ -35,7 +35,7 @@ def qt_message_handler(msg_type, msg_log_context, msg_string):
 old_msg_handler = QtCore.qInstallMessageHandler(qt_message_handler)
 
 
-NO_SKIP = True
+NO_SKIP = False
 
 def meta_to_pix(bytesperline, data):
     prev = None
@@ -44,7 +44,7 @@ def meta_to_pix(bytesperline, data):
     for i in data:
         if cnt == bytesperline:
             if nskip > 0:
-                print("... ({} skipped) ".format(nskip), end='')
+                print("(* {}) ".format(nskip), end='')
 
             cnt = 0
             prev = None
@@ -58,7 +58,7 @@ def meta_to_pix(bytesperline, data):
             continue
 
         if nskip > 0:
-            print("... ({} skipped) ".format(nskip), end='')
+            print("(* {}) ".format(nskip), end='')
 
         print('{:02x} '.format(i), end='')
 
@@ -66,7 +66,7 @@ def meta_to_pix(bytesperline, data):
         nskip = 0
 
     if nskip > 0:
-        print("... ({} skipped) ".format(nskip), end='')
+        print("(* {}) ".format(nskip), end='')
 
     if cnt == bytesperline:
         print("LE")
