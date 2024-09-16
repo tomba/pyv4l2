@@ -132,9 +132,12 @@ class SubDevice:
         return fmt
 
     def set_format(self, pad, stream, w, h, code, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
-        fmt = self.get_format(pad, stream, which)
+        try:
+            fmt = self.get_format(pad, stream, which)
+        except OSError:
+            print(f'Failed to get format from {self}:{pad}/{stream}, trying set_format with blank v4l2_subdev_format')
+            fmt = v4l2.uapi.v4l2_subdev_format()
 
-        #fmt = v4l2.uapi.v4l2_subdev_format()
         fmt.pad = pad
         fmt.stream = stream
         fmt.which = which
