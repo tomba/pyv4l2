@@ -123,6 +123,32 @@ class SubDevice:
 
         return codes
 
+    def get_framesizes(self, pad, code, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+        val = v4l2.uapi.v4l2_subdev_frame_size_enum()
+        val.pad = pad
+        val.code = code
+        val.stream = stream
+        val.which = which
+        val.index = 0
+
+        frame_sizes = []
+
+        while True:
+            try:
+                fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_ENUM_FRAME_SIZE, val, True)
+            except OSError as e:
+                if e.errno == errno.EINVAL:
+                    break
+                if e.errno == errno.ENOTTY:
+                    return []
+                raise
+
+            frame_sizes.append((val.min_width, val.min_height))
+
+            val.index += 1
+
+        return frame_sizes
+
     def get_format(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
         fmt = v4l2.uapi.v4l2_subdev_format()
         fmt.pad = pad
