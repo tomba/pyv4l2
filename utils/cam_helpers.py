@@ -63,11 +63,9 @@ class NetTX:
     # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
     struct_fmt = struct.Struct('<III4I16pI4I')
 
-    def __init__(self) -> None:
-        HOST, PORT = '192.168.88.20', 43242
-
+    def __init__(self, host: str, port: int) -> None:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((HOST, PORT))
+        self.sock.connect((host, port))
 
     def tx(self, stream, vbuf, is_drm):
         cap = stream['cap']
