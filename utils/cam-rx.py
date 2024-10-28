@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (C) 2023, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
+import argparse
 import struct
 import sys
 import traceback
@@ -13,7 +14,6 @@ from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
 import PyQt6.QtNetwork
 
-PORT = 43242
 receivers = []
 
 # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
@@ -195,6 +195,11 @@ def readkey():
     qApp.quit()
 
 def main():
+    parser = argparse.ArgumentParser(description='Camera RX server')
+    parser.add_argument('-H', '--host', default='0.0.0.0')
+    parser.add_argument('-P', '--port', default=43242, type=int)
+    args = parser.parse_args()
+
     qApp = QtWidgets.QApplication(sys.argv)
     qApp.setQuitOnLastWindowClosed(False)
 
@@ -202,8 +207,9 @@ def main():
     keynotif.activated.connect(readkey)
 
     tcpServer = PyQt6.QtNetwork.QTcpServer(qApp)
-    tcpServer.listen(PyQt6.QtNetwork.QHostAddress('0.0.0.0'), PORT)
+    tcpServer.listen(PyQt6.QtNetwork.QHostAddress(args.host), args.port)
     tcpServer.newConnection.connect(lambda: new_connection(tcpServer))
+    print(f'Network receive on {args.host}:{args.port}')
 
     return qApp.exec()
 
