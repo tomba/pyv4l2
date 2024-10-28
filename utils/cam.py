@@ -59,6 +59,8 @@ def parse_args(ctx: Context):
     parser.add_argument('-S', '--script', help='User script')
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
+    parser.add_argument('-H', '--host', default='192.168.88.20', type=str)
+    parser.add_argument('-P', '--port', default=43242, type=int)
     parser.add_argument('config_name', help='Configuration name')
     parser.add_argument('params', nargs='*', help='Parameters to the configuration')
     args = parser.parse_args()
@@ -88,7 +90,8 @@ def parse_args(ctx: Context):
 
     if args.tx:
         ctx.tx = args.tx.split(',')
-        ctx.net_tx = NetTX()
+        ctx.net_tx = NetTX(host=args.host, port=args.port)
+        print(f'Network transfer on {args.host}:{args.port}')
     else:
         ctx.tx = None
         ctx.net_tx = None
