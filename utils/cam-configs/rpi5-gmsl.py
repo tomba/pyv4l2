@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
+from typing import List
 import v4l2
 
 # Pixel
 
-imx219_w = 1920
-imx219_h = 1080
+imx219_w = 640
+imx219_h = 480
 imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
 imx219_pix_fmt = v4l2.PixelFormats.SRGGB10P
 #imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
@@ -19,11 +20,12 @@ fmt_pix = (imx219_w, imx219_h, imx219_pix_fmt)
 
 configurations = {}
 
-first_imx_i2c_port = 14
+def gen_imx219_pixel(port, num_cameras):
+    first_ser_i2c_port = 13
+    first_imx_i2c_port = first_ser_i2c_port + num_cameras
 
-def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
-    ser_ent = 'max96717 13-0040'
+    ser_ent = f'max96717 {port + first_ser_i2c_port}-0040'
     des_ent = 'max96724 6-0027'
 
     return {
@@ -84,13 +86,18 @@ def gen_imx219_pixel(port):
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': (des_ent, 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
             { 'src': (des_ent, 6), 'dst': ('csi2', 0) },
             { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
 
-configurations['cam0'] = gen_imx219_pixel(0)
+def get_configs(params: List[str]):
+    num_cameras = 1
+    if len(params) >= 1:
+        num_cameras = int(params[0])
 
-def get_configs():
+    for i in range(num_cameras):
+        configurations[f'cam{i}'] = gen_imx219_pixel(i, num_cameras)
+
     return (configurations, ['cam0'])
