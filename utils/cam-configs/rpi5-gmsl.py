@@ -20,16 +20,42 @@ fmt_pix = (imx219_w, imx219_h, imx219_pix_fmt)
 
 configurations = {}
 
+media_device_name = ('rp1-cfe', 'model')
+des_ent = 'max96724 6-0027'
+
+def find_devices():
+    md = v4l2.MediaDevice(*media_device_name)
+    assert md
+    deser = md.find_entity(des_ent)
+    assert deser
+
+    cameras = {}
+
+    for p in [p for p in deser.pads if p.index < 4]:
+        if len(p.links) == 0:
+            continue
+
+        assert len(p.links) == 1
+
+        ser = p.links[0].source.entity
+        sensor = ser.pads[0].links[0].source.entity
+
+        cameras[p.index] = (ser.name, sensor.name)
+
+    return cameras
+
+cameras = find_devices()
+
+
 def gen_imx219_pixel(port, num_cameras):
     first_ser_i2c_port = 13
     first_imx_i2c_port = first_ser_i2c_port + num_cameras
 
-    sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
-    ser_ent = f'max96717 {port + first_ser_i2c_port}-0040'
-    des_ent = 'max96724 6-0027'
+    sensor_ent = cameras[port][1]
+    ser_ent = cameras[port][0]
 
     return {
-        'media': ('rp1-cfe', 'model'),
+        'media': media_device_name,
 
         'subdevs': [
             # Camera
@@ -92,10 +118,8 @@ def gen_imx219_pixel(port, num_cameras):
         ],
     }
 
-def get_configs(params: List[str]):
-    num_cameras = 1
-    if len(params) >= 1:
-        num_cameras = int(params[0])
+def get_configs():
+    num_cameras = len(cameras)
 
     for i in range(num_cameras):
         configurations[f'cam{i}'] = gen_imx219_pixel(i, num_cameras)
