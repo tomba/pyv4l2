@@ -238,3 +238,10 @@ class SubDevice:
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_FRAME_INTERVAL, v4l2_ival, True)
 
         return (v4l2_ival.interval.numerator, v4l2_ival.interval.denominator)
+
+    def set_control(self, ctrl_id: int, ctrl_val: int):
+        v4l2_ctrl = v4l2.uapi.v4l2_control()
+        v4l2_ctrl.id = ctrl_id
+        v4l2_ctrl.value = ctrl_val
+
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_CTRL, v4l2_ctrl, False)

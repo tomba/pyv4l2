@@ -218,6 +218,10 @@ def configure_subdevs(ctx: Context, config):
 
         subdevices[ent.name] = subdev
 
+        if 'controls' in e:
+            for ctrl_id, ctrl_val in e['controls']:
+                subdev.set_control(ctrl_id, ctrl_val)
+
         # Configure routes
         if 'routing' in e:
             routes = []
