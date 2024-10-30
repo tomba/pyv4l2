@@ -14,6 +14,8 @@ from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
 import PyQt6.QtNetwork
 
+from concurrent.futures import ThreadPoolExecutor
+
 receivers = []
 
 # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
@@ -77,6 +79,8 @@ def meta_to_pix(bytesperline, data):
 class Receiver(QtWidgets.QWidget):
     def __init__(self, socket: PyQt6.QtNetwork.QTcpSocket):
         super().__init__()
+
+        self.executor = ThreadPoolExecutor()
 
         self.name = '{}:{}'.format(socket.peerAddress().toString(), socket.peerPort())
 
@@ -161,13 +165,15 @@ class Receiver(QtWidgets.QWidget):
 
             label = self.labels[idx]
 
-            pix = buffer_to_pix(fmt, w, h, bytesperline, self.data_buffer)
+            future = self.executor.submit(buffer_to_pix, fmt, w, h, bytesperline, self.data_buffer.copy())
 
-            # pylint: disable=no-member
-            pix = pix.scaled(label.width(), label.height(), Qt.AspectRatioMode.KeepAspectRatio,
-                             Qt.TransformationMode.FastTransformation)
+            def threaded_work(future):
+                pix = future.result()
+                pix = pix.scaled(label.width(), label.height(), Qt.AspectRatioMode.KeepAspectRatio,
+                                 Qt.TransformationMode.FastTransformation)
+                label.setPixmap(pix)
 
-            label.setPixmap(pix)
+            future.add_done_callback(threaded_work)
 
         self.data_buffer = bytearray()
 
