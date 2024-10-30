@@ -15,6 +15,9 @@ class KmsContext:
 
         self.card = card
 
+        res = None
+        crtc = None
+        mode = None
         if ctx.use_display:
             res = kms.ResourceManager(card)
             conn = res.reserve_connector()
@@ -42,6 +45,8 @@ class KmsContext:
 
             if stream.get('dra-plane-hack', False):
                 # Hack to reserve the unscaleable GFX plane
+                assert res is not None
+                assert crtc is not None
                 res.reserve_generic_plane(crtc, v4l2.PixelFormats.RGB565)
 
             # If we don't have a DRM fmt, just fall back to RGB565
@@ -52,10 +57,15 @@ class KmsContext:
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]
+                div = None
+                w = None
                 for div in divs:
                     w = stream['kms-buf-w'] // div
                     if w % 2 == 0:
                         break
+
+                assert div is not None
+                assert w is not None
 
                 h = stream['kms-buf-h'] * div
 
@@ -63,6 +73,7 @@ class KmsContext:
                 stream['kms-buf-h'] = h
 
             if stream['display']:
+                assert mode is not None
                 max_w = mode.hdisplay // (1 if num_planes == 1 else 2)
                 max_h = mode.vdisplay // (1 if num_planes <= 2 else 2)
 
@@ -86,6 +97,8 @@ class KmsContext:
 
                 display_idx += 1
 
+                assert res is not None
+                assert crtc is not None
                 plane = res.reserve_generic_plane(crtc, stream['kms-format'])
                 assert(plane)
                 stream['plane'] = plane

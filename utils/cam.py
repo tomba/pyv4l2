@@ -325,10 +325,12 @@ def readvid(ctx: Context, stream):
         fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
         assert fb is not None
 
+    fb = None
     if ctx.save:
         save_fb_to_file(stream, ctx.buf_type == 'drm', fb if ctx.buf_type == 'drm' else vbuf)
 
     if stream['display']:
+        assert fb is not None
         stream['kms_fb_queue'].append(fb)
 
         if len(stream['kms_fb_queue']) >= stream['num_bufs'] - 1:
@@ -409,6 +411,7 @@ def main():
 
     setup(ctx)
 
+    net_thread = None
     if ctx.tx:
         for stream in ctx.streams:
             stream['tx_buf'] = None
@@ -422,6 +425,7 @@ def main():
     run(ctx)
 
     if ctx.tx:
+        assert net_thread is not None
         ctx.net_tx_queue.put(None)
         net_thread.join()
 

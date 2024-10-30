@@ -179,6 +179,7 @@ def read_config(config_name, params):
 # Setup links
 def setup_links(ctx: Context, config):
     md = ctx.md
+    assert md is not None
 
     for l in config.get('links', []):
         source_ent, source_pad = l['src']
@@ -204,6 +205,7 @@ def setup_links(ctx: Context, config):
 # Configure entities
 def configure_subdevs(ctx: Context, config):
     md = ctx.md
+    assert md is not None
 
     subdevices = {}
 
