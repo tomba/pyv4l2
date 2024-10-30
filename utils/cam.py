@@ -263,7 +263,7 @@ def setup(ctx: Context):
         ctx.updater = None
 
 
-def queue_buf(ctx: Context, stream: Stream, vbuf: v4l2.VideoBuffer):
+def queue_buf(stream: Stream, vbuf: v4l2.VideoBuffer):
     cap = stream['cap']
     cap.queue(vbuf)
 
@@ -288,7 +288,7 @@ def handle_sent_buffers(ctx: Context):
 
         stream['tx_buf'] = None
 
-        queue_buf(ctx, stream, vbuf)
+        queue_buf(stream, vbuf)
 
 
 def readvid(ctx: Context, stream: Stream):
@@ -348,7 +348,7 @@ def readvid(ctx: Context, stream: Stream):
         stream['tx_buf'] = vbuf
         ctx.net_tx_queue.put((stream, vbuf, ctx.buf_type == 'drm'))
     else:
-        queue_buf(ctx, stream, vbuf)
+        queue_buf(stream, vbuf)
 
 
 def readkey(ctx):
