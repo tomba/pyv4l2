@@ -49,6 +49,8 @@ class Context:
     net_tx_queue: queue.Queue
     net_done_queue: queue.Queue
 
+    updater: object
+
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
