@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import v4l2
+import v4l2.uapi
 
 USE_RAW_10=False
 MEDIA_DEVICE_NAME = ('rp1-cfe', 'model')
@@ -52,6 +53,9 @@ def gen_imx219_pixel(cameras, port):
                 ],
                 "routing": [
                    { "src": (1, 0), "dst": (0, 0) },
+                ],
+                "controls": [
+                    (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
                 ],
             },
 
