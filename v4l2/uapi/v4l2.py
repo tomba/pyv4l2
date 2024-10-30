@@ -1,7 +1,7 @@
 r"""Wrapper for videodev2.h
 
 Generated with:
-/home/tomba/work/ctypesgen/run.py --no-embed-preamble --no-macro-try-except --no-source-comments -D__volatile__= -D__signed__= -U__SIZEOF_INT128__ -I/home/tomba/tmp/khdrs/include -o v4l2/uapi/v4l2.py /home/tomba/tmp/khdrs/include/linux/videodev2.h /home/tomba/tmp/khdrs/include/linux/media.h /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h /home/tomba/tmp/khdrs/include/linux/media-bus-format.h /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h
+ctypesgen --no-embed-preamble --no-macro-try-except --no-source-comments -D__volatile__= -D__signed__= -U__SIZEOF_INT128__ -I/home/tomba/tmp/khdrs/include -ov4l2/uapi/v4l2.py /home/tomba/tmp/khdrs/include/linux/videodev2.h /home/tomba/tmp/khdrs/include/linux/media.h /home/tomba/tmp/khdrs/include/linux/v4l2-subdev.h /home/tomba/tmp/khdrs/include/linux/media-bus-format.h /home/tomba/tmp/khdrs/include/linux/v4l2-mediabus.h
 
 Do not modify this file.
 """
@@ -3624,6 +3624,23 @@ struct_v4l2_create_buffers._fields_ = [
 ]
 
 
+class struct_v4l2_remove_buffers(Structure):
+    pass
+
+struct_v4l2_remove_buffers.__slots__ = [
+    'index',
+    'count',
+    'type',
+    'reserved',
+]
+struct_v4l2_remove_buffers._fields_ = [
+    ('index', __u32),
+    ('count', __u32),
+    ('type', __u32),
+    ('reserved', __u32 * int(13)),
+]
+
+
 class struct_media_device_info(Structure):
     pass
 
@@ -4716,6 +4733,12 @@ V4L2_PIX_FMT_ARGB2101010 = (v4l2_fourcc ('A', 'R', '3', '0'))
 V4L2_PIX_FMT_BGR48_12 = (v4l2_fourcc ('B', '3', '1', '2'))
 
 
+V4L2_PIX_FMT_BGR48 = (v4l2_fourcc ('B', 'G', 'R', '6'))
+
+
+V4L2_PIX_FMT_RGB48 = (v4l2_fourcc ('R', 'G', 'B', '6'))
+
+
 V4L2_PIX_FMT_ABGR64_12 = (v4l2_fourcc ('B', '4', '1', '2'))
 
 
@@ -4753,6 +4776,12 @@ V4L2_PIX_FMT_Y10P = (v4l2_fourcc ('Y', '1', '0', 'P'))
 
 
 V4L2_PIX_FMT_IPU3_Y10 = (v4l2_fourcc ('i', 'p', '3', 'y'))
+
+
+V4L2_PIX_FMT_Y12P = (v4l2_fourcc ('Y', '1', '2', 'P'))
+
+
+V4L2_PIX_FMT_Y14P = (v4l2_fourcc ('Y', '1', '4', 'P'))
 
 
 V4L2_PIX_FMT_PAL8 = (v4l2_fourcc ('P', 'A', 'L', '8'))
@@ -5277,6 +5306,36 @@ V4L2_PIX_FMT_IPU3_SGRBG10 = (v4l2_fourcc ('i', 'p', '3', 'G'))
 V4L2_PIX_FMT_IPU3_SRGGB10 = (v4l2_fourcc ('i', 'p', '3', 'r'))
 
 
+V4L2_PIX_FMT_PISP_COMP1_RGGB = (v4l2_fourcc ('P', 'C', '1', 'R'))
+
+
+V4L2_PIX_FMT_PISP_COMP1_GRBG = (v4l2_fourcc ('P', 'C', '1', 'G'))
+
+
+V4L2_PIX_FMT_PISP_COMP1_GBRG = (v4l2_fourcc ('P', 'C', '1', 'g'))
+
+
+V4L2_PIX_FMT_PISP_COMP1_BGGR = (v4l2_fourcc ('P', 'C', '1', 'B'))
+
+
+V4L2_PIX_FMT_PISP_COMP1_MONO = (v4l2_fourcc ('P', 'C', '1', 'M'))
+
+
+V4L2_PIX_FMT_PISP_COMP2_RGGB = (v4l2_fourcc ('P', 'C', '2', 'R'))
+
+
+V4L2_PIX_FMT_PISP_COMP2_GRBG = (v4l2_fourcc ('P', 'C', '2', 'G'))
+
+
+V4L2_PIX_FMT_PISP_COMP2_GBRG = (v4l2_fourcc ('P', 'C', '2', 'g'))
+
+
+V4L2_PIX_FMT_PISP_COMP2_BGGR = (v4l2_fourcc ('P', 'C', '2', 'B'))
+
+
+V4L2_PIX_FMT_PISP_COMP2_MONO = (v4l2_fourcc ('P', 'C', '2', 'M'))
+
+
 V4L2_SDR_FMT_CU8 = (v4l2_fourcc ('C', 'U', '0', '8'))
 
 
@@ -5332,6 +5391,15 @@ V4L2_META_FMT_RK_ISP1_PARAMS = (v4l2_fourcc ('R', 'K', '1', 'P'))
 
 
 V4L2_META_FMT_RK_ISP1_STAT_3A = (v4l2_fourcc ('R', 'K', '1', 'S'))
+
+
+V4L2_META_FMT_RPI_BE_CFG = (v4l2_fourcc ('R', 'P', 'B', 'C'))
+
+
+V4L2_META_FMT_RPI_FE_CFG = (v4l2_fourcc ('R', 'P', 'F', 'C'))
+
+
+V4L2_META_FMT_RPI_FE_STATS = (v4l2_fourcc ('R', 'P', 'F', 'S'))
 
 
 V4L2_META_FMT_GENERIC_8 = (v4l2_fourcc ('M', 'E', 'T', '8'))
@@ -5467,6 +5535,9 @@ V4L2_BUF_CAP_SUPPORTS_MMAP_CACHE_HINTS = (1 << 6)
 
 
 V4L2_BUF_CAP_SUPPORTS_MAX_NUM_BUFFERS = (1 << 7)
+
+
+V4L2_BUF_CAP_SUPPORTS_REMOVE_BUFS = (1 << 8)
 
 
 V4L2_BUF_FLAG_MAPPED = 0x00000001
@@ -6532,6 +6603,9 @@ VIDIOC_DBG_G_CHIP_INFO = (_IOWR ('V', 102, struct_v4l2_dbg_chip_info))
 VIDIOC_QUERY_EXT_CTRL = (_IOWR ('V', 103, struct_v4l2_query_ext_ctrl))
 
 
+VIDIOC_REMOVE_BUFS = (_IOWR ('V', 104, struct_v4l2_remove_buffers))
+
+
 BASE_VIDIOC_PRIVATE = 192
 
 
@@ -7233,9 +7307,6 @@ MEDIA_BUS_FMT_META_24 = 0x8007
 MEDIA_BUS_FMT_CCS_EMBEDDED = 0x9001
 
 
-MEDIA_BUS_FMT_OV2740_EMBEDDED = 0x9002
-
-
 V4L2_MBUS_FRAMEFMT_SET_CSC = 0x0001
 
 
@@ -7267,6 +7338,9 @@ V4L2_SUBDEV_ROUTE_FL_IMMUTABLE = (1 << 1)
 
 
 V4L2_SUBDEV_CLIENT_CAP_STREAMS = (1 << 0)
+
+
+V4L2_SUBDEV_CLIENT_CAP_INTERVAL_USES_WHICH = (1 << 1)
 
 
 VIDIOC_SUBDEV_QUERYCAP = (_IOR ('V', 0, struct_v4l2_subdev_capability))
@@ -7500,6 +7574,8 @@ v4l2_dbg_register = struct_v4l2_dbg_register
 v4l2_dbg_chip_info = struct_v4l2_dbg_chip_info
 
 v4l2_create_buffers = struct_v4l2_create_buffers
+
+v4l2_remove_buffers = struct_v4l2_remove_buffers
 
 media_device_info = struct_media_device_info
 
