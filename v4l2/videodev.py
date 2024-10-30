@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC, ABCMeta, abstractmethod
 import ctypes
 import errno
 import fcntl
@@ -185,7 +186,7 @@ class VideoDevice:
         raise NotImplementedError()
 
 
-class CaptureStreamer():
+class CaptureStreamer(ABC):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType) -> None:
         self.vdev = vdev
         self.mem_type = mem_type
@@ -208,12 +209,40 @@ class CaptureStreamer():
         buf_type = ctypes.c_uint32(self.buf_type.value)
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_STREAMOFF, buf_type, True)
 
+    @abstractmethod
+    def reserve_buffers(self, num_bufs: int): ...
+
+    @abstractmethod
+    def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]): ...
+
+    @abstractmethod
+    def queue(self, vbuf: VideoBuffer): ...
+
+    @abstractmethod
+    def dequeue(self) -> VideoBuffer: ...
+
+    @property
+    @abstractmethod
+    def buffersizes(self) -> list[int]: ...
+
+    @property
+    @abstractmethod
+    def strides(self) -> list[int]: ...
+
+    @property
+    @abstractmethod
+    def framesize(self) -> int: ...
+
+    @property
+    @abstractmethod
+    def format(self) -> v4l2.PixelFormat | v4l2.MetaFormat: ...
+
     @property
     def fd(self):
         return self.vdev.fd
 
 
-class VideoCaptureStreamer(CaptureStreamer):
+class VideoCaptureStreamer(CaptureStreamer, metaclass=ABCMeta):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
                  width: int, height: int, format: v4l2.PixelFormat) -> None:
         super().__init__(vdev, mem_type, buf_type)
@@ -222,11 +251,27 @@ class VideoCaptureStreamer(CaptureStreamer):
 
         self.width = width
         self.height = height
-        self.format = format
 
-        self.strides = [format.stride(width, i) for i in range(len(format.planes))]
-        self.buffersizes = [format.planesize(width, height, i) for i in range(len(format.planes))]
-        self.framesize = format.framesize(width, height)
+        self.__format = format
+        self.__strides = [format.stride(width, i) for i in range(len(format.planes))]
+        self.__buffersizes = [format.planesize(width, height, i) for i in range(len(format.planes))]
+        self.__framesize = format.framesize(width, height)
+
+    @property
+    def buffersizes(self):
+        return self.__buffersizes
+
+    @property
+    def framesize(self):
+        return self.__framesize
+
+    @property
+    def strides(self):
+        return self.__strides
+
+    @property
+    def format(self) -> v4l2.PixelFormat:
+        return self.__format
 
     def reserve_buffers(self, num_bufs):
         assert self.format.v4l2_fourcc
@@ -416,7 +461,7 @@ class MetaCaptureStreamer(CaptureStreamer):
         super().__init__(vdev, mem_type, buf_type)
 
         self.size = size
-        self.format = format
+        self.__format = format
 
         if isinstance(size, int):
             w, h = (size, 1)
@@ -425,14 +470,24 @@ class MetaCaptureStreamer(CaptureStreamer):
 
         self.stride = format.stride(w)
         self.buffersize = format.buffersize(w, h)
-        self.framesize = self.buffersize
-
-        # Just for compatibility with video streamers
-        self.strides = [self.stride]
-        self.buffersizes = [self.buffersize]
-        self.framesizes = [self.framesize]
 
         self.set_format()
+
+    @property
+    def strides(self):
+        return [self.stride]
+
+    @property
+    def buffersizes(self):
+        return [self.buffersize]
+
+    @property
+    def framesize(self):
+        return self.buffersize
+
+    @property
+    def format(self) -> v4l2.MetaFormat:
+        return self.__format
 
     def set_format(self):
         v4lfmt = v4l2.uapi.v4l2_format()
@@ -509,18 +564,28 @@ class MetaOutputStreamer(CaptureStreamer):
         super().__init__(vdev, mem_type, buf_type)
 
         self.size = size
-        self.format = format
+        self.__format = format
 
         self.stride = format.stride(size)
         self.buffersize = self.stride
-        self.framesize = self.buffersize
-
-        # Just for compatibility with video streamers
-        self.strides = [self.stride]
-        self.buffersizes = [self.buffersize]
-        self.framesizes = [self.framesize]
 
         self.set_format()
+
+    @property
+    def strides(self):
+        return [self.stride]
+
+    @property
+    def buffersizes(self):
+        return [self.buffersize]
+
+    @property
+    def framesize(self):
+        return self.buffersize
+
+    @property
+    def format(self) -> v4l2.MetaFormat:
+        return self.__format
 
     def set_format(self):
         v4lfmt = v4l2.uapi.v4l2_format()
