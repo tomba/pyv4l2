@@ -13,6 +13,7 @@ INCLUDES = (
     f'{INCLUDE_PATH}/linux/v4l2-subdev.h',
     f'{INCLUDE_PATH}/linux/media-bus-format.h',
     f'{INCLUDE_PATH}/linux/v4l2-mediabus.h',
+    f'{INCLUDE_PATH}/linux/v4l2-controls.h',
 )
 
 # For some reason ctypesgen refuses to use the media-bus-format.h from the above
