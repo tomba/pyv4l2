@@ -15,6 +15,8 @@ from typing import TYPE_CHECKING
 
 from cam_helpers import read_config, NetTX, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
 
+from cam_types import Stream
+
 import v4l2
 from v4l2.videodev import VideoCaptureStreamer
 
@@ -26,9 +28,9 @@ class Context:
     config: dict
     use_ipython: bool
     user_script: types.ModuleType | None
-    subdevices: dict
-    streams: list
-    md: v4l2.MediaDevice
+    subdevices: dict[str, v4l2.SubDevice] | None
+    streams: list[Stream]
+    md: v4l2.MediaDevice | None
     buf_type: str
     use_display: bool
     kms_committed: bool
@@ -153,15 +155,19 @@ def init_viddevs(ctx: Context):
         stream['display'] = ctx.use_display and stream.get('display', True)
         stream['embedded'] = stream.get('embedded', False)
 
-        if len(stream['fmt']) == 3:
-            stream['w'] = stream['fmt'][0]
-            stream['h'] = stream['fmt'][1]
-            stream['format'] = stream['fmt'][2]
+        fmt = stream['fmt']
+        if len(fmt) == 3:
+            stream['w'] = fmt[0]
+            stream['h'] = fmt[1]
+            stream['format'] = fmt[2]
         elif len(stream['fmt']) == 2:
-            stream['size'] = stream['fmt'][0]
-            stream['format'] = stream['fmt'][1]
+            stream['w'] = fmt[0]
+            stream['h'] = 1
+            stream['format'] = fmt[1]
         else:
             raise RuntimeError()
+
+        stream['size'] = stream['w'] * stream['h']
 
         if ctx.md:
             vid_ent = ctx.md.find_entity(stream['entity'])
@@ -198,14 +204,11 @@ def init_streamer(ctx: Context):
         mem_type = v4l2.MemType.DMABUF if ctx.buf_type == 'drm' else v4l2.MemType.MMAP
 
         if not stream.get('embedded', False):
+            assert isinstance(stream['format'], v4l2.PixelFormat)
             cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['format'])
         else:
-            if 'size' in stream:
-                size = stream['size']
-            else:
-                size = (stream['w'], stream['h'])
-
-            cap = vd.get_meta_capture_streamer(mem_type, size, stream['format'])
+            assert isinstance(stream['format'], v4l2.MetaFormat)
+            cap = vd.get_meta_capture_streamer(mem_type, stream['size'], stream['format'])
 
         stream['cap'] = cap
 
@@ -260,7 +263,7 @@ def setup(ctx: Context):
         ctx.updater = None
 
 
-def queue_buf(ctx: Context, stream, vbuf: v4l2.VideoBuffer):
+def queue_buf(ctx: Context, stream: Stream, vbuf: v4l2.VideoBuffer):
     cap = stream['cap']
     cap.queue(vbuf)
 
@@ -288,7 +291,7 @@ def handle_sent_buffers(ctx: Context):
         queue_buf(ctx, stream, vbuf)
 
 
-def readvid(ctx: Context, stream):
+def readvid(ctx: Context, stream: Stream):
     if ctx.verbose:
         print('{}: event'.format(stream['dev_path']))
 

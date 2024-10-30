@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING
 import v4l2
 import v4l2.uapi
 
+from cam_types import Stream
+
 if TYPE_CHECKING:
     from .cam import Context
     import kms
@@ -67,7 +69,7 @@ class NetTX:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
 
-    def tx(self, stream, vbuf, is_drm):
+    def tx(self, stream: Stream, vbuf, is_drm):
         cap = stream['cap']
 
         plane_sizes = cap.buffersizes
@@ -279,7 +281,8 @@ def configure_subdevs(ctx: Context, config):
 
     return subdevices
 
-def save_fb_to_file(stream, is_drm, fb_or_vbuf):
+
+def save_fb_to_file(stream: Stream, is_drm, fb_or_vbuf):
     cap = stream['cap']
 
     filename = 'frame-{}-{}.data'.format(stream['id'], stream['total_num_frames'])

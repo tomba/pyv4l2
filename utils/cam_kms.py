@@ -3,6 +3,9 @@ from selectors import BaseSelector, EVENT_READ
 import time
 
 import kms
+
+from cam_types import Stream
+
 import v4l2
 
 class KmsContext:
@@ -49,10 +52,11 @@ class KmsContext:
                 res.reserve_generic_plane(crtc, v4l2.PixelFormats.RGB565)
 
             # If we don't have a DRM fmt, just fall back to RGB565
-            if isinstance(stream['format'], v4l2.MetaFormat) or not stream['format'].drm_fourcc:
+            format = stream['format']
+            if isinstance(format, v4l2.MetaFormat) or not format.drm_fourcc:
                 stream['kms-format'] = v4l2.PixelFormats.RGB565
             else:
-                stream['kms-format'] = stream['format']
+                stream['kms-format'] = format
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]
@@ -102,12 +106,14 @@ class KmsContext:
                 assert(plane)
                 stream['plane'] = plane
 
-    def alloc_fbs(self, stream):
+    def alloc_fbs(self, stream: Stream):
         fbs = []
         cap = stream['cap']
         for i in range(stream['num_bufs']):
             fb = kms.DumbFramebuffer(self.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-format'])
             fbs.append(fb)
+
+            assert isinstance(cap.format, v4l2.PixelFormat)
 
             for i in range(len(cap.format.planes)):
                 assert cap.strides[i] == fb.planes[i].pitch
@@ -115,7 +121,7 @@ class KmsContext:
 
         stream['fbs'] = fbs
 
-    def setup_stream(self, stream):
+    def setup_stream(self, stream: Stream):
         ctx = self.ctx
 
         assert(ctx.buf_type == 'drm')
