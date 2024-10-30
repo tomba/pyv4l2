@@ -22,7 +22,6 @@ class KmsContext:
             res = kms.ResourceManager(card)
             conn = res.reserve_connector()
             crtc = res.reserve_crtc(conn)
-            card.disable_planes()
             mode = conn.get_default_mode()
             modeb = kms.Blob(card, mode)
 
