@@ -292,7 +292,7 @@ def save_fb_to_file(stream, is_drm, fb_or_vbuf):
     else:
         vbuf = typing.cast(v4l2.VideoBuffer, fb_or_vbuf)
 
-        with mmap.mmap(cap.fd, vbuf.buffer_size, mmap.MAP_SHARED, mmap.PROT_READ,
+        with mmap.mmap(cap.fd, cap.framesize, mmap.MAP_SHARED, mmap.PROT_READ,
                        offset=vbuf.offset) as b:
             with open(filename, 'wb') as f:
                 f.write(b)
