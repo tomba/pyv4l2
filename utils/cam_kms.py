@@ -1,5 +1,5 @@
 from collections import deque
-import selectors
+from selectors import BaseSelector, EVENT_READ
 import time
 
 import kms
@@ -219,5 +219,5 @@ class KmsContext:
             if ev.type == kms.DrmEventType.FLIP_COMPLETE:
                 self.handle_pageflip()
 
-    def register_selector(self, sel):
-        sel.register(self.card.fd, selectors.EVENT_READ, lambda: self.readdrm())
+    def register_selector(self, sel: BaseSelector):
+        sel.register(self.card.fd, EVENT_READ, lambda: self.readdrm())
