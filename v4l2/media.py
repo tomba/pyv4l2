@@ -26,9 +26,9 @@ class MediaTopology:
 
 
 class MediaObject:
-    links: list['MediaLink']
+    links: list[MediaLink]
 
-    def __init__(self, md: 'MediaDevice', id: int) -> None:
+    def __init__(self, md: MediaDevice, id: int) -> None:
         self.md = md
         self.id = id
 
@@ -43,8 +43,8 @@ class MediaEntity(MediaObject):
         self.name = media_entity.name.decode('ascii')
         self.function = MediaEntityFunction(media_entity.function)
         self.flags = media_entity.flags
-        self.pads: list['MediaPad'] = None # type: ignore
-        self.interface: 'MediaInterface' = None # type: ignore
+        self.pads: list[MediaPad] = None # type: ignore
+        self.interface: MediaInterface = None # type: ignore
 
     def _finalize(self):
         super()._finalize()
@@ -71,7 +71,7 @@ class MediaEntity(MediaObject):
         return f'MediaEntity({self.id}, \'{self.name}\')'
 
     @property
-    def pad_links(self) -> list['MediaLink']:
+    def pad_links(self) -> list[MediaLink]:
         return [l for p in self.pads for l in p.links]
 
 
