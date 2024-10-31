@@ -258,7 +258,8 @@ def main():
 
         recurse = True
 
-    flatten = lambda t: [item for sublist in t for item in sublist]
+    def flatten(t):
+        return [item for sublist in t for item in sublist]
 
     print(f'Driver: {md.driver}, Model: {md.model}, Bus info: {md.bus_info}')
     print()

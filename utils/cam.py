@@ -167,7 +167,7 @@ def init_viddevs(ctx: Context):
             vid_ent = ctx.md.find_entity(stream['entity'])
             assert(vid_ent)
 
-            if not 'dev_path' in stream:
+            if 'dev_path' not in stream:
                 stream['dev_path'] = vid_ent.interface.dev_path
 
             if ctx.verbose:

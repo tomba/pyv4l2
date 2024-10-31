@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import ctypes
 import v4l2
 
 imx219_w = 640
