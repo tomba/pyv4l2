@@ -170,12 +170,15 @@ class VideoDevice:
                                width, height, format)
 
     def get_meta_capture_streamer(self, mem_type: v4l2.MemType,
-                                  size: int, format: v4l2.MetaFormat):
+                                  size: int | tuple[int, int],
+                                  format: v4l2.MetaFormat):
         if self.has_meta_capture:
             return MetaCaptureStreamer(self, mem_type, v4l2.BufType.META_CAPTURE,
                                        size, format)
 
         if self.has_meta_output:
+            assert isinstance(size, int)
+
             return MetaOutputStreamer(self, mem_type, v4l2.BufType.META_OUTPUT,
                                        size, format)
 
