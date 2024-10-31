@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 import ctypes
 import errno
 import fcntl
@@ -242,7 +242,7 @@ class CaptureStreamer(ABC):
         return self.vdev.fd
 
 
-class VideoCaptureStreamer(CaptureStreamer, metaclass=ABCMeta):
+class VideoCaptureStreamer(CaptureStreamer):
     def __init__(self, vdev: VideoDevice, mem_type: v4l2.MemType, buf_type: v4l2.BufType,
                  width: int, height: int, format: v4l2.PixelFormat) -> None:
         super().__init__(vdev, mem_type, buf_type)
