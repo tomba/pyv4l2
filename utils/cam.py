@@ -39,6 +39,7 @@ class Context:
     tx: None | list[str]
     run_ipython: types.LambdaType
     exit: bool
+    exit_num_frames: int
 
     kms_ctx: KmsContext
 
@@ -61,6 +62,7 @@ def parse_args(ctx: Context):
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
     parser.add_argument('-H', '--host', default='192.168.88.20', type=str)
     parser.add_argument('-P', '--port', default=43242, type=int)
+    parser.add_argument('-n', '--numframes', default=0, type=int, help='Number of frames to capture')
     parser.add_argument('config_name', help='Configuration name')
     parser.add_argument('params', nargs='*', help='Parameters to the configuration')
     args = parser.parse_args()
@@ -70,6 +72,7 @@ def parse_args(ctx: Context):
     ctx.config_only = args.config_only
     ctx.delay = args.delay
     ctx.save = args.save
+    ctx.exit_num_frames = args.numframes
 
     ctx.use_ipython = args.ipython
 
@@ -293,6 +296,9 @@ def readvid(ctx: Context, stream):
         ctx.updater.update()
 
     stream['total_num_frames'] += 1
+
+    if stream['total_num_frames'] == ctx.exit_num_frames:
+        ctx.exit = True
 
     # With IPython we have separate fps tracking
     if not ctx.use_ipython:
