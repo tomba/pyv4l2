@@ -91,6 +91,7 @@ disable=
         too-many-statements,
         too-many-instance-attributes,
         too-many-public-methods,
+        too-many-branches,
 # Below warnings should possibly be fixed
         global-statement,
         redefined-builtin,
