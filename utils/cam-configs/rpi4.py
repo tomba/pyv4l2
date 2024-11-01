@@ -55,8 +55,6 @@ configurations['cam0'] = {
         {
             'entity': 'unicam-image',
             'fmt': fmt_pix_imx219,
-            'embedded': False,
-            'dra-plane-hack': False,
         },
     ],
 

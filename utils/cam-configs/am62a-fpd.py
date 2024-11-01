@@ -93,7 +93,6 @@ def gen_imx219_pixel(port):
             {
                 'entity': f'{dma_ent} {port}',
                 'fmt': fmt_pix_imx219,
-                'embedded': False,
             },
         ],
 
@@ -236,8 +235,6 @@ def gen_ub953_tpg(port):
             {
                 'entity': f'{dma_ent} {port}',
                 'fmt': fmt_tpg,
-                'embedded': False,
-                'dra-plane-hack': False,
             },
         ],
 
