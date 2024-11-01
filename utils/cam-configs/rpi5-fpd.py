@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 # Pixel
