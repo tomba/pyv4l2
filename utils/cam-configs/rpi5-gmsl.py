@@ -100,6 +100,8 @@ def gen_imx219_pixel(cameras, port):
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_pix,
                 'embedded': False,
+                'display': True,
+                'kms-format': v4l2.PixelFormats.RGB565,
             },
         ],
 
@@ -174,6 +176,7 @@ def gen_imx219_meta(cameras, port):
                 'fmt': fmt_pix_imx219_meta,
                 'embedded': True,
                 "display": False,
+                'kms-format': v4l2.PixelFormats.RGB565,
             },
         ],
 
