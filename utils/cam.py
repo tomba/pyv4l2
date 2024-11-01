@@ -13,7 +13,8 @@ import threading
 
 from typing import TYPE_CHECKING
 
-from cam_helpers import read_config, NetTX, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
+from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
+from cam_net import NetTX
 
 from cam_types import Stream
 
