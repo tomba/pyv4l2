@@ -53,7 +53,6 @@ def enable_link(source, sink):
     if link.is_immutable:
         return
 
-    link.enabled = True
     #src_ent.setup_link(link)
 
     link.enable()
