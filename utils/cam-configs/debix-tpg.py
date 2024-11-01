@@ -15,6 +15,7 @@ crop3 = (0, 0, 2400, 1600) # RSZ input crop
 
 #2592✕1940
 configurations["cam0"] = {
+    # TODO: add 'media' entry
     "subdevs": [
         {
             "entity": "rkisp1_tpg",

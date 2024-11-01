@@ -12,6 +12,7 @@ fmt_pix_1 = (sensor_1_w, sensor_1_h, PIX_FMT)
 configurations = {}
 
 configurations["lappy"] = {
+    # TODO: add 'media' entry
     "subdevs": [
     ],
 
@@ -19,7 +20,6 @@ configurations["lappy"] = {
         {
             "entity": "Integrated Camera: Integrated C",
             "fmt": fmt_pix_1,
-            "dev": "/dev/video0",
         },
     ],
 

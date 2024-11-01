@@ -19,8 +19,8 @@ configurations = {}
 configurations["legacy-ov5640"] = {
     "devices": [
         {
+            # TODO: add 'device' entry
             "fmt": fmt_pix_1,
-            "dev": "/dev/video0",
         },
     ],
 }
@@ -29,6 +29,7 @@ configurations["legacy-ov5640"] = {
 # DRA76 EVM: OV5640
 #
 configurations["ov5640"] = {
+    # TODO: add 'media' entry
     "subdevs": [
         {
             "entity": "ov5640 4-003c",
@@ -49,7 +50,6 @@ configurations["ov5640"] = {
         {
             "entity": "CAL output 0",
             "fmt": fmt_pix_1,
-            "dev": "/dev/video0",
         },
     ],
 

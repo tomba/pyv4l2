@@ -21,7 +21,6 @@ configurations["desky"] = {
         {
             "entity": "UVC Camera*",
             "fmt": fmt_pix_1,
-            "dev": "/dev/video0",
         },
     ],
 

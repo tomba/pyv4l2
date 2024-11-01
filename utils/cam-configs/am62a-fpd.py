@@ -96,7 +96,6 @@ def gen_imx219_pixel(port):
                 "entity": f"{dma_ent} {port}",
                 "fmt": fmt_pix_imx219,
                 "embedded": False,
-                "dev": f"/dev/video{port}",
             },
         ],
 
@@ -166,7 +165,6 @@ def gen_imx219_meta(port):
                 "entity": f"CAL output {port + 4}",
                 "fmt": fmt_pix_imx219_meta,
                 "embedded": True,
-                "dev": f"/dev/video{port + 4}",
                 "display": False,
             },
         ],
@@ -241,7 +239,6 @@ def gen_ub953_tpg(port):
                 "entity": f"{dma_ent} {port}",
                 "fmt": fmt_tpg,
                 "embedded": False,
-                "dev": f"/dev/video{port}",
                 "dra-plane-hack": False,
             },
         ],

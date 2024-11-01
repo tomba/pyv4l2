@@ -14,6 +14,7 @@ fmt_pix_1 = (sensor_1_w, sensor_1_h, PIX_FMT)
 configurations = {}
 
 configurations["ov5640"] = {
+    # TODO: add 'media' entry
     "subdevs": [
         {
             "entity": "ov5640 4-003c",
@@ -34,7 +35,6 @@ configurations["ov5640"] = {
         {
             "entity": "j721e-csi2rx",
             "fmt": fmt_pix_1,
-            "dev": "/dev/video0",
         },
     ],
 

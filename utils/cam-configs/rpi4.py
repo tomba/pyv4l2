@@ -27,6 +27,7 @@ configurations = {}
 sensor_ent = "imx219 5-0010"
 
 configurations["cam0"] = {
+    # TODO: add 'media' entry
     "subdevs": [
         # Camera
         {

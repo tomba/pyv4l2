@@ -13,6 +13,7 @@ resizer_crop = (0, 0, 2592, 1940)
 configurations = {}
 
 configurations["cam0"] = {
+    # TODO: add 'media' entry
     "subdevs": [
         # Camera
         {
