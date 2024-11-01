@@ -546,7 +546,7 @@ class MetaCaptureStreamer(CaptureStreamer):
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_DQBUF, v4l2buf, True)
 
-        assert v4l2buf.length == self.buffersize
+        assert v4l2buf.length >= self.buffersize, f'{v4l2buf.length} < {self.buffersize}'
 
         vbuf = self.vbuffers[v4l2buf.index]
 

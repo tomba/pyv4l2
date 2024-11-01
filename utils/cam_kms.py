@@ -26,7 +26,7 @@ class KmsContext:
             conn = res.reserve_connector()
             crtc = res.reserve_crtc(conn)
             mode = conn.get_default_mode()
-            modeb = kms.Blob(card, mode)
+            modeb = mode.to_blob(card)
 
             self.crtc = crtc
             self.conn = conn
@@ -37,26 +37,50 @@ class KmsContext:
         display_idx = 0
 
         for stream in streams:
-            if 'size' in stream:
-                # It's metadata, we use RGB565 for it, so divide by 2
-                stream['kms-buf-w'] = stream['size'] // 2
-                stream['kms-buf-h'] = 1
-            else:
-                stream['kms-buf-w'] = stream['w']
-                stream['kms-buf-h'] = stream['h']
-
             if stream.get('dra-plane-hack', False):
                 # Hack to reserve the unscaleable GFX plane
                 assert res is not None
                 assert crtc is not None
                 res.reserve_generic_plane(crtc, v4l2.PixelFormats.RGB565)
 
-            # If we don't have a DRM fmt, just fall back to RGB565
-            format = stream['format']
-            if isinstance(format, v4l2.MetaFormat) or not format.drm_fourcc:
-                stream['kms-format'] = v4l2.PixelFormats.RGB565
+            if isinstance(stream['size'], int):
+                stream['kms-buf-w'] = stream['size']
+                stream['kms-buf-h'] = 1
             else:
-                stream['kms-format'] = format
+                stream['kms-buf-w'] = stream['w']
+                stream['kms-buf-h'] = stream['h']
+
+            if 'kms-format' not in stream:
+                if isinstance(stream['format'], v4l2.MetaFormat):
+                    raise RuntimeError('No KMS format specified')
+
+                stream['kms-format'] = stream['format']
+
+            if not stream['kms-format'].drm_fourcc:
+                raise RuntimeError('No KMS format available or specified')
+
+            if stream['format'] != stream['kms-format']:
+                if (isinstance(stream['format'], v4l2.PixelFormat) and
+                    len(stream['format'].planes) > 1):
+                    raise RuntimeError("Unable to adjust formats with more than one plane")
+
+                print(f'Aligning V4L2 and KMS formats: {stream["format"]}, {stream["kms-format"]}')
+
+                kms_w = stream['kms-buf-w']
+
+                if isinstance(stream['format'], v4l2.MetaFormat):
+                    v4l2_stride = stream['format'].stride(kms_w)
+                else:
+                    v4l2_stride = stream['format'].stride(kms_w, plane=0)
+
+                kms_stride = stream['kms-format'].stride(kms_w, plane=0)
+
+                if kms_stride % v4l2_stride == 0:
+                    stream['kms-buf-w'] //= kms_stride // v4l2_stride
+                else:
+                    raise RuntimeError('Unable to adjust formats')
+
+                print(f'Adjusted kms width from {kms_w} to {stream['kms-buf-w']}')
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]
@@ -113,11 +137,12 @@ class KmsContext:
             fb = kms.DumbFramebuffer(self.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-format'])
             fbs.append(fb)
 
-            assert isinstance(cap.format, v4l2.PixelFormat)
-
-            for i in range(len(cap.format.planes)):
-                assert cap.strides[i] == fb.planes[i].pitch
-                assert cap.buffersizes[i] == fb.planes[i].size
+            if isinstance(cap.format, v4l2.PixelFormat):
+                for i in range(len(cap.format.planes)):
+                    assert cap.strides[i] == fb.planes[i].pitch, f'{cap.strides[i]}, {fb.planes[i].pitch}'
+                    assert cap.buffersizes[i] == fb.planes[i].size
+            else:
+                pass
 
         stream['fbs'] = fbs
 
