@@ -31,8 +31,6 @@ else:
 mbus_fmt_imx219_meta = (imx219_w, 2, imx219_bus_fmt_meta)
 fmt_pix_imx219_meta = (imx219_w, 2, imx219_pix_fmt_meta)
 
-configurations = {}
-
 def gen_imx219_pixel(cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
@@ -213,6 +211,7 @@ def get_configs():
 
     num_cameras = len(cameras)
 
+    configurations = {}
     for i in range(num_cameras):
         configurations[f'cam{i}'] = gen_imx219_pixel(cameras, i)
         configurations[f'cam{i}-meta'] = gen_imx219_meta(cameras, i)
