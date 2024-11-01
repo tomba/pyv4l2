@@ -104,19 +104,18 @@ def parse_args(ctx: Context):
         ctx.tx = None
         ctx.net_tx = None
 
-    if args.type and args.type not in ['drm', 'v4l2']:
+    if not args.type:
+        if args.display:
+            args.type = 'drm'
+        else:
+            args.type = 'v4l2'
+
+    if args.type not in ['drm', 'v4l2']:
         print('Bad buffer type', args.type)
         sys.exit(-1)
 
     ctx.use_display = args.display
-
-    if args.type:
-        ctx.buf_type = args.type
-    else:
-        if args.display:
-            ctx.buf_type = 'drm'
-        else:
-            ctx.buf_type = 'v4l2'
+    ctx.buf_type = args.type
 
     ctx.config = read_config(args.config_name, args.params)
 
