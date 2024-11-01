@@ -87,6 +87,8 @@ def merge_configs(configs):
                 if 'pads' in subdev:
                     dst['pads'] += subdev['pads']
                 if 'routing' in subdev:
+                    if 'routing' not in dst:
+                        dst['routing'] = []
                     dst['routing'] += subdev['routing']
             else:
                 d['subdevs'].append(subdev)
