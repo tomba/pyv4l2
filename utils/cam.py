@@ -324,11 +324,12 @@ def readvid(ctx: Context, stream: Stream):
     cap = stream['cap']
     vbuf = cap.dequeue()
 
+    fb = None
+
     if ctx.buf_type == 'drm':
         fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
         assert fb is not None
 
-    fb = None
     if ctx.save:
         save_fb_to_file(stream, ctx.buf_type == 'drm', fb if ctx.buf_type == 'drm' else vbuf)
 
