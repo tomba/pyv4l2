@@ -45,7 +45,7 @@ def print_routes(subdev):
 def print_videodev_pad(videodev, print_supported):
     def print_videodef_fmts(videodev, buftype, title,):
         fmts = videodev.get_formats(buftype)
-        fmts = [f'{f.name} (\'{v4l2.fourcc_to_str(f.v4l2_fourcc)}\')' for f in fmts]
+        fmts = [f"{f.name} ('{v4l2.fourcc_to_str(f.v4l2_fourcc)}')" for f in fmts]
 
         unsupported_fmts = videodev.get_unsupported_formats(buftype)
         unsupported_fmts = [f"'{f}'" for f in unsupported_fmts]
@@ -177,14 +177,14 @@ def print_pads(ent, subdev, videodev, only_graph: bool, print_supported):
         if len(links) == 1:
             link = links[0]
             remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
-            link_fmt = f'{link_dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]'
+            link_fmt = f"{link_dir} '{remote_pad.entity.name}':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]"
             print(f'  Pad{pad.index} [{pad.flags.name}] {link_fmt}')
         else:
             print(f'  Pad{pad.index} [{pad.flags.name}]')
 
             for link in links:
                 remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
-                print(f'      {link_dir} \'{remote_pad.entity.name}\':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]')
+                print(f"      {link_dir} '{remote_pad.entity.name}':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]")
 
         if routes:
             streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
@@ -201,7 +201,7 @@ def print_pads(ent, subdev, videodev, only_graph: bool, print_supported):
 
 
 def print_entity(ent, only_graph: bool, print_supported):
-    print(f'Entity {ent.id}: \'{ent.name}\', Function: {ent.function.name}', end='')
+    print(f"Entity {ent.id}: '{ent.name}', Function: {ent.function.name}", end='')
     if ent.interface:
         print(f', Interface: {ent.interface.intf_type.name}', end='')
         if ent.interface.dev_path:

@@ -68,7 +68,7 @@ class MediaEntity(MediaObject):
             self.interface = ifaces[0]
 
     def __repr__(self) -> str:
-        return f'MediaEntity({self.id}, \'{self.name}\')'
+        return f"MediaEntity({self.id}, '{self.name}')"
 
     @property
     def pad_links(self) -> list[MediaLink]:
@@ -110,7 +110,7 @@ class MediaPad(MediaObject):
         self.entity = next(e for e in self.md.entities if e.id == self.media_pad.entity_id)
 
     def __repr__(self) -> str:
-        return f'MediaPad({self.id}, \'{self.entity.name}\':{self.index})'
+        return f"MediaPad({self.id}, '{self.entity.name}':{self.index})"
 
     @property
     def is_source(self):
