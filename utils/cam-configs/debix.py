@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 sensor_fmt = (2592, 1940, v4l2.BusFormat.SRGGB12_1X12)
