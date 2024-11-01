@@ -58,7 +58,6 @@ configurations['cam0'] = {
         {
             'entity': 'j721e-csi2rx',
             'fmt': fmt_pix_imx219,
-            'embedded': False,
         },
     ],
 
@@ -98,7 +97,6 @@ configurations['cam0-meta'] = {
             'entity': 'rp1-cfe-csi2-ch1',
             'fmt': meta_fmt_pix_imx219,
             'embedded': True,
-            'display': True,
         },
     ],
 
@@ -151,7 +149,6 @@ configurations['cam0-new'] = {
         {
             'entity': '30102000.ticsi2rx context 0',
             'fmt': fmt_pix_imx219,
-            'embedded': False,
         },
     ],
 

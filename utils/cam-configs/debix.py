@@ -57,8 +57,6 @@ configurations['cam0'] = {
         {
             'entity': 'rkisp1_mainpath',
             'fmt': vid_fmt,
-            'embedded': False,
-            'dra-plane-hack': False,
         },
     ],
 
