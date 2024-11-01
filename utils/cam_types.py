@@ -22,7 +22,7 @@ Stream = TypedDict(
         'fmt': tuple[int, int, pix_or_meta_fmt] | tuple[int, pix_or_meta_fmt],
         'w': int,
         'h': int,
-        'size': int,
+        'size': int | tuple[int, int],
         'format': pix_or_meta_fmt,
         'entity': str,
         'dev_path': str,

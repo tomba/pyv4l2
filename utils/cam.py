@@ -161,15 +161,13 @@ def init_viddevs(ctx: Context):
         if len(fmt) == 3:
             stream['w'] = fmt[0]
             stream['h'] = fmt[1]
+            stream['size'] = (stream['w'], stream['h'])
             stream['format'] = fmt[2]
-        elif len(stream['fmt']) == 2:
-            stream['w'] = fmt[0]
-            stream['h'] = 1
+        elif len(fmt) == 2:
+            stream['size'] = fmt[0]
             stream['format'] = fmt[1]
         else:
             raise RuntimeError()
-
-        stream['size'] = stream['w'] * stream['h']
 
         if ctx.md:
             vid_ent = ctx.md.find_entity(stream['entity'])
