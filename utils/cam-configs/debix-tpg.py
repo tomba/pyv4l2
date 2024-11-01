@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 configurations = {}
@@ -64,8 +62,6 @@ configurations['cam0'] = {
         {
             'entity': 'rkisp1_mainpath',
             'fmt': vfmt,
-            'embedded': False,
-            'dra-plane-hack': False,
         },
     ],
 

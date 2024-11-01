@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 # Pixel
@@ -94,7 +92,6 @@ def gen_imx219_pixel(port):
             {
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_pix_imx219,
-                'embedded': False,
             },
         ],
 
@@ -227,7 +224,6 @@ def gen_ub953_tpg(port):
             {
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_tpg,
-                'embedded': False,
             },
         ],
 

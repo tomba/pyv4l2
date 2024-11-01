@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 ov10635_w = 1280
@@ -111,8 +109,6 @@ def gen_imx390_pixel(port):
             {
                 'entity': f'CAL output {port}',
                 'fmt': fmt_pix_imx390,
-                'embedded': False,
-                'dra-plane-hack': False,
             },
         ],
 
@@ -252,8 +248,6 @@ def gen_imx219_pixel(port):
             {
                 'entity': f'CAL output {port}',
                 'fmt': fmt_pix_imx219,
-                'embedded': False,
-                'dra-plane-hack': False,
             },
         ],
 
@@ -393,7 +387,6 @@ def gen_ov10635_pixel(port):
             {
                 'entity': f'CAL output {port}',
                 'fmt': fmt_pix_ov10635,
-                'embedded': False,
             },
         ],
 
@@ -517,8 +510,6 @@ def gen_ub953_tpg(port):
             {
                 'entity': f'CAL output {port}',
                 'fmt': fmt_tpg,
-                'embedded': False,
-                'dra-plane-hack': False,
             },
         ],
 

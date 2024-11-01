@@ -53,7 +53,6 @@ def enable_link(source, sink):
     if link.is_immutable:
         return
 
-    link.enabled = True
     #src_ent.setup_link(link)
 
     link.enable()
@@ -87,6 +86,8 @@ def merge_configs(configs):
                 if 'pads' in subdev:
                     dst['pads'] += subdev['pads']
                 if 'routing' in subdev:
+                    if 'routing' not in dst:
+                        dst['routing'] = []
                     dst['routing'] += subdev['routing']
             else:
                 d['subdevs'].append(subdev)
@@ -167,7 +168,6 @@ def configure_subdevs(ctx: Context, config):
         ent = md.find_entity(e['entity'])
         assert ent
         subdev = v4l2.SubDevice(ent.interface.dev_path)
-        assert subdev, f'no subdev for entity {ent}'
 
         if ctx.verbose:
             print(f'Configuring {ent.name}')

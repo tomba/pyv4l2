@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 imx219_w = 1920
@@ -57,8 +55,6 @@ configurations['cam0'] = {
         {
             'entity': 'unicam-image',
             'fmt': fmt_pix_imx219,
-            'embedded': False,
-            'dra-plane-hack': False,
         },
     ],
 

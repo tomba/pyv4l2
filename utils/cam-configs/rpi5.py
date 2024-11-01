@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import v4l2
 
 imx219_w = 640
@@ -63,7 +61,6 @@ configurations['cam0'] = {
         {
             'entity': 'rp1-cfe-csi2-ch0',
             'fmt': fmt_pix_imx219,
-            'embedded': False,
         },
     ],
 
@@ -103,7 +100,6 @@ configurations['cam0-meta'] = {
             'entity': 'rp1-cfe-csi2-ch1',
             'fmt': meta_fmt_pix_imx219,
             'embedded': True,
-            'display': True,
         },
     ],
 
@@ -139,7 +135,6 @@ if LEGACY:
             {
                 'entity': 'rp1-cfe-csi2-ch0',
                 'fmt': fmt_pix_imx219,
-                'embedded': False,
             },
         ],
 
