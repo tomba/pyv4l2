@@ -198,6 +198,8 @@ class KmsContext:
     def handle_pageflip(self):
         ctx = self.ctx
 
+        assert ctx.buf_type == 'drm'
+
         streams = ctx.streams
 
         ctx.kms_committed = False
@@ -215,8 +217,6 @@ class KmsContext:
             cap = stream['cap']
 
             if stream['kms_old_fb']:
-                assert(ctx.buf_type == 'drm')
-
                 fb = stream['kms_old_fb']
 
                 # XXX we should just track the vbufs in streams, instead of looking
