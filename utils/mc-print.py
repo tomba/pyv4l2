@@ -242,7 +242,7 @@ def main():
 
     if args.pattern:
         if args.all:
-            print("Entity pattern and --all cannot be used at the same time")
+            print('Entity pattern and --all cannot be used at the same time')
             return -1
 
         pat = args.pattern.lower()

@@ -5,7 +5,7 @@ import re
 
 CTYPESGEN_PATH = '/home/tomba/work/ctypesgen/'
 
-INCLUDE_PATH = "/home/tomba/tmp/khdrs/include"
+INCLUDE_PATH = '/home/tomba/tmp/khdrs/include'
 
 INCLUDES = (
     f'{INCLUDE_PATH}/linux/videodev2.h',
@@ -22,7 +22,7 @@ INCLUDES = (
 OUT = 'v4l2/uapi/v4l2.py'
 
 CTYPESGEN_OPTS = (
-    "--no-embed-preamble",
+    '--no-embed-preamble',
     '--no-macro-try-except',
     '--no-source-comments',
     '-D__volatile__=',
@@ -60,6 +60,6 @@ replace(OUT, [
 # Add pylint ignore comment
 
 replace('v4l2/uapi/ctypes_preamble.py', [
-        (r"^def POINTER\(obj\):$",
-         "def POINTER(obj): # pylint: disable=function-redefined:")
+        (r'^def POINTER\(obj\):$',
+         'def POINTER(obj): # pylint: disable=function-redefined:')
         ])

@@ -245,7 +245,7 @@ def setup(ctx: Context):
         if 'size' in stream:
             print(f'{stream["dev_path"]}: stream on {stream["size"]}-{stream["format"].name}')
         else:
-            streamer: VideoCaptureStreamer = stream["cap"]
+            streamer: VideoCaptureStreamer = stream['cap']
             strides = '/'.join(map(str, streamer.strides))
             bufsizes = '/'.join(map(str, streamer.buffersizes))
             print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{stream["format"].name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
@@ -436,5 +436,5 @@ def main():
 
     return 0
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sys.exit(main())

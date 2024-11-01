@@ -30,17 +30,17 @@ if LEGACY:
 
 configurations = {}
 
-sensor_ent = "imx219 6-0010"
+sensor_ent = 'imx219 6-0010'
 
-configurations["cam0"] = {
+configurations['cam0'] = {
     'media': ('rp1-cfe', 'model'),
 
-    "subdevs": [
+    'subdevs': [
         # Camera
         {
-            "entity": sensor_ent,
-            "pads": [
-                { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
+            'entity': sensor_ent,
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
             ],
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },
@@ -48,38 +48,38 @@ configurations["cam0"] = {
         },
         # CSI-2 RX
         {
-            "entity": "csi2",
-            "routing": [
-                { "src": (0, 0), "dst": (1, 0) },
+            'entity': 'csi2',
+            'routing': [
+                { 'src': (0, 0), 'dst': (1, 0) },
             ],
-            "pads": [
-                { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
-                { "pad": (1, 0), "fmt": mbus_fmt_imx219 },
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
             ],
         },
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "rp1-cfe-csi2-ch0",
-            "fmt": fmt_pix_imx219,
-            "embedded": False,
+            'entity': 'rp1-cfe-csi2-ch0',
+            'fmt': fmt_pix_imx219,
+            'embedded': False,
         },
     ],
 
-    "links": [
-        { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
-        { "src": ("csi2", 1), "dst": ("rp1-cfe-csi2-ch0", 0) },
+    'links': [
+        { 'src': (sensor_ent, 0), 'dst': ('csi2', 0) },
+        { 'src': ('csi2', 1), 'dst': ('rp1-cfe-csi2-ch0', 0) },
     ],
 }
 
-configurations["cam0-meta"] = {
-    "subdevs": [
+configurations['cam0-meta'] = {
+    'subdevs': [
         # Camera
         {
-            "entity": sensor_ent,
-            "pads": [
-                { "pad": (0, 1), "fmt": meta_mbus_fmt_imx219 },
+            'entity': sensor_ent,
+            'pads': [
+                { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
             ],
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },
@@ -87,101 +87,101 @@ configurations["cam0-meta"] = {
         },
         # CSI-2 RX
         {
-            "entity": "csi2",
-            "routing": [
-                { "src": (0, 1), "dst": (2, 0) },
+            'entity': 'csi2',
+            'routing': [
+                { 'src': (0, 1), 'dst': (2, 0) },
             ],
-            "pads": [
-                { "pad": (0, 1), "fmt": meta_mbus_fmt_imx219 },
-                { "pad": (2, 0), "fmt": meta_mbus_fmt_imx219 },
+            'pads': [
+                { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
+                { 'pad': (2, 0), 'fmt': meta_mbus_fmt_imx219 },
             ],
         },
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "rp1-cfe-csi2-ch1",
-            "fmt": meta_fmt_pix_imx219,
-            "embedded": True,
-            "display": True,
+            'entity': 'rp1-cfe-csi2-ch1',
+            'fmt': meta_fmt_pix_imx219,
+            'embedded': True,
+            'display': True,
         },
     ],
 
-    "links": [
-        { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
-        { "src": ("csi2", 2), "dst": ("rp1-cfe-csi2-ch1", 0) },
+    'links': [
+        { 'src': (sensor_ent, 0), 'dst': ('csi2', 0) },
+        { 'src': ('csi2', 2), 'dst': ('rp1-cfe-csi2-ch1', 0) },
     ],
 }
 
 if LEGACY:
-    configurations["cam0-legacy"] = {
+    configurations['cam0-legacy'] = {
         'media': ('rp1-cfe', 'model'),
 
-        "subdevs": [
+        'subdevs': [
             # Camera
             {
-                "entity": sensor_ent,
-                "pads": [
-                    { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
+                'entity': sensor_ent,
+                'pads': [
+                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
                 ],
             },
             # CSI-2 RX
             {
-                "entity": "csi2",
-                "pads": [
-                    { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
-                    { "pad": (4, 0), "fmt": mbus_fmt_imx219 },
+                'entity': 'csi2',
+                'pads': [
+                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (4, 0), 'fmt': mbus_fmt_imx219 },
                 ],
             },
         ],
 
-        "devices": [
+        'devices': [
             {
-                "entity": "rp1-cfe-csi2-ch0",
-                "fmt": fmt_pix_imx219,
-                "embedded": False,
+                'entity': 'rp1-cfe-csi2-ch0',
+                'fmt': fmt_pix_imx219,
+                'embedded': False,
             },
         ],
 
-        "links": [
-            { "src": (sensor_ent, 0), "dst": ("csi2", 0) },
-            { "src": ("csi2", 4), "dst": ("rp1-cfe-csi2-ch0", 0) },
+        'links': [
+            { 'src': (sensor_ent, 0), 'dst': ('csi2', 0) },
+            { 'src': ('csi2', 4), 'dst': ('rp1-cfe-csi2-ch0', 0) },
         ],
     }
 
-    configurations["cam0-meta-legacy"] = {
-        "subdevs": [
+    configurations['cam0-meta-legacy'] = {
+        'subdevs': [
             # Camera
             {
-                "entity": sensor_ent,
-                "pads": [
-                    { "pad": (1, 0), "fmt": meta_mbus_fmt_imx219_legacy },
+                'entity': sensor_ent,
+                'pads': [
+                    { 'pad': (1, 0), 'fmt': meta_mbus_fmt_imx219_legacy },
                 ],
             },
             # CSI-2 RX
             {
-                "entity": "csi2",
-                "pads": [
-                    { "pad": (1, 0), "fmt": meta_mbus_fmt_imx219_legacy },
-                    { "pad": (5, 0), "fmt": meta_mbus_fmt_imx219_legacy },
+                'entity': 'csi2',
+                'pads': [
+                    { 'pad': (1, 0), 'fmt': meta_mbus_fmt_imx219_legacy },
+                    { 'pad': (5, 0), 'fmt': meta_mbus_fmt_imx219_legacy },
                 ],
             },
         ],
 
-        "devices": [
+        'devices': [
             {
-                "entity": "rp1-cfe-embedded",
-                "fmt": meta_fmt_pix_imx219_legacy,
-                "embedded": True,
+                'entity': 'rp1-cfe-embedded',
+                'fmt': meta_fmt_pix_imx219_legacy,
+                'embedded': True,
             },
         ],
 
-        "links": [
-            { "src": (sensor_ent, 1), "dst": ("csi2", 1) },
-            { "src": ("csi2", 5), "dst": ("rp1-cfe-embedded", 0) },
+        'links': [
+            { 'src': (sensor_ent, 1), 'dst': ('csi2', 1) },
+            { 'src': ('csi2', 5), 'dst': ('rp1-cfe-embedded', 0) },
         ],
     }
 
 
 def get_configs():
-    return (configurations, ["cam0"])
+    return (configurations, ['cam0'])

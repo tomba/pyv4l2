@@ -62,7 +62,7 @@ class MediaEntity(MediaObject):
                 ifaces.append(ob)
 
         if len(ifaces) > 1:
-            raise RuntimeError("Multiple interfaces for entity")
+            raise RuntimeError('Multiple interfaces for entity')
 
         if len(ifaces) > 0:
             self.interface = ifaces[0]
@@ -157,13 +157,13 @@ class MediaLink(MediaObject):
     def source_pad(self) -> MediaPad:
         if isinstance(self.source, MediaPad):
             return self.source
-        raise RuntimeError("Source is not a MediaPad")
+        raise RuntimeError('Source is not a MediaPad')
 
     @property
     def sink_pad(self) -> MediaPad:
         if isinstance(self.sink, MediaPad):
             return self.sink
-        raise RuntimeError("Sink is not a MediaPad")
+        raise RuntimeError('Sink is not a MediaPad')
 
     def enable(self):
         self._setup(v4l2.uapi.MEDIA_LNK_FL_ENABLED)

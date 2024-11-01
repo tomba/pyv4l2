@@ -21,7 +21,7 @@ struct_fmt = struct.Struct('<III4I16pI4I')
 
 # Loading MJPEG to a QPixmap produces corrupt JPEG data warnings. Ignore these.
 def qt_message_handler(msg_type, msg_log_context, msg_string):
-    if msg_string.startswith("Corrupt JPEG data"):
+    if msg_string.startswith('Corrupt JPEG data'):
         return
 
     # For some reason qInstallMessageHandler returns None, so we won't
@@ -44,12 +44,12 @@ def meta_to_pix(bytesperline, data):
     for i in data:
         if cnt == bytesperline:
             if nskip > 0:
-                print("(* {}) ".format(nskip), end='')
+                print('(* {}) '.format(nskip), end='')
 
             cnt = 0
             prev = None
             nskip = 0
-            print("LE")
+            print('LE')
 
         cnt += 1
 
@@ -58,7 +58,7 @@ def meta_to_pix(bytesperline, data):
             continue
 
         if nskip > 0:
-            print("(* {}) ".format(nskip), end='')
+            print('(* {}) '.format(nskip), end='')
 
         print('{:02x} '.format(i), end='')
 
@@ -66,10 +66,10 @@ def meta_to_pix(bytesperline, data):
         nskip = 0
 
     if nskip > 0:
-        print("(* {}) ".format(nskip), end='')
+        print('(* {}) '.format(nskip), end='')
 
     if cnt == bytesperline:
-        print("LE")
+        print('LE')
     else:
         print()
 
@@ -105,7 +105,7 @@ class Receiver(QtWidgets.QWidget):
         self.labels = {}
 
         self.show()
-        print("done")
+        print('done')
 
     def on_ready_read(self):
         while self.socket.bytesAvailable():

@@ -48,13 +48,13 @@ def gen_imx219_pixel(cameras, port):
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { "pad": (1, 0), "fmt": mbus_fmt_imx219 },
-                    { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
+                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
                 ],
-                "routing": [
-                   { "src": (1, 0), "dst": (0, 0) },
+                'routing': [
+                   { 'src': (1, 0), 'dst': (0, 0) },
                 ],
-                "controls": [
+                'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
                 ],
             },
@@ -126,11 +126,11 @@ def gen_imx219_meta(cameras, port):
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { "pad": (2, 0), "fmt": mbus_fmt_imx219_meta },
-                    { "pad": (0, 1), "fmt": mbus_fmt_imx219_meta },
+                    { 'pad': (2, 0), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
                 ],
-                "routing": [
-                   { "src": (2, 0), "dst": (0, 1) },
+                'routing': [
+                   { 'src': (2, 0), 'dst': (0, 1) },
                 ],
             },
 
@@ -175,7 +175,7 @@ def gen_imx219_meta(cameras, port):
                 'entity': f'rp1-cfe-csi2-ch{port + 2}',
                 'fmt': fmt_pix_imx219_meta,
                 'embedded': True,
-                "display": False,
+                'display': False,
                 'kms-format': v4l2.PixelFormats.RGB565,
             },
         ],

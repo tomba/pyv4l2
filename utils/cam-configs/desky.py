@@ -11,22 +11,22 @@ fmt_pix_1 = (sensor_1_w, sensor_1_h, PIX_FMT)
 
 configurations = {}
 
-configurations["desky"] = {
+configurations['desky'] = {
     'media': ('UVC Camera*', 'model'),
 
-    "subdevs": [
+    'subdevs': [
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "UVC Camera*",
-            "fmt": fmt_pix_1,
+            'entity': 'UVC Camera*',
+            'fmt': fmt_pix_1,
         },
     ],
 
-    "links": [
+    'links': [
     ],
 }
 
 def get_configs():
-    return (configurations, ["desky"])
+    return (configurations, ['desky'])

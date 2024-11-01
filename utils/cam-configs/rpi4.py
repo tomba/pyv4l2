@@ -24,16 +24,16 @@ meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)
 
 configurations = {}
 
-sensor_ent = "imx219 5-0010"
+sensor_ent = 'imx219 5-0010'
 
-configurations["cam0"] = {
+configurations['cam0'] = {
     # TODO: add 'media' entry
-    "subdevs": [
+    'subdevs': [
         # Camera
         {
-            "entity": sensor_ent,
-            "pads": [
-                { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
+            'entity': sensor_ent,
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
             ],
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },
@@ -42,39 +42,39 @@ configurations["cam0"] = {
         },
         # CSI-2 RX
         {
-            "entity": "unicam",
-            "pads": [
-                { "pad": (0, 0), "fmt": mbus_fmt_imx219 },
-                { "pad": (1, 0), "fmt": mbus_fmt_imx219 },
+            'entity': 'unicam',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
             ],
-            "routing": [
-                { "src": (0, 0), "dst": (1, 0) },
+            'routing': [
+                { 'src': (0, 0), 'dst': (1, 0) },
             ],
         },
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "unicam-image",
-            "fmt": fmt_pix_imx219,
-            "embedded": False,
-            "dra-plane-hack": False,
+            'entity': 'unicam-image',
+            'fmt': fmt_pix_imx219,
+            'embedded': False,
+            'dra-plane-hack': False,
         },
     ],
 
-    "links": [
-        { "src": (sensor_ent, 0), "dst": ("unicam", 0) },
-        { "src": ("unicam", 1), "dst": ("unicam-image", 0) },
+    'links': [
+        { 'src': (sensor_ent, 0), 'dst': ('unicam', 0) },
+        { 'src': ('unicam', 1), 'dst': ('unicam-image', 0) },
     ],
 }
 
-configurations["cam0-meta"] = {
-    "subdevs": [
+configurations['cam0-meta'] = {
+    'subdevs': [
         # Camera
         {
-            "entity": sensor_ent,
-            "pads": [
-                { "pad": (0, 1), "fmt": meta_mbus_fmt_imx219 },
+            'entity': sensor_ent,
+            'pads': [
+                { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
             ],
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },
@@ -82,31 +82,31 @@ configurations["cam0-meta"] = {
         },
         # CSI-2 RX
         {
-            "entity": "unicam",
-            "routing": [
-                { "src": (0, 1), "dst": (2, 0) },
+            'entity': 'unicam',
+            'routing': [
+                { 'src': (0, 1), 'dst': (2, 0) },
             ],
-            "pads": [
-                { "pad": (0, 1), "fmt": meta_mbus_fmt_imx219 },
-                { "pad": (2, 0), "fmt": meta_mbus_fmt_imx219 },
+            'pads': [
+                { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
+                { 'pad': (2, 0), 'fmt': meta_mbus_fmt_imx219 },
             ],
         },
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "unicam-embedded",
-            "fmt": meta_fmt_pix_imx219,
-            "embedded": True,
-            "display": False,
+            'entity': 'unicam-embedded',
+            'fmt': meta_fmt_pix_imx219,
+            'embedded': True,
+            'display': False,
         },
     ],
 
-    "links": [
-        { "src": (sensor_ent, 0), "dst": ("unicam", 0) },
-        { "src": ("unicam", 2), "dst": ("unicam-embedded", 0) },
+    'links': [
+        { 'src': (sensor_ent, 0), 'dst': ('unicam', 0) },
+        { 'src': ('unicam', 2), 'dst': ('unicam-embedded', 0) },
     ],
 }
 
 def get_configs():
-    return (configurations, ["cam0"])
+    return (configurations, ['cam0'])

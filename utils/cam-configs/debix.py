@@ -12,65 +12,65 @@ resizer_crop = (0, 0, 2592, 1940)
 
 configurations = {}
 
-configurations["cam0"] = {
+configurations['cam0'] = {
     # TODO: add 'media' entry
-    "subdevs": [
+    'subdevs': [
         # Camera
         {
-            "entity": "imx335 1-001a",
-            "pads": [
-                { "pad": (0, 0), "fmt": sensor_fmt },
+            'entity': 'imx335 1-001a',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': sensor_fmt },
             ],
         },
         # CSI-2 RX
         {
-            "entity": "csis-32e40000.csi",
-            "pads": [
-                { "pad": (0, 0), "fmt": sensor_fmt },
-                { "pad": (1, 0), "fmt": sensor_fmt },
+            'entity': 'csis-32e40000.csi',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': sensor_fmt },
+                { 'pad': (1, 0), 'fmt': sensor_fmt },
             ],
         },
 
         {
-            "entity": "rkisp1_isp",
-            "pads": [
-                { "pad": (0, 0), "fmt": sensor_fmt,
-                    "crop": isp_crop,
+            'entity': 'rkisp1_isp',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': sensor_fmt,
+                    'crop': isp_crop,
                 },
-                { "pad": (2, 0), "fmt": isp_out_fmt,
-                    "crop": isp_crop,
+                { 'pad': (2, 0), 'fmt': isp_out_fmt,
+                    'crop': isp_crop,
                 },
             ],
         },
 
         {
-            "entity": "rkisp1_resizer_mainpath",
-            "pads": [
-                { "pad": (0, 0), "fmt": isp_out_fmt,
-                    "crop": resizer_crop,
+            'entity': 'rkisp1_resizer_mainpath',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': isp_out_fmt,
+                    'crop': resizer_crop,
                 },
-                { "pad": (1, 0), "fmt": resizer_out_fmt },
+                { 'pad': (1, 0), 'fmt': resizer_out_fmt },
             ],
         },
 
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "rkisp1_mainpath",
-            "fmt": vid_fmt,
-            "embedded": False,
-            "dra-plane-hack": False,
+            'entity': 'rkisp1_mainpath',
+            'fmt': vid_fmt,
+            'embedded': False,
+            'dra-plane-hack': False,
         },
     ],
 
-    "links": [
-        { "src": ("imx335 1-001a", 0), "dst": ("csis-32e40000.csi", 0) },
-        { "src": ("csis-32e40000.csi", 1), "dst": ("rkisp1_isp", 0) },
-        { "src": ("rkisp1_isp", 2), "dst": ("rkisp1_resizer_mainpath", 0) },
-        { "src": ("rkisp1_resizer_mainpath", 1), "dst": ("rkisp1_mainpath", 0) },
+    'links': [
+        { 'src': ('imx335 1-001a', 0), 'dst': ('csis-32e40000.csi', 0) },
+        { 'src': ('csis-32e40000.csi', 1), 'dst': ('rkisp1_isp', 0) },
+        { 'src': ('rkisp1_isp', 2), 'dst': ('rkisp1_resizer_mainpath', 0) },
+        { 'src': ('rkisp1_resizer_mainpath', 1), 'dst': ('rkisp1_mainpath', 0) },
     ],
 }
 
 def get_configs():
-    return (configurations, ["cam0"])
+    return (configurations, ['cam0'])

@@ -194,7 +194,7 @@ def gen_ub953_tpg(port):
                     { 'src': (2, 0), 'dst': (1, 0) },
                 ],
                 'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_tpg, "ival": ival },
+                    { 'pad': (2, 0), 'fmt': mbus_fmt_tpg, 'ival': ival },
                     { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
@@ -247,8 +247,8 @@ configurations['cam3'] = gen_imx219_pixel(3)
 configurations['cam0-meta'] = gen_imx219_meta(0)
 configurations['cam1-meta'] = gen_imx219_meta(1)
 
-configurations["cam0-tpg"] = gen_ub953_tpg(0)
-configurations["cam1-tpg"] = gen_ub953_tpg(1)
+configurations['cam0-tpg'] = gen_ub953_tpg(0)
+configurations['cam1-tpg'] = gen_ub953_tpg(1)
 
 def get_configs():
     return (configurations, ['cam0'])

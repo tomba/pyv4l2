@@ -62,7 +62,7 @@ class KmsContext:
             if stream['format'] != stream['kms-format']:
                 if (isinstance(stream['format'], v4l2.PixelFormat) and
                     len(stream['format'].planes) > 1):
-                    raise RuntimeError("Unable to adjust formats with more than one plane")
+                    raise RuntimeError('Unable to adjust formats with more than one plane')
 
                 print(f'Aligning V4L2 and KMS formats: {stream["format"]}, {stream["kms-format"]}')
 

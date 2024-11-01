@@ -16,11 +16,11 @@ configurations = {}
 #
 # Non-MC OV5640
 #
-configurations["legacy-ov5640"] = {
-    "devices": [
+configurations['legacy-ov5640'] = {
+    'devices': [
         {
             # TODO: add 'device' entry
-            "fmt": fmt_pix_1,
+            'fmt': fmt_pix_1,
         },
     ],
 }
@@ -28,36 +28,36 @@ configurations["legacy-ov5640"] = {
 #
 # DRA76 EVM: OV5640
 #
-configurations["ov5640"] = {
+configurations['ov5640'] = {
     # TODO: add 'media' entry
-    "subdevs": [
+    'subdevs': [
         {
-            "entity": "ov5640 4-003c",
-            "pads": [
-                { "pad": (0, 0), "fmt": mbus_fmt_pix_1 },
+            'entity': 'ov5640 4-003c',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_pix_1 },
             ],
         },
         {
-            "entity": "CAMERARX0",
-            "pads": [
-                { "pad": (0, 0), "fmt": mbus_fmt_pix_1 },
-                { "pad": (1, 0), "fmt": mbus_fmt_pix_1 },
+            'entity': 'CAMERARX0',
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_pix_1 },
+                { 'pad': (1, 0), 'fmt': mbus_fmt_pix_1 },
             ],
         },
     ],
 
-    "devices": [
+    'devices': [
         {
-            "entity": "CAL output 0",
-            "fmt": fmt_pix_1,
+            'entity': 'CAL output 0',
+            'fmt': fmt_pix_1,
         },
     ],
 
-    "links": [
-        { "src": ("ov5640 4-003c", 0), "dst": ("CAMERARX0", 0) },
-        { "src": ("CAMERARX0", 1), "dst": ("CAL output 0", 0) },
+    'links': [
+        { 'src': ('ov5640 4-003c', 0), 'dst': ('CAMERARX0', 0) },
+        { 'src': ('CAMERARX0', 1), 'dst': ('CAL output 0', 0) },
     ],
 }
 
 def get_configs():
-    return (configurations, ["ov5640"])
+    return (configurations, ['ov5640'])
