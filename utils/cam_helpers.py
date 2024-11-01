@@ -169,7 +169,6 @@ def configure_subdevs(ctx: Context, config):
         ent = md.find_entity(e['entity'])
         assert ent
         subdev = v4l2.SubDevice(ent.interface.dev_path)
-        assert subdev, f'no subdev for entity {ent}'
 
         if ctx.verbose:
             print(f'Configuring {ent.name}')
