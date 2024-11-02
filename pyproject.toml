@@ -39,8 +39,10 @@ line-length = 100
 extend-exclude = ['v4l2/uapi/']
 
 [tool.ruff.lint]
-extend-select = ['E', 'W', 'F', 'FA', 'Q']
-ignore = ['E741', 'E501']  # TODO: fix E501
+#extend-select = ['E', 'W', 'F', 'FA', 'Q']
+#ignore = ['E741', 'E501']  # TODO: fix E501
+extend-select = ['E', 'W', 'F', 'FA', 'Q', 'UP', 'PLE']
+ignore = ['E741', 'E501', 'Q001', 'UP032']  # TODO: fix E501
 
 [tool.ruff.lint.per-file-ignores]
 '__init__.py' = ['F401', 'F403']
