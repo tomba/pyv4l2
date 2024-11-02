@@ -6,7 +6,7 @@ import v4l2.uapi
 __all__ = [ 'BufType', 'MemType' ]
 
 def filepath_for_major_minor(major: int, minor: int):
-    with open(f'/sys/dev/char/{major}:{minor}/uevent', 'r', encoding='ascii') as f:
+    with open(f'/sys/dev/char/{major}:{minor}/uevent', encoding='ascii') as f:
         for l in f.readlines():
             if not l.startswith('DEVNAME='):
                 continue
