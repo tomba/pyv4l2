@@ -138,9 +138,9 @@ class KmsContext:
             fbs.append(fb)
 
             if isinstance(cap.format, v4l2.PixelFormat):
-                for i in range(len(cap.format.planes)):
-                    assert cap.strides[i] == fb.planes[i].pitch, f'{cap.strides[i]}, {fb.planes[i].pitch}'
-                    assert cap.buffersizes[i] == fb.planes[i].size
+                for pi in range(len(cap.format.planes)):
+                    assert cap.strides[pi] == fb.planes[pi].pitch, f'{cap.strides[pi]}, {fb.planes[pi].pitch}'
+                    assert cap.buffersizes[pi] == fb.planes[pi].size
             else:
                 pass
 
