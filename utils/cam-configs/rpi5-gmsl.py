@@ -74,7 +74,7 @@ def gen_imx219_pixel(cameras, port):
                 ],
                 'pads': [
                     { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (6, 0), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (6, port), 'fmt': mbus_fmt_imx219 },
                 ],
             },
 
