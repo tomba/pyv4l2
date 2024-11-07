@@ -92,9 +92,11 @@ class VideoDevice:
 
         raise FileNotFoundError(f'No video device "{key}" = "{value}" found')
 
-    def get_formats(self, buf_type: v4l2.BufType):
+    def get_formats(self, buf_type: v4l2.BufType,
+                    mbus_code: v4l2.BusFormat | None = None):
         fmt = v4l2.uapi.v4l2_fmtdesc()
         fmt.type = buf_type.value
+        fmt.mbus_code = mbus_code if mbus_code else 0
         fmt.index = 0
 
         fmts = []
