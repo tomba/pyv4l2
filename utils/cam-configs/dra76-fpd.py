@@ -109,6 +109,7 @@ def gen_imx390_pixel(port):
             {
                 'entity': f'CAL output {port}',
                 'fmt': fmt_pix_imx390,
+                'kms-format': v4l2.PixelFormats.RGB565,
             },
         ],
 
