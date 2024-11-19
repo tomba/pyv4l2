@@ -3613,6 +3613,7 @@ struct_v4l2_ext_control.__slots__ = [
     'reserved2',
     'unnamed_1',
 ]
+struct_v4l2_ext_control._pack_ = 1
 struct_v4l2_ext_control._anonymous_ = [
     'unnamed_1',
 ]
