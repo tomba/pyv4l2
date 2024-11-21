@@ -254,7 +254,7 @@ class VideoCaptureStreamer(CaptureStreamer):
 
         self.__format = format
         self.__strides = [format.stride(width, i) for i in range(len(format.planes))]
-        self.__buffersizes = [format.planesize(width, height, i) for i in range(len(format.planes))]
+        self.__buffersizes = [format.planesize(self.__strides[i], height, i) for i in range(len(format.planes))]
         self.__framesize = format.framesize(width, height)
 
     @property
