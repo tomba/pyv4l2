@@ -81,7 +81,7 @@ class KmsContext:
                     raise RuntimeError('Unable to adjust formats')
 
                 if kms_w != stream['kms-buf-w']:
-                    print(f'Adjusted kms width from {kms_w} to {stream['kms-buf-w']}')
+                    print(f'Adjusted kms width from {kms_w} to {stream["kms-buf-w"]}')
 
             if ctx.buf_type == 'drm' and stream.get('embedded', False):
                 divs = [16, 8, 4, 2, 1]
