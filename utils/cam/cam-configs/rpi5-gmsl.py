@@ -1,7 +1,7 @@
 import v4l2
 import v4l2.uapi
 
-USE_RAW_10=False
+USE_RAW_10=True
 MEDIA_DEVICE_NAME = ('rp1-cfe', 'model')
 DESER_NAME = 'max96724 6-0027'
 
