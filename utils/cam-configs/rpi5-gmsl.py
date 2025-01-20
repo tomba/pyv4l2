@@ -50,7 +50,6 @@ def gen_imx219_pixel(cameras, port):
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
                 ],
                 'routing': [
@@ -127,7 +126,6 @@ def gen_imx219_meta(cameras, port):
                 'entity': sensor_ent,
                 'pads': [
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_imx219_meta },
                     { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
                 ],
                 'routing': [
