@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ctypes
 import fcntl
+import re
 import weakref
 import os
 import glob
@@ -336,8 +337,14 @@ class MediaDevice:
     def find_id(self, id) -> MediaObject | None:
         return next((o for o in self.objects if o.id == id), None)
 
-    def find_entity(self, name):
+    def find_entity(self, name=None, regex=None):
         for e in self.entities:
-            if fnmatch.fnmatch(e.name, name):
-                return e
+            if name is not None and not fnmatch.fnmatch(e.name, name):
+                continue
+
+            if regex is not None and re.match(regex, e.name) is None:
+                continue
+
+            return e
+
         return None
