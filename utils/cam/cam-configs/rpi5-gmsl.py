@@ -3,7 +3,7 @@ import v4l2.uapi
 
 USE_RAW_10=True
 MEDIA_DEVICE_NAME = ('rp1-cfe', 'model')
-DESER_NAME = 'max96724 6-0027'
+DESER_REGEX = '(max96724|max96726a|max9296a) [0-9]+-[a-f0-9]+'
 
 # Pixel
 
@@ -37,10 +37,9 @@ mbus_fmt_tpg = (640, 480, v4l2.BusFormat.RGB888_1X24)
 fmt_tpg = (640, 480, v4l2.PixelFormats.BGR888)
 
 
-def gen_imx219_pixel(cameras, port):
+def gen_imx219_pixel(des_ent, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
-    des_ent = DESER_NAME
 
     return {
         'media': MEDIA_DEVICE_NAME,
@@ -112,10 +111,9 @@ def gen_imx219_pixel(cameras, port):
         ],
     }
 
-def gen_imx219_meta(cameras, port):
+def gen_imx219_meta(des_ent, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
-    des_ent = DESER_NAME
 
     return {
         'media': MEDIA_DEVICE_NAME,
@@ -187,9 +185,7 @@ def gen_imx219_meta(cameras, port):
         ],
     }
 
-def gen_des_tpg():
-    des_ent = DESER_NAME
-
+def gen_des_tpg(des_ent):
     return {
         'media': MEDIA_DEVICE_NAME,
 
@@ -232,9 +228,8 @@ def gen_des_tpg():
         ],
     }
 
-def gen_ser_tpg(cameras, port):
+def gen_ser_tpg(des_ent, cameras, port):
     ser_ent = cameras[port][0]
-    des_ent = DESER_NAME
 
     return {
         'media': MEDIA_DEVICE_NAME,
@@ -291,10 +286,10 @@ def gen_ser_tpg(cameras, port):
     }
 
 # Find serializers and sensors connected to the deserializer
-def find_devices(mdev_name, deser_name):
+def find_devices(mdev_name, deser_regex):
     md = v4l2.MediaDevice(*mdev_name)
     assert md
-    deser = md.find_entity(deser_name)
+    deser = md.find_entity(regex=deser_regex)
     assert deser
 
     cameras = {}
@@ -310,19 +305,19 @@ def find_devices(mdev_name, deser_name):
 
         cameras[p.index] = (ser.name, sensor.name)
 
-    return cameras
+    return deser.name, cameras
 
 def get_configs():
-    cameras = find_devices(MEDIA_DEVICE_NAME, DESER_NAME)
+    des_name, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
 
     num_cameras = len(cameras)
 
     configurations = {}
     for i in range(num_cameras):
-        configurations[f'cam{i}'] = gen_imx219_pixel(cameras, i)
-        configurations[f'cam{i}-meta'] = gen_imx219_meta(cameras, i)
-        configurations[f'ser{i}-tpg'] = gen_ser_tpg(cameras, i)
+        configurations[f'cam{i}'] = gen_imx219_pixel(des_name, cameras, i)
+        configurations[f'cam{i}-meta'] = gen_imx219_meta(des_name, cameras, i)
+        configurations[f'ser{i}-tpg'] = gen_ser_tpg(des_name, cameras, i)
 
-    configurations['des-tpg'] = gen_des_tpg()
+    configurations['des-tpg'] = gen_des_tpg(des_name)
 
     return (configurations, ['cam0'])
