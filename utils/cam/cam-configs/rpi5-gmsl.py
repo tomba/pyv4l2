@@ -38,7 +38,7 @@ mbus_fmt_tpg = (640, 480, v4l2.BusFormat.RGB888_1X24)
 fmt_tpg = (640, 480, v4l2.PixelFormats.BGR888)
 
 
-def gen_imx219_pixel(des_ent, cameras, port):
+def gen_imx219_pixel(des_ent, des_src_pad, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
 
@@ -75,11 +75,11 @@ def gen_imx219_pixel(des_ent, cameras, port):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (6, port) },
+                    { 'src': (port, 0), 'dst': (des_src_pad, port) },
                 ],
                 'pads': [
                     { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (6, port), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (des_src_pad, port), 'fmt': mbus_fmt_imx219 },
                 ],
             },
 
@@ -107,12 +107,12 @@ def gen_imx219_pixel(des_ent, cameras, port):
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
             { 'src': (CSI2_NAME, 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
 
-def gen_imx219_meta(des_ent, cameras, port):
+def gen_imx219_meta(des_ent, des_src_pad, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
 
@@ -147,11 +147,11 @@ def gen_imx219_meta(des_ent, cameras, port):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 1), 'dst': (6, port + 4) },
+                    { 'src': (port, 1), 'dst': (des_src_pad, port + 4) },
                 ],
                 'pads': [
                     { 'pad': (port, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (6, port + 4), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (des_src_pad, port + 4), 'fmt': mbus_fmt_imx219_meta },
                 ],
             },
 
@@ -181,12 +181,12 @@ def gen_imx219_meta(des_ent, cameras, port):
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
             { 'src': (CSI2_NAME, 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
         ],
     }
 
-def gen_des_tpg(des_ent):
+def gen_des_tpg(des_ent, des_src_pad):
     return {
         'media': MEDIA_DEVICE_NAME,
 
@@ -195,11 +195,11 @@ def gen_des_tpg(des_ent):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (8, 0), 'dst': (6, 0) },
+                    { 'src': (8, 0), 'dst': (des_src_pad, 0) },
                 ],
                 'pads': [
                     { 'pad': (8, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (6, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (des_src_pad, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -224,12 +224,12 @@ def gen_des_tpg(des_ent):
         ],
 
         'links': [
-            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
             { 'src': (CSI2_NAME, 1), 'dst': ('rp1-cfe-csi2-ch0', 0) },
         ],
     }
 
-def gen_ser_tpg(des_ent, cameras, port):
+def gen_ser_tpg(des_ent, des_src_pad, cameras, port):
     ser_ent = cameras[port][0]
 
     return {
@@ -251,11 +251,11 @@ def gen_ser_tpg(des_ent, cameras, port):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (6, port) },
+                    { 'src': (port, 0), 'dst': (des_src_pad, port) },
                 ],
                 'pads': [
                     { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (6, port), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (des_src_pad, port), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -281,7 +281,7 @@ def gen_ser_tpg(des_ent, cameras, port):
 
         'links': [
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
             { 'src': (CSI2_NAME, 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
@@ -292,6 +292,14 @@ def find_devices(mdev_name, deser_regex):
     assert md
     deser = md.find_entity(regex=deser_regex)
     assert deser
+
+    deser_src_pad = None
+    for p in deser.pads:
+        if p.is_source and len(p.links) == 1 and \
+            p.links[0].sink.entity.name == CSI2_NAME:
+            deser_src_pad = p.index
+            break
+    assert deser_src_pad is not None
 
     cameras = {}
 
@@ -309,19 +317,19 @@ def find_devices(mdev_name, deser_regex):
 
         cameras[p.index] = (ser.name, sensor.name)
 
-    return deser.name, cameras
+    return deser.name, deser_src_pad, cameras
 
 def get_configs():
-    des_name, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
+    des_name, des_src_pad, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
 
     num_cameras = len(cameras)
 
     configurations = {}
     for i in range(num_cameras):
-        configurations[f'cam{i}'] = gen_imx219_pixel(des_name, cameras, i)
-        configurations[f'cam{i}-meta'] = gen_imx219_meta(des_name, cameras, i)
-        configurations[f'ser{i}-tpg'] = gen_ser_tpg(des_name, cameras, i)
+        configurations[f'cam{i}'] = gen_imx219_pixel(des_name, des_src_pad, cameras, i)
+        configurations[f'cam{i}-meta'] = gen_imx219_meta(des_name, des_src_pad, cameras, i)
+        configurations[f'ser{i}-tpg'] = gen_ser_tpg(des_name, des_src_pad, cameras, i)
 
-    configurations['des-tpg'] = gen_des_tpg(des_name)
+    configurations['des-tpg'] = gen_des_tpg(des_name, des_src_pad)
 
     return (configurations, ['cam0'])
