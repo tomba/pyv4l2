@@ -4,6 +4,7 @@ import v4l2.uapi
 USE_RAW_10=True
 MEDIA_DEVICE_NAME = ('rp1-cfe', 'model')
 DESER_REGEX = '(max96724|max96726a|max9296a) [0-9]+-[a-f0-9]+'
+CSI2_NAME = 'csi2'
 
 # Pixel
 
@@ -84,7 +85,7 @@ def gen_imx219_pixel(des_ent, cameras, port):
 
             # CSI-2 RX
             {
-                'entity': 'csi2',
+                'entity': CSI2_NAME,
                 'routing': [
                     { 'src': (0, port), 'dst': (1 + port, 0) },
                 ],
@@ -106,8 +107,8 @@ def gen_imx219_pixel(des_ent, cameras, port):
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 6), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (CSI2_NAME, 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
 
@@ -156,7 +157,7 @@ def gen_imx219_meta(des_ent, cameras, port):
 
             # CSI-2 RX
             {
-                'entity': 'csi2',
+                'entity': CSI2_NAME,
                 'routing': [
                     { 'src': (0, port + 4), 'dst': (1 + port + 2, 0) },
                 ],
@@ -180,8 +181,8 @@ def gen_imx219_meta(des_ent, cameras, port):
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 6), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
+            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (CSI2_NAME, 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
         ],
     }
 
@@ -204,7 +205,7 @@ def gen_des_tpg(des_ent):
 
             # CSI-2 RX
             {
-                'entity': 'csi2',
+                'entity': CSI2_NAME,
                 'routing': [
                     { 'src': (0, 0), 'dst': (1, 0) },
                 ],
@@ -223,8 +224,8 @@ def gen_des_tpg(des_ent):
         ],
 
         'links': [
-            { 'src': (des_ent, 6), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1), 'dst': ('rp1-cfe-csi2-ch0', 0) },
+            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (CSI2_NAME, 1), 'dst': ('rp1-cfe-csi2-ch0', 0) },
         ],
     }
 
@@ -260,7 +261,7 @@ def gen_ser_tpg(des_ent, cameras, port):
 
             # CSI-2 RX
             {
-                'entity': 'csi2',
+                'entity': CSI2_NAME,
                 'routing': [
                     { 'src': (0, port), 'dst': (1 + port, 0) },
                 ],
@@ -280,8 +281,8 @@ def gen_ser_tpg(des_ent, cameras, port):
 
         'links': [
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 6), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            { 'src': (des_ent, 6), 'dst': (CSI2_NAME, 0) },
+            { 'src': (CSI2_NAME, 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
 
