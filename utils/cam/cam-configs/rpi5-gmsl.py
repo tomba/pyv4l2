@@ -294,7 +294,10 @@ def find_devices(mdev_name, deser_regex):
 
     cameras = {}
 
-    for p in [p for p in deser.pads if p.index < 4]:
+    for p in deser.pads:
+        if not p.is_sink:
+            continue
+
         if len(p.links) == 0:
             continue
 
