@@ -1,5 +1,7 @@
+import sys
 import v4l2
 import v4l2.uapi
+from cam_helpers import merge_configs
 
 USE_RAW_10=True
 MEDIA_DEVICE_NAME = ('rp1-cfe', 'model')
@@ -38,7 +40,7 @@ mbus_fmt_tpg = (640, 480, v4l2.BusFormat.RGB888_1X24)
 fmt_tpg = (640, 480, v4l2.PixelFormats.BGR888)
 
 
-def gen_imx219_pixel(des_ent, des_src_pad, cameras, port):
+def gen_imx219_pixel(des_ent, des_src_pad, ch_index, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
 
@@ -87,18 +89,18 @@ def gen_imx219_pixel(des_ent, des_src_pad, cameras, port):
             {
                 'entity': CSI2_NAME,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    { 'src': (0, port), 'dst': (1 + ch_index, 0) },
                 ],
                 'pads': [
                     { 'pad': (0, port), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (1 + ch_index, 0), 'fmt': mbus_fmt_imx219 },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port}',
+                'entity': f'rp1-cfe-csi2-ch{ch_index}',
                 'fmt': fmt_pix,
                 'kms-format': v4l2.PixelFormats.RGB565,
             },
@@ -108,11 +110,11 @@ def gen_imx219_pixel(des_ent, des_src_pad, cameras, port):
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
             { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
-            { 'src': (CSI2_NAME, 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            { 'src': (CSI2_NAME, 1 + ch_index), 'dst': (f'rp1-cfe-csi2-ch{ch_index}', 0) },
         ],
     }
 
-def gen_imx219_meta(des_ent, des_src_pad, cameras, port):
+def gen_imx219_meta(des_ent, des_src_pad, ch_index, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
 
@@ -159,18 +161,18 @@ def gen_imx219_meta(des_ent, des_src_pad, cameras, port):
             {
                 'entity': CSI2_NAME,
                 'routing': [
-                    { 'src': (0, port + 4), 'dst': (1 + port + 2, 0) },
+                    { 'src': (0, port + 4), 'dst': (1 + ch_index, 0) },
                 ],
                 'pads': [
                     { 'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1 + port + 2, 0), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (1 + ch_index, 0), 'fmt': mbus_fmt_imx219_meta },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port + 2}',
+                'entity': f'rp1-cfe-csi2-ch{ch_index}',
                 'fmt': fmt_pix_imx219_meta,
                 'embedded': True,
                 'display': False,
@@ -182,11 +184,11 @@ def gen_imx219_meta(des_ent, des_src_pad, cameras, port):
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
             { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
-            { 'src': (CSI2_NAME, 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
+            { 'src': (CSI2_NAME, 1 + ch_index), 'dst': (f'rp1-cfe-csi2-ch{ch_index}', 0) },
         ],
     }
 
-def gen_des_tpg(des_ent, des_src_pad):
+def gen_des_tpg(des_ent, des_src_pad, ch_index):
     return {
         'media': MEDIA_DEVICE_NAME,
 
@@ -207,29 +209,29 @@ def gen_des_tpg(des_ent, des_src_pad):
             {
                 'entity': CSI2_NAME,
                 'routing': [
-                    { 'src': (0, 0), 'dst': (1, 0) },
+                    { 'src': (0, 0), 'dst': (1 + ch_index, 0) },
                 ],
                 'pads': [
                     { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (1 + ch_index, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': 'rp1-cfe-csi2-ch0',
+                'entity': f'rp1-cfe-csi2-ch{ch_index}',
                 'fmt': fmt_tpg,
             },
         ],
 
         'links': [
             { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
-            { 'src': (CSI2_NAME, 1), 'dst': ('rp1-cfe-csi2-ch0', 0) },
+            { 'src': (CSI2_NAME, 1 + ch_index), 'dst': (f'rp1-cfe-csi2-ch{ch_index}', 0) },
         ],
     }
 
-def gen_ser_tpg(des_ent, des_src_pad, cameras, port):
+def gen_ser_tpg(des_ent, des_src_pad, ch_index, cameras, port):
     ser_ent = cameras[port][0]
 
     return {
@@ -263,11 +265,11 @@ def gen_ser_tpg(des_ent, des_src_pad, cameras, port):
             {
                 'entity': CSI2_NAME,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    { 'src': (0, port), 'dst': (1 + ch_index, 0) },
                 ],
                 'pads': [
                     { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (1 + ch_index, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
         ],
@@ -282,7 +284,7 @@ def gen_ser_tpg(des_ent, des_src_pad, cameras, port):
         'links': [
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
             { 'src': (des_ent, des_src_pad), 'dst': (CSI2_NAME, 0) },
-            { 'src': (CSI2_NAME, 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            { 'src': (CSI2_NAME, 1 + ch_index), 'dst': (f'rp1-cfe-csi2-ch{ch_index}', 0) },
         ],
     }
 
@@ -319,17 +321,48 @@ def find_devices(mdev_name, deser_regex):
 
     return deser.name, deser_src_pad, cameras
 
-def get_configs():
+def get_configs(config_names):
     des_name, des_src_pad, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
 
     num_cameras = len(cameras)
 
-    configurations = {}
+    cfgs = []
+    ch_index = 0
     for i in range(num_cameras):
-        configurations[f'cam{i}'] = gen_imx219_pixel(des_name, des_src_pad, cameras, i)
-        configurations[f'cam{i}-meta'] = gen_imx219_meta(des_name, des_src_pad, cameras, i)
-        configurations[f'ser{i}-tpg'] = gen_ser_tpg(des_name, des_src_pad, cameras, i)
+        cam = f'cam{i}'
+        cam_meta = f'cam{i}-meta'
+        ser_tpg = f'ser{i}-tpg'
 
-    configurations['des-tpg'] = gen_des_tpg(des_name, des_src_pad)
+        if cam in config_names:
+            config_names.remove(cam)
+            cfg = gen_imx219_pixel(des_name, des_src_pad, ch_index, cameras, i)
+            cfgs.append(cfg)
+            ch_index += 1
 
-    return (configurations, ['cam0'])
+        if cam_meta in config_names:
+            config_names.remove(cam_meta)
+            cfg = gen_imx219_meta(des_name, des_src_pad, ch_index, cameras, i)
+            cfgs.append(cfg)
+            ch_index += 1
+
+        if ser_tpg in config_names:
+            cfg = gen_ser_tpg(des_name, des_src_pad, ch_index, cameras, i)
+            config_names.remove(ser_tpg)
+            cfgs.append(cfg)
+            ch_index += 1
+
+    if 'des-tpg' in config_names:
+        config_names.remove('des-tpg')
+        cfg = gen_des_tpg(des_name, des_src_pad, ch_index)
+        cfgs.append(cfg)
+        ch_index += 1
+
+    for config_name in config_names:
+        print('Cannot find config "{}"'.format(config_name))
+
+    if config_names:
+        sys.exit(-1)
+
+    merged_config = merge_configs(cfgs)
+
+    return merged_config
