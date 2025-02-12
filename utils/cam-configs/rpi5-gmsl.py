@@ -319,7 +319,7 @@ def find_devices(mdev_name, deser_regex):
 
     return deser.name, deser_src_pad, cameras
 
-def get_configs():
+def get_configs(**kwargs):
     des_name, des_src_pad, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
 
     num_cameras = len(cameras)

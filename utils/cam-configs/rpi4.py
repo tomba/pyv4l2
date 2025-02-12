@@ -104,5 +104,5 @@ configurations['cam0-meta'] = {
     ],
 }
 
-def get_configs():
+def get_configs(**kwargs):
     return (configurations, ['cam0'])
