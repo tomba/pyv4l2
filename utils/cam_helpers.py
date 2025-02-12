@@ -111,7 +111,7 @@ def read_config(config_name, params):
     config_names = [c for c in config_names if len(c) > 0]
 
     sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/cam-configs')
-    configurations, default_configurations = importlib.import_module(config_file).get_configs(params=params)
+    configurations, default_configurations = importlib.import_module(config_file).get_configs(params=params, config_names=config_names)
 
     if len(config_names) == 0:
         config_names = default_configurations
