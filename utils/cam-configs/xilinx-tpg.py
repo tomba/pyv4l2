@@ -33,5 +33,5 @@ configurations['tpg'] = {
     ],
 }
 
-def get_configs():
+def get_configs(**kwargs):
     return (configurations, ['tpg'])

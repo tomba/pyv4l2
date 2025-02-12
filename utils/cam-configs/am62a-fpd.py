@@ -261,5 +261,5 @@ configurations['cam1-meta'] = gen_imx219_meta(1)
 configurations['cam2-meta'] = gen_imx219_meta(2)
 configurations['cam3-meta'] = gen_imx219_meta(3)
 
-def get_configs():
+def get_configs(**kwargs):
     return (configurations, ['cam0', 'cam1', 'cam2', 'cam3'])
