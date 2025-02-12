@@ -42,5 +42,5 @@ configurations['ov5640'] = {
     ],
 }
 
-def get_configs():
+def get_configs(**kwargs):
     return (configurations, ['ov5640'])

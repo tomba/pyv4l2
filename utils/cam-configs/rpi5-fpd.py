@@ -246,5 +246,5 @@ configurations['cam1-meta'] = gen_imx219_meta(1)
 configurations['cam0-tpg'] = gen_ub953_tpg(0)
 configurations['cam1-tpg'] = gen_ub953_tpg(1)
 
-def get_configs():
+def get_configs(**kwargs):
     return (configurations, ['cam0'])
