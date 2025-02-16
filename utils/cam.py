@@ -7,51 +7,12 @@ import pprint
 import selectors
 import sys
 import time
-import types
-import queue
-import threading
-
-from typing import TYPE_CHECKING, Callable
-
-from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
-from cam_net import NetTX
-
-from cam_types import Stream, Updater
 
 import v4l2
 from v4l2.videodev import VideoCaptureStreamer
 
-if TYPE_CHECKING:
-    from .cam_kms import KmsContext
-
-class Context:
-    verbose: bool
-    config: dict
-    use_ipython: bool
-    user_script: types.ModuleType | None
-    subdevices: dict[str, v4l2.SubDevice] | None
-    streams: list[Stream]
-    md: v4l2.MediaDevice | None
-    buf_type: str
-    use_display: bool
-    kms_committed: bool
-    print_config: bool
-    config_only: bool
-    delay: int
-    save: bool
-    tx: None | list[str]
-    run_ipython: Callable
-    exit: bool
-    exit_num_frames: int
-
-    kms_ctx: KmsContext
-
-    net_tx: None | NetTX
-    net_tx_queue: queue.Queue
-    net_done_queue: queue.Queue
-
-    updater: None | Updater
-
+from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
+from cam_types import Stream, Context
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
@@ -97,11 +58,11 @@ def parse_args(ctx: Context):
 
     if args.tx:
         ctx.tx = args.tx.split(',')
-        ctx.net_tx = NetTX(host=args.host, port=args.port)
+        ctx.net_host=args.host
+        ctx.net_port=args.port
         print(f'Network transfer on {args.host}:{args.port}')
     else:
         ctx.tx = None
-        ctx.net_tx = None
 
     if not args.type:
         if args.display:
@@ -217,12 +178,8 @@ def setup(ctx: Context):
 
     for stream in streams:
         cap = stream['cap']
-
-        if ctx.buf_type == 'drm':
-            ctx.kms_ctx.alloc_fbs(stream)
-
-        if stream['display']:
-            ctx.kms_ctx.setup_stream(stream)
+        if ctx.consumer:
+            ctx.consumer.setup_stream(ctx, stream)
 
         if ctx.buf_type == 'drm':
             fds = [fb.fd(0) for fb in stream['fbs']]
@@ -236,8 +193,8 @@ def setup(ctx: Context):
         for i in range(first_buf, stream['num_bufs']):
             cap.queue(cap.vbuffers[i])
 
-    if ctx.use_display:
-        ctx.kms_ctx.init_modeset()
+    if ctx.consumer:
+        ctx.consumer.setup_streams_done(ctx)
 
     for stream in streams:
         if 'size' in stream:
@@ -254,8 +211,6 @@ def setup(ctx: Context):
         stream['last_framenum'] = 0
         stream['last_timestamp'] = time.perf_counter()
 
-    ctx.kms_committed = False
-
     if ctx.user_script:
         ctx.updater = ctx.user_script.Updater(ctx.subdevices)
     else:
@@ -265,29 +220,6 @@ def setup(ctx: Context):
 def queue_buf(stream: Stream, vbuf: v4l2.VideoBuffer):
     cap = stream['cap']
     cap.queue(vbuf)
-
-
-def net_main(ctx):
-    while True:
-        data = ctx.net_tx_queue.get()
-
-        if not data:
-            break
-
-        stream, vbuf, is_drm = data
-
-        ctx.net_tx.tx(stream, vbuf, is_drm)
-
-        ctx.net_done_queue.put((stream, vbuf))
-
-
-def handle_sent_buffers(ctx: Context):
-    while not ctx.net_done_queue.empty():
-        stream, vbuf = ctx.net_done_queue.get()
-
-        stream['tx_buf'] = None
-
-        queue_buf(stream, vbuf)
 
 
 def readvid(ctx: Context, stream: Stream):
@@ -332,21 +264,8 @@ def readvid(ctx: Context, stream: Stream):
     if ctx.save:
         save_fb_to_file(stream, ctx.buf_type == 'drm', fb if ctx.buf_type == 'drm' else vbuf)
 
-    if stream['display']:
-        assert fb is not None
-        stream['kms_fb_queue'].append(fb)
-
-        if len(stream['kms_fb_queue']) >= stream['num_bufs'] - 1:
-            print('WARNING fb_queue {}'.format(len(stream['kms_fb_queue'])))
-
-        #print(f'Buf from {stream['dev_path']}: kms_fb_queue {len(stream['kms_fb_queue'])}, commit ongoing {kms_committed}')
-
-        # XXX with a small delay we might get more planes to the commit
-        if not ctx.kms_committed:
-            ctx.kms_ctx.handle_pageflip()
-    elif ctx.tx and (ctx.tx == ['all'] or str(stream['id']) in ctx.tx) and not stream['tx_buf']:
-        stream['tx_buf'] = vbuf
-        ctx.net_tx_queue.put((stream, vbuf, ctx.buf_type == 'drm'))
+    if ctx.consumer:
+        ctx.consumer.handle_frame(ctx, stream, vbuf)
     else:
         queue_buf(stream, vbuf)
 
@@ -368,10 +287,13 @@ def run(ctx: Context):
 
     sel = selectors.DefaultSelector()
 
+    # Register stdin only if we are not in IPython mode
     if not ctx.use_ipython:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
-    if ctx.use_display:
-        ctx.kms_ctx.register_selector(sel)
+
+    if ctx.consumer:
+        ctx.consumer.register_selector(sel)
+
     for stream in ctx.streams:
         sel.register(stream['cap'].fd,
                      selectors.EVENT_READ | selectors.EVENT_WRITE,
@@ -381,8 +303,8 @@ def run(ctx: Context):
         while not ctx.exit:
             events = sel.select()
 
-            if ctx.tx:
-                handle_sent_buffers(ctx)
+            if ctx.consumer:
+                ctx.consumer.handle_tick(ctx)
 
             for key, _ in events:
                 callback = key.data
@@ -395,15 +317,22 @@ def main():
     ctx = Context()
 
     parse_args(ctx)
+
     init_mdev(ctx)
     init_links(ctx)
     init_subdevs(ctx)
     init_viddevs(ctx)
     init_streamer(ctx)
 
+    ctx.consumer = None
+
     if ctx.use_display or ctx.buf_type == 'drm':
-        from cam_kms import KmsContext
-        ctx.kms_ctx = KmsContext(ctx)
+        from cam_kms import DisplayConsumer
+        ctx.consumer = DisplayConsumer(ctx)
+
+    if ctx.tx:
+        from cam_net import NetConsumer
+        ctx.consumer = NetConsumer(host=ctx.net_host, port=ctx.net_port)
 
     if ctx.print_config:
         for stream in ctx.streams:
@@ -414,23 +343,10 @@ def main():
 
     setup(ctx)
 
-    net_thread = None
-    if ctx.tx:
-        for stream in ctx.streams:
-            stream['tx_buf'] = None
-
-        ctx.net_tx_queue = queue.Queue()
-        ctx.net_done_queue = queue.Queue()
-
-        net_thread = threading.Thread(target=net_main, args=(ctx,))
-        net_thread.start()
-
     run(ctx)
 
-    if ctx.tx:
-        assert net_thread is not None
-        ctx.net_tx_queue.put(None)
-        net_thread.join()
+    if ctx.consumer:
+        ctx.consumer.cleanup(ctx)
 
     return 0
 

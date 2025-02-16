@@ -3,10 +3,10 @@ from selectors import BaseSelector, EVENT_READ
 import time
 
 import kms
-
-from cam_types import Stream
-
 import v4l2
+
+from cam_types import Stream, Context, Consumer
+
 
 class KmsContext:
     def __init__(self, ctx) -> None:
@@ -253,3 +253,42 @@ class KmsContext:
 
     def register_selector(self, sel: BaseSelector):
         sel.register(self.card.fd, EVENT_READ, lambda: self.readdrm())
+
+class DisplayConsumer(Consumer):
+    def __init__(self, ctx: Context):
+        self.kms_ctx = KmsContext(ctx)
+
+    def setup_stream(self, ctx: Context, stream: Stream):
+        if ctx.buf_type == 'drm':
+            self.kms_ctx.alloc_fbs(stream)
+        if stream['display']:
+            self.kms_ctx.setup_stream(stream)
+
+    def setup_streams_done(self, ctx: Context):
+        ctx.kms_committed = False
+
+        if ctx.use_display:
+            self.kms_ctx.init_modeset()
+
+    def handle_frame(self, ctx: Context, stream: Stream, vbuf):
+        fb = None
+
+        if ctx.buf_type == 'drm':
+            fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
+            assert fb is not None
+
+        if stream['display']:
+            assert fb is not None
+            stream['kms_fb_queue'].append(fb)
+
+            if len(stream['kms_fb_queue']) >= stream['num_bufs'] - 1:
+                print('WARNING fb_queue {}'.format(len(stream['kms_fb_queue'])))
+
+            if not ctx.kms_committed:
+                self.kms_ctx.handle_pageflip()
+
+    def cleanup(self, ctx: Context):
+        pass
+
+    def register_selector(self, sel: BaseSelector):
+        self.kms_ctx.register_selector(sel)

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from collections import deque
-from typing import TypedDict
+from selectors import BaseSelector
+from typing import TypedDict, Callable
+import types
 
 from kms import DumbFramebuffer, Plane
-from v4l2 import PixelFormat, MetaFormat
 
+import v4l2
+from v4l2 import PixelFormat, MetaFormat
 from v4l2.videodev import CaptureStreamer, VideoBuffer, VideoDevice
 
 
@@ -56,3 +59,57 @@ Stream = TypedDict(
         'tx_buf': VideoBuffer | None,
     },
 )
+
+
+# Application wide context
+class Context:
+    verbose: bool
+    config: dict
+    use_ipython: bool
+    user_script: types.ModuleType | None
+    subdevices: dict[str, v4l2.SubDevice] | None
+    streams: list[Stream]
+    md: v4l2.MediaDevice | None
+    buf_type: str
+    use_display: bool
+    kms_committed: bool
+    print_config: bool
+    config_only: bool
+    delay: int
+    save: bool
+    tx: None | list[str]
+    run_ipython: Callable
+    exit: bool
+    exit_num_frames: int
+
+    net_host: str
+    net_port: int
+
+    updater: None | Updater
+
+    consumer: None | Consumer
+
+
+# Frame consumer interface
+class Consumer(ABC):
+    @abstractmethod
+    def setup_stream(self, ctx: Context, stream: Stream):
+        pass
+
+    def setup_streams_done(self, ctx: Context):
+        pass
+
+    def cleanup(self, ctx: Context):
+        pass
+
+    @abstractmethod
+    def handle_frame(self, ctx: Context, stream: Stream, vbuf):
+        """Handle a frame from a stream."""
+        pass
+
+    def handle_tick(self, ctx: Context):
+        """Called every time there's any event"""
+        pass
+
+    def register_selector(self, sel: BaseSelector):
+        pass

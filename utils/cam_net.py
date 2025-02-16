@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import mmap
+import queue
 import socket
 import struct
+import threading
 
-from cam_types import Stream
 from v4l2 import MetaFormat
 
+from cam_types import Stream, Context, Consumer
 
 class NetTX:
     # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
@@ -61,3 +63,52 @@ class NetTX:
                 offset=vbuf.offset,
             ) as b:
                 self.sock.sendall(b)
+
+class NetConsumer(Consumer):
+    def __init__(self, host: str, port: int):
+        self.net_tx = NetTX(host, port)
+        self.net_tx_queue = queue.Queue()
+        self.net_done_queue = queue.Queue()
+        self.net_thread = None
+
+    def setup_stream(self, ctx: Context, stream: Stream):
+        stream['tx_buf'] = None
+
+    def setup_streams_done(self, ctx: Context):
+        self.net_thread = threading.Thread(target=self.net_main)
+        self.net_thread.start()
+
+    def handle_frame(self, ctx: Context, stream: Stream, vbuf):
+        assert ctx.tx
+
+        if ctx.tx != ['all'] and str(stream['id']) not in ctx.tx:
+            return
+
+        if stream['tx_buf']:
+            # Already sending a frame
+            return
+
+        stream['tx_buf'] = vbuf
+        self.net_tx_queue.put((stream, vbuf, ctx.buf_type == 'drm'))
+
+    def cleanup(self, ctx: Context):
+        self.net_tx_queue.put(None)
+        if self.net_thread:
+            self.net_thread.join()
+
+    def net_main(self):
+        while True:
+            data = self.net_tx_queue.get()
+            if not data:
+                break
+            stream, vbuf, is_drm = data
+            self.net_tx.tx(stream, vbuf, is_drm)
+            self.net_done_queue.put((stream, vbuf))
+
+    def handle_tick(self, ctx: Context):
+        while not self.net_done_queue.empty():
+            stream, vbuf = self.net_done_queue.get()
+            stream['tx_buf'] = None
+
+            cap = stream['cap']
+            cap.queue(vbuf)
