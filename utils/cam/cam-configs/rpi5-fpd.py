@@ -1,4 +1,5 @@
 import v4l2
+import v4l2.uapi
 
 # Pixel
 
@@ -34,7 +35,7 @@ tpg_fmts = [
 
 configurations = {}
 
-first_imx_i2c_port = 11
+first_imx_i2c_port = 13
 
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
@@ -49,6 +50,10 @@ def gen_imx219_pixel(port):
                 'entity': sensor_ent,
                 'pads': [
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                ],
+                'controls': [
+                    (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+                    (v4l2.uapi.V4L2_CID_DIGITAL_GAIN, 1024),
                 ],
             },
 
