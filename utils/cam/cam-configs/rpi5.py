@@ -1,4 +1,5 @@
 import v4l2
+import v4l2.uapi
 
 imx219_w = 640
 imx219_h = 480
@@ -43,6 +44,9 @@ configurations['cam0'] = {
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },
 #            ],
+            'controls': [
+                (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+            ],
         },
         # CSI-2 RX
         {
