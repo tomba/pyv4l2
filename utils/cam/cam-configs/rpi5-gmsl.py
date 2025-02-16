@@ -34,6 +34,8 @@ fmt_pix_imx219_meta = (imx219_w, 2, imx219_pix_fmt_meta)
 # TPG
 
 mbus_fmt_tpg = (640, 480, v4l2.BusFormat.RGB888_1X24)
+# This gives R and B reversed. Is the cfe driver wrong? What does the
+# deser/ser even send?
 fmt_tpg = (640, 480, v4l2.PixelFormats.BGR888)
 
 
