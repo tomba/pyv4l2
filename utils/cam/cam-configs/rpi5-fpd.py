@@ -35,7 +35,7 @@ tpg_fmts = [
 
 configurations = {}
 
-first_imx_i2c_port = 13
+first_imx_i2c_port = 15
 
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
