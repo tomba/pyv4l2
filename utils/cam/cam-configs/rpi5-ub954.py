@@ -38,14 +38,15 @@ tpg_fmts = [
 
 configurations = {}
 
+main_i2c_bus = 4
 first_imx_i2c_bus = 13
 
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_bus}-0010'
-    ser_ent = f'ds90ub953 6-004{4 + port}'
+    ser_ent = f'ds90ub953 {main_i2c_bus}-004{4 + port}'
 
     return {
-        'media': ('rp1-cfe', 'model'),
+        'media': ('platform:1f00128000.csi', 'bus_info'),
 
         'subdevs': [
             # Camera
@@ -56,6 +57,7 @@ def gen_imx219_pixel(port):
                 ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+                    (v4l2.uapi.V4L2_CID_DIGITAL_GAIN, 1024),
                 ],
             },
 
@@ -72,7 +74,7 @@ def gen_imx219_pixel(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 6-0030',
+                'entity': f'ds90ub960 {main_i2c_bus}-0030',
                 'routing': [
                     { 'src': (port, 0), 'dst': (2, port) },
                 ],
@@ -105,8 +107,8 @@ def gen_imx219_pixel(port):
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 2), 'dst': ('csi2', 0) },
+            { 'src': (ser_ent, 1), 'dst': (f'ds90ub960 {main_i2c_bus}-0030', port) },
+            { 'src': (f'ds90ub960 {main_i2c_bus}-0030', 2), 'dst': ('csi2', 0) },
             { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
