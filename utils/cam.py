@@ -12,7 +12,7 @@ import v4l2
 from v4l2.videodev import VideoCaptureStreamer
 
 from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
-from cam_types import Stream, Context
+from cam_types import Stream, Context, Subcontext
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
@@ -29,7 +29,7 @@ def parse_args(ctx: Context):
     parser.add_argument('-H', '--host', default='192.168.88.20', type=str)
     parser.add_argument('-P', '--port', default=43242, type=int)
     parser.add_argument('-n', '--numframes', default=0, type=int, help='Number of frames to capture')
-    parser.add_argument('config_name', help='<config name>[:<stream name>[,<stream name>...]]')
+    parser.add_argument('config_names', nargs='*', help='<config name>[:<stream name>[,<stream name>...]]')
     args = parser.parse_args()
 
     ctx.verbose = args.verbose
@@ -77,40 +77,57 @@ def parse_args(ctx: Context):
     ctx.use_display = args.display
     ctx.buf_type = args.type
 
-    ctx.config = read_config(args.config_name)
+    ctx.subcontexts = []
+    for cfg_name in args.config_names:
+        subcontext = Subcontext()
+        subcontext.ctx = ctx
+        subcontext.config = read_config(cfg_name)
+        ctx.subcontexts.append(subcontext)
 
 
 def init_mdev(ctx: Context):
-    if ctx.config['media']:
-        ctx.md = v4l2.MediaDevice(*ctx.config['media'])
-    else:
-        ctx.md = None
+    for sctx in ctx.subcontexts:
+        if sctx.config['media']:
+            sctx.md = v4l2.MediaDevice(*sctx.config['media'])
+        else:
+            sctx.md = None
 
 
 def init_links(ctx: Context):
-    if not ctx.md:
-        return
+    for sctx in ctx.subcontexts:
+        if not sctx.md:
+            continue
 
-    disable_all_links(ctx.md)
+        disable_all_links(sctx.md)
 
-    setup_links(ctx, ctx.config)
+        setup_links(sctx, sctx.config)
 
 
 def init_subdevs(ctx: Context):
-    if not ctx.md:
-        ctx.subdevices = None
-        return
+    for sctx in ctx.subcontexts:
+        if not sctx.md:
+            sctx.subdevices = None
+            continue
 
-    ctx.subdevices = configure_subdevs(ctx, ctx.config)
-
+        sctx.subdevices = configure_subdevs(sctx, sctx.config)
 
 def init_viddevs(ctx: Context):
-    ctx.streams = ctx.config['devices']
+    stream_counter = 0
 
-    streams = ctx.streams
+    for sctx in ctx.subcontexts:
+        sctx.streams = sctx.config['devices']
 
-    for i, stream in enumerate(streams):
-        stream['id'] = i
+        for stream in sctx.streams:
+            stream['id'] = stream_counter
+            stream_counter += 1
+
+    for sctx in ctx.subcontexts:
+        init_viddevs_sctx(sctx)
+
+def init_viddevs_sctx(sctx: Subcontext):
+    ctx = sctx.ctx
+
+    streams = sctx.streams
 
     for stream in streams:
         stream['num_bufs'] = stream.get('num_bufs', 5)
@@ -129,8 +146,8 @@ def init_viddevs(ctx: Context):
         else:
             raise RuntimeError()
 
-        if ctx.md:
-            vid_ent = ctx.md.find_entity(stream['entity'])
+        if sctx.md:
+            vid_ent = sctx.md.find_entity(stream['entity'])
             assert(vid_ent)
 
             if 'dev_path' not in stream:
@@ -153,7 +170,13 @@ def init_viddevs(ctx: Context):
 
 
 def init_streamer(ctx: Context):
-    streams = ctx.streams
+    for sctx in ctx.subcontexts:
+        init_streamer_sctx(sctx)
+
+
+def init_streamer_sctx(sctx: Subcontext):
+    ctx = sctx.ctx
+    streams = sctx.streams
 
     for stream in streams:
         vd = stream['dev']
@@ -174,7 +197,16 @@ def init_streamer(ctx: Context):
 
 
 def setup(ctx: Context):
-    streams = ctx.streams
+    for sctx in ctx.subcontexts:
+        setup_sctx(sctx)
+
+    if ctx.consumer:
+        ctx.consumer.setup_streams_done(ctx)
+
+
+def setup_sctx(sctx: Subcontext):
+    ctx = sctx.ctx
+    streams = sctx.streams
 
     for stream in streams:
         cap = stream['cap']
@@ -193,9 +225,6 @@ def setup(ctx: Context):
         for i in range(first_buf, stream['num_bufs']):
             cap.queue(cap.vbuffers[i])
 
-    if ctx.consumer:
-        ctx.consumer.setup_streams_done(ctx)
-
     for stream in streams:
         if 'size' in stream:
             print(f'{stream["dev_path"]}: stream on {stream["size"]}-{stream["format"].name}')
@@ -212,7 +241,7 @@ def setup(ctx: Context):
         stream['last_timestamp'] = time.perf_counter()
 
     if ctx.user_script:
-        ctx.updater = ctx.user_script.Updater(ctx.subdevices)
+        ctx.updater = ctx.user_script.Updater(sctx.subdevices)
     else:
         ctx.updater = None
 
@@ -222,7 +251,9 @@ def queue_buf(stream: Stream, vbuf: v4l2.VideoBuffer):
     cap.queue(vbuf)
 
 
-def readvid(ctx: Context, stream: Stream):
+def readvid(sctx: Subcontext, stream: Stream):
+    ctx = sctx.ctx
+
     if ctx.verbose:
         print('{}: event'.format(stream['dev_path']))
 
@@ -270,12 +301,13 @@ def readvid(ctx: Context, stream: Stream):
         queue_buf(stream, vbuf)
 
 
-def readkey(ctx):
-    streams = ctx.streams
+def readkey(ctx: Context):
+    for sctx in ctx.subcontexts:
+        streams = sctx.streams
 
-    for stream in reversed(streams):
-        print(f'{stream["dev_path"]}: stream off')
-        stream['cap'].stream_off()
+        for stream in reversed(streams):
+            print(f'{stream["dev_path"]}: stream off')
+            stream['cap'].stream_off()
 
     print('Done')
     sys.stdin.readline()
@@ -294,10 +326,11 @@ def run(ctx: Context):
     if ctx.consumer:
         ctx.consumer.register_selector(sel)
 
-    for stream in ctx.streams:
-        sel.register(stream['cap'].fd,
-                     selectors.EVENT_READ | selectors.EVENT_WRITE,
-                     lambda data=stream: readvid(ctx, data))
+    for sctx in ctx.subcontexts:
+        for stream in sctx.streams:
+            sel.register(stream['cap'].fd,
+                        selectors.EVENT_READ | selectors.EVENT_WRITE,
+                        lambda data=stream: readvid(sctx, data))
 
     if not ctx.use_ipython:
         while not ctx.exit:
@@ -335,8 +368,9 @@ def main():
         ctx.consumer = NetConsumer(host=ctx.net_host, port=ctx.net_port)
 
     if ctx.print_config:
-        for stream in ctx.streams:
-            pprint.pprint(stream)
+        for sctx in ctx.subcontexts:
+            for stream in sctx.streams:
+                pprint.pprint(stream)
 
     if ctx.config_only:
         sys.exit(0)

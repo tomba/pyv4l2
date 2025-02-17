@@ -9,10 +9,11 @@ from cam_types import Stream, Context, Consumer
 
 
 class KmsContext:
-    def __init__(self, ctx) -> None:
+    def __init__(self, ctx: Context) -> None:
         self.ctx = ctx
 
-        streams = ctx.streams
+        streams = [stream for sctx in ctx.subcontexts for stream in sctx.streams]
+        self.streams = streams
 
         card = kms.Card()
 
@@ -177,7 +178,7 @@ class KmsContext:
     def init_modeset(self):
         ctx = self.ctx
 
-        streams = ctx.streams
+        streams = self.streams
 
         # Do the initial modeset
         req = kms.AtomicReq(self.card)
@@ -201,7 +202,7 @@ class KmsContext:
 
         assert ctx.buf_type == 'drm'
 
-        streams = ctx.streams
+        streams = self.streams
 
         ctx.kms_committed = False
 

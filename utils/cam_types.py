@@ -60,16 +60,20 @@ Stream = TypedDict(
     },
 )
 
+# Media device context
+class Subcontext:
+    md: v4l2.MediaDevice | None
+    config: dict
+    subdevices: dict[str, v4l2.SubDevice] | None
+    streams: list[Stream]
+    ctx: Context
 
 # Application wide context
 class Context:
+    subcontexts: list[Subcontext]
     verbose: bool
-    config: dict
     use_ipython: bool
     user_script: types.ModuleType | None
-    subdevices: dict[str, v4l2.SubDevice] | None
-    streams: list[Stream]
-    md: v4l2.MediaDevice | None
     buf_type: str
     use_display: bool
     kms_committed: bool

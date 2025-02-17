@@ -12,7 +12,7 @@ import v4l2.uapi
 from cam_types import Stream
 
 if TYPE_CHECKING:
-    from .cam import Context
+    from .cam import Subcontext
     import kms
 
 # Disable all possible links
@@ -130,8 +130,8 @@ def read_config(config_name):
 #
 
 # Setup links
-def setup_links(ctx: Context, config):
-    md = ctx.md
+def setup_links(sctx: Subcontext, config):
+    md = sctx.md
     assert md is not None
 
     for l in config.get('links', []):
@@ -147,7 +147,7 @@ def setup_links(ctx: Context, config):
             if sink_ent is None:
                 raise RuntimeError(f'Failed to find entity {l["dst"]}')
 
-            if ctx.verbose:
+            if sctx.ctx.verbose:
                 print(f'Link {source_ent.name} -> {sink_ent.name}')
 
             enable_link((source_ent, source_pad), (sink_ent, sink_pad))
@@ -156,8 +156,9 @@ def setup_links(ctx: Context, config):
             raise e
 
 # Configure entities
-def configure_subdevs(ctx: Context, config):
-    md = ctx.md
+def configure_subdevs(sctx: Subcontext, config):
+    ctx = sctx.ctx
+    md = sctx.md
     assert md is not None
 
     subdevices = {}
