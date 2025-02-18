@@ -11,12 +11,12 @@ import types
 import queue
 import threading
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
 from cam_net import NetTX
 
-from cam_types import Stream
+from cam_types import Stream, Updater
 
 import v4l2
 from v4l2.videodev import VideoCaptureStreamer
@@ -40,7 +40,7 @@ class Context:
     delay: int
     save: bool
     tx: None | list[str]
-    run_ipython: types.LambdaType
+    run_ipython: Callable
     exit: bool
     exit_num_frames: int
 
@@ -50,7 +50,7 @@ class Context:
     net_tx_queue: queue.Queue
     net_done_queue: queue.Queue
 
-    updater: object
+    updater: None | Updater
 
 
 def parse_args(ctx: Context):

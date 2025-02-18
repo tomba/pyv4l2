@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from collections import deque
 from typing import TypedDict
 
@@ -11,6 +12,10 @@ from v4l2.videodev import CaptureStreamer, VideoBuffer, VideoDevice
 
 pix_or_meta_fmt = PixelFormat | MetaFormat
 
+class Updater(ABC):
+    @abstractmethod
+    def update(self):
+        pass
 
 Stream = TypedDict(
     'Stream',
