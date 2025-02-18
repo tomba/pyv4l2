@@ -68,8 +68,7 @@ def parse_args(ctx: Context):
     parser.add_argument('-H', '--host', default='192.168.88.20', type=str)
     parser.add_argument('-P', '--port', default=43242, type=int)
     parser.add_argument('-n', '--numframes', default=0, type=int, help='Number of frames to capture')
-    parser.add_argument('config_name', help='Configuration name')
-    parser.add_argument('params', nargs='*', help='Parameters to the configuration')
+    parser.add_argument('config_name', help='<config name>[:<stream name>[,<stream name>...]]')
     args = parser.parse_args()
 
     ctx.verbose = args.verbose
@@ -117,7 +116,7 @@ def parse_args(ctx: Context):
     ctx.use_display = args.display
     ctx.buf_type = args.type
 
-    ctx.config = read_config(args.config_name, args.params)
+    ctx.config = read_config(args.config_name)
 
 
 def init_mdev(ctx: Context):

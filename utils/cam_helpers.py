@@ -95,7 +95,7 @@ def merge_configs(configs):
 
     return d
 
-def read_config(config_name, params):
+def read_config(config_name):
     parts = config_name.split(':')
 
     if len(parts) > 2:
@@ -111,10 +111,7 @@ def read_config(config_name, params):
     config_names = [c for c in config_names if len(c) > 0]
 
     sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/cam-configs')
-    if params:
-        configurations, default_configurations = importlib.import_module(config_file).get_configs(params)
-    else:
-        configurations, default_configurations = importlib.import_module(config_file).get_configs()
+    configurations, default_configurations = importlib.import_module(config_file).get_configs()
 
     if len(config_names) == 0:
         config_names = default_configurations
