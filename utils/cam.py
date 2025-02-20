@@ -234,10 +234,11 @@ def setup_sctx(sctx: Subcontext):
         else:
             cap.reserve_buffers(stream.num_bufs)
 
+        skip_first = False
         if ctx.consumer:
-            ctx.consumer.setup_stream(ctx, stream)
+            skip_first = ctx.consumer.setup_stream(ctx, stream)
 
-        first_buf = 1 if stream.display else 0
+        first_buf = 1 if skip_first else 0
 
         # Queue the rest to the camera
         for i in range(first_buf, stream.num_bufs):

@@ -78,8 +78,9 @@ class Context:
 # Frame consumer interface
 class Consumer(ABC):
     @abstractmethod
-    def setup_stream(self, ctx: Context, stream: Stream):
-        pass
+    def setup_stream(self, ctx: Context, stream: Stream) -> bool:
+        """Returns if the first buffer of the stream was taken by the consumer"""
+        return False
 
     def setup_streams_done(self, ctx: Context):
         pass

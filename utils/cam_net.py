@@ -72,8 +72,9 @@ class NetConsumer(Consumer):
         self.net_thread = None
         self.current_buf = { }
 
-    def setup_stream(self, ctx: Context, stream: Stream):
+    def setup_stream(self, ctx: Context, stream: Stream) -> bool:
         self.current_buf[stream.id] = None
+        return False
 
     def setup_streams_done(self, ctx: Context):
         self.net_thread = threading.Thread(target=self.net_main)

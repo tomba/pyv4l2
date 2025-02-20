@@ -288,9 +288,12 @@ class DisplayConsumer(Consumer):
         if ctx.buf_type == 'drm':
             self.kms_ctx.alloc_fbs(stream)
 
-    def setup_stream(self, ctx: Context, stream: Stream):
+    def setup_stream(self, ctx: Context, stream: Stream) -> bool:
         if stream.display:
             self.kms_ctx.setup_stream(stream)
+            return True
+        else:
+            return False
 
     def setup_streams_done(self, ctx: Context):
 
