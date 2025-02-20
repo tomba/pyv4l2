@@ -7,6 +7,7 @@ import pprint
 import selectors
 import sys
 import time
+import typing
 
 import v4l2
 from v4l2.videodev import VideoCaptureStreamer
@@ -115,10 +116,24 @@ def init_viddevs(ctx: Context):
     stream_counter = 0
 
     for sctx in ctx.subcontexts:
-        sctx.streams = sctx.config['devices']
+        sctx.streams = []
+
+        for data in sctx.config['devices']:
+            # Copy all the fields from 'data' to the stream
+            stream = Stream()
+            for k, v in data.items():
+                k = k.replace('-', '_')
+                setattr(stream, k, v)
+
+            stream.dev_path = data.get('dev_path', None)
+            stream.embedded = data.get('embedded', False)
+            stream.display = ctx.use_display and data.get('display', True)
+            stream.num_bufs = data.get('num_bufs', 5)
+
+            sctx.streams.append(stream)
 
         for stream in sctx.streams:
-            stream['id'] = stream_counter
+            stream.id = stream_counter
             stream_counter += 1
 
     for sctx in ctx.subcontexts:
@@ -130,43 +145,39 @@ def init_viddevs_sctx(sctx: Subcontext):
     streams = sctx.streams
 
     for stream in streams:
-        stream['num_bufs'] = stream.get('num_bufs', 5)
-        stream['display'] = ctx.use_display and stream.get('display', True)
-        stream['embedded'] = stream.get('embedded', False)
-
-        fmt = stream['fmt']
+        fmt = stream.fmt
         if len(fmt) == 3:
-            stream['w'] = fmt[0]
-            stream['h'] = fmt[1]
-            stream['size'] = (stream['w'], stream['h'])
-            stream['format'] = fmt[2]
+            stream.w = fmt[0]
+            stream.h = fmt[1]
+            stream.size = (stream.w, stream.h)
+            stream.format = fmt[2]
         elif len(fmt) == 2:
-            stream['size'] = fmt[0]
-            stream['format'] = fmt[1]
+            stream.size = fmt[0]
+            stream.format = fmt[1]
         else:
             raise RuntimeError()
 
         if sctx.md:
-            vid_ent = sctx.md.find_entity(stream['entity'])
+            vid_ent = sctx.md.find_entity(stream.entity)
             assert(vid_ent)
 
-            if 'dev_path' not in stream:
-                stream['dev_path'] = vid_ent.interface.dev_path
+            if not stream.dev_path:
+                stream.dev_path = vid_ent.interface.dev_path
 
             if ctx.verbose:
-                print(f'Configuring {vid_ent.name} ({stream["dev_path"]})')
+                print(f'Configuring {vid_ent.name} ({stream.dev_path})')
 
             vd = v4l2.VideoDevice(vid_ent.interface.dev_path)
         else:
-            dev_path = v4l2.VideoDevice.find_video_device(*stream['device'])
-            stream['dev_path'] = dev_path
+            dev_path = v4l2.VideoDevice.find_video_device(*stream.device)
+            stream.dev_path = dev_path
 
             if ctx.verbose:
                 print(f'Configuring {dev_path}')
 
             vd = v4l2.VideoDevice(dev_path)
 
-        stream['dev'] = vd
+        stream.dev = vd
 
 
 def init_streamer(ctx: Context):
@@ -179,21 +190,21 @@ def init_streamer_sctx(sctx: Subcontext):
     streams = sctx.streams
 
     for stream in streams:
-        vd = stream['dev']
+        vd = stream.dev
 
         if ctx.verbose:
             print(f'Configuring streamer {vd.dev_path}')
 
         mem_type = v4l2.MemType.DMABUF if ctx.buf_type == 'drm' else v4l2.MemType.MMAP
 
-        if not stream.get('embedded', False):
-            assert isinstance(stream['format'], v4l2.PixelFormat)
-            cap = vd.get_capture_streamer(mem_type, stream['w'], stream['h'], stream['format'])
+        if not stream.embedded:
+            assert isinstance(stream.format, v4l2.PixelFormat)
+            cap = vd.get_capture_streamer(mem_type, stream.w, stream.h, stream.format)
         else:
-            assert isinstance(stream['format'], v4l2.MetaFormat)
-            cap = vd.get_meta_capture_streamer(mem_type, stream['size'], stream['format'])
+            assert isinstance(stream.format, v4l2.MetaFormat)
+            cap = vd.get_meta_capture_streamer(mem_type, stream.size, stream.format)
 
-        stream['cap'] = cap
+        stream.cap = cap
 
 
 def setup(ctx: Context):
@@ -209,36 +220,36 @@ def setup_sctx(sctx: Subcontext):
     streams = sctx.streams
 
     for stream in streams:
-        cap = stream['cap']
+        cap = stream.cap
         if ctx.consumer:
             ctx.consumer.setup_stream(ctx, stream)
 
         if ctx.buf_type == 'drm':
-            fds = [fb.fd(0) for fb in stream['fbs']]
+            fds = [fb.fd(0) for fb in stream.fbs]
             cap.reserve_buffers_dmabuf(fds)
         else:
-            cap.reserve_buffers(stream['num_bufs'])
+            cap.reserve_buffers(stream.num_bufs)
 
-        first_buf = 1 if stream['display'] else 0
+        first_buf = 1 if stream.display else 0
 
         # Queue the rest to the camera
-        for i in range(first_buf, stream['num_bufs']):
+        for i in range(first_buf, stream.num_bufs):
             cap.queue(cap.vbuffers[i])
 
     for stream in streams:
-        if 'size' in stream:
-            print(f'{stream["dev_path"]}: stream on {stream["size"]}-{stream["format"].name}')
+        if stream.size:
+            print(f'{stream.dev_path}: stream on {stream.size}-{stream.format.name}')
         else:
-            streamer: VideoCaptureStreamer = stream['cap']
+            streamer = typing.cast(VideoCaptureStreamer, stream.cap)
             strides = '/'.join(map(str, streamer.strides))
             bufsizes = '/'.join(map(str, streamer.buffersizes))
-            print(f'{stream["dev_path"]}: stream on {stream["w"]}x{stream["h"]}-{stream["format"].name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
-        stream['cap'].stream_on()
+            print(f'{stream.dev_path}: stream on {stream.w}x{stream.h}-{stream.format.name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
+        stream.cap.stream_on()
 
     for stream in streams:
-        stream['total_num_frames'] = 0
-        stream['last_framenum'] = 0
-        stream['last_timestamp'] = time.perf_counter()
+        stream.total_num_frames = 0
+        stream.last_framenum = 0
+        stream.last_timestamp = time.perf_counter()
 
     if ctx.user_script:
         ctx.updater = ctx.user_script.Updater(sctx.subdevices)
@@ -247,7 +258,7 @@ def setup_sctx(sctx: Subcontext):
 
 
 def queue_buf(stream: Stream, vbuf: v4l2.VideoBuffer):
-    cap = stream['cap']
+    cap = stream.cap
     cap.queue(vbuf)
 
 
@@ -255,41 +266,41 @@ def readvid(sctx: Subcontext, stream: Stream):
     ctx = sctx.ctx
 
     if ctx.verbose:
-        print('{}: event'.format(stream['dev_path']))
+        print('{}: event'.format(stream.dev_path))
 
     if ctx.updater:
         ctx.updater.update()
 
-    stream['total_num_frames'] += 1
+    stream.total_num_frames += 1
 
-    if stream['total_num_frames'] == ctx.exit_num_frames:
+    if stream.total_num_frames == ctx.exit_num_frames:
         ctx.exit = True
 
     # With IPython we have separate fps tracking
     if not ctx.use_ipython:
         ts = time.perf_counter()
 
-        diff = ts - stream['last_timestamp']
-        num_frames = stream['total_num_frames'] - stream['last_framenum']
+        diff = ts - stream.last_timestamp
+        num_frames = stream.total_num_frames - stream.last_framenum
 
-        if stream['total_num_frames'] == 1:
+        if stream.total_num_frames == 1:
             print('{}: first frame in {:.2f} s'
-                  .format(stream['dev_path'], diff))
+                  .format(stream.dev_path, diff))
 
         if diff >= 1:
             print('{}: {} frames in {:.2f} s, {:.2f} fps'
-                  .format(stream['dev_path'], num_frames, diff, num_frames / diff))
+                  .format(stream.dev_path, num_frames, diff, num_frames / diff))
 
-            stream['last_timestamp'] = ts
-            stream['last_framenum'] = stream['total_num_frames']
+            stream.last_timestamp = ts
+            stream.last_framenum = stream.total_num_frames
 
-    cap = stream['cap']
+    cap = stream.cap
     vbuf = cap.dequeue()
 
     fb = None
 
     if ctx.buf_type == 'drm':
-        fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
+        fb = next((fb for fb in stream.fbs if fb.fd(0) == vbuf.fd), None)
         assert fb is not None
 
     if ctx.save:
@@ -306,8 +317,8 @@ def readkey(ctx: Context):
         streams = sctx.streams
 
         for stream in reversed(streams):
-            print(f'{stream["dev_path"]}: stream off')
-            stream['cap'].stream_off()
+            print(f'{stream.dev_path}: stream off')
+            stream.cap.stream_off()
 
     print('Done')
     sys.stdin.readline()
@@ -328,7 +339,7 @@ def run(ctx: Context):
 
     for sctx in ctx.subcontexts:
         for stream in sctx.streams:
-            sel.register(stream['cap'].fd,
+            sel.register(stream.cap.fd,
                         selectors.EVENT_READ | selectors.EVENT_WRITE,
                         lambda data=stream: readvid(sctx, data))
 
@@ -370,7 +381,7 @@ def main():
     if ctx.print_config:
         for sctx in ctx.subcontexts:
             for stream in sctx.streams:
-                pprint.pprint(stream)
+                pprint.pprint(vars(stream))
 
     if ctx.config_only:
         sys.exit(0)

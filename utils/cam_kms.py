@@ -33,110 +33,104 @@ class KmsContext:
             self.conn = conn
             self.modeb = modeb
 
-        num_planes = sum(1 for stream in streams if ctx.use_display and stream.get('display', True))
+        num_planes = sum(1 for stream in streams if ctx.use_display and stream.display)
 
         display_idx = 0
 
         for stream in streams:
-            if stream.get('dra-plane-hack', False):
-                # Hack to reserve the unscaleable GFX plane
-                assert res is not None
-                assert crtc is not None
-                res.reserve_generic_plane(crtc, v4l2.PixelFormats.RGB565)
-
-            if isinstance(stream['size'], int):
-                stream['kms-buf-w'] = stream['size']
-                stream['kms-buf-h'] = 1
+            if isinstance(stream.size, int):
+                stream.kms_buf_w = stream.size
+                stream.kms_buf_h = 1
             else:
-                stream['kms-buf-w'] = stream['w']
-                stream['kms-buf-h'] = stream['h']
+                stream.kms_buf_w = stream.w
+                stream.kms_buf_h = stream.h
 
-            if 'kms-format' not in stream:
-                if isinstance(stream['format'], v4l2.MetaFormat):
+            if not hasattr(stream, 'kms_format'):
+                if isinstance(stream.format, v4l2.MetaFormat):
                     raise RuntimeError('No KMS format specified')
 
-                stream['kms-format'] = stream['format']
+                stream.kms_format = stream.format
 
-            if not stream['kms-format'].drm_fourcc:
+            if not stream.kms_format.drm_fourcc:
                 raise RuntimeError('No KMS format available or specified')
 
-            if stream['format'] != stream['kms-format']:
-                if (isinstance(stream['format'], v4l2.PixelFormat) and
-                    len(stream['format'].planes) > 1):
+            if stream.format != stream.kms_format:
+                if (isinstance(stream.format, v4l2.PixelFormat) and
+                    len(stream.format.planes) > 1):
                     raise RuntimeError('Unable to adjust formats with more than one plane')
 
-                print(f'Aligning V4L2 and KMS formats: {stream["format"]}, {stream["kms-format"]}')
+                print(f'Aligning V4L2 and KMS formats: {stream.format}, {stream.kms_format}')
 
-                kms_w = stream['kms-buf-w']
+                kms_w = stream.kms_buf_w
 
-                if isinstance(stream['format'], v4l2.MetaFormat):
-                    v4l2_stride = stream['format'].stride(kms_w)
+                if isinstance(stream.format, v4l2.MetaFormat):
+                    v4l2_stride = stream.format.stride(kms_w)
                 else:
-                    v4l2_stride = stream['format'].stride(kms_w, plane=0)
+                    v4l2_stride = stream.format.stride(kms_w, plane=0)
 
-                kms_stride = stream['kms-format'].stride(kms_w, plane=0)
+                kms_stride = stream.kms_format.stride(kms_w, plane=0)
 
                 if kms_stride % v4l2_stride == 0:
-                    stream['kms-buf-w'] //= kms_stride // v4l2_stride
+                    stream.kms_buf_w //= kms_stride // v4l2_stride
                 else:
                     raise RuntimeError('Unable to adjust formats')
 
-                if kms_w != stream['kms-buf-w']:
-                    print(f'Adjusted kms width from {kms_w} to {stream["kms-buf-w"]}')
+                if kms_w != stream.kms_buf_w:
+                    print(f'Adjusted kms width from {kms_w} to {stream.kms_buf_w}')
 
-            if ctx.buf_type == 'drm' and stream.get('embedded', False):
+            if ctx.buf_type == 'drm' and stream.embedded:
                 divs = [16, 8, 4, 2, 1]
                 div = None
                 w = None
                 for div in divs:
-                    w = stream['kms-buf-w'] // div
+                    w = stream.kms_buf_w // div
                     if w % 2 == 0:
                         break
 
                 assert div is not None
                 assert w is not None
 
-                h = stream['kms-buf-h'] * div
+                h = stream.kms_buf_h * div
 
-                stream['kms-buf-w'] = w
-                stream['kms-buf-h'] = h
+                stream.kms_buf_w = w
+                stream.kms_buf_h = h
 
-            if stream['display']:
+            if stream.display:
                 assert mode is not None
                 max_w = mode.hdisplay // (1 if num_planes == 1 else 2)
                 max_h = mode.vdisplay // (1 if num_planes <= 2 else 2)
 
-                stream['kms-src-w'] = min(stream['kms-buf-w'], max_w)
-                stream['kms-src-h'] = min(stream['kms-buf-h'], max_h)
-                stream['kms-src-x'] = (stream['kms-buf-w'] - stream['kms-src-w']) // 2
-                stream['kms-src-y'] = (stream['kms-buf-h'] - stream['kms-src-h']) // 2
+                stream.kms_src_w = min(stream.kms_buf_w, max_w)
+                stream.kms_src_h = min(stream.kms_buf_h, max_h)
+                stream.kms_src_x = (stream.kms_buf_w - stream.kms_src_w) // 2
+                stream.kms_src_y = (stream.kms_buf_h - stream.kms_src_h) // 2
 
-                stream['kms-dst-w']  =stream['kms-src-w']
-                stream['kms-dst-h'] = stream['kms-src-h']
+                stream.kms_dst_w  =stream.kms_src_w
+                stream.kms_dst_h = stream.kms_src_h
 
                 if display_idx % 2 == 0:
-                    stream['kms-dst-x'] = 0
+                    stream.kms_dst_x = 0
                 else:
-                    stream['kms-dst-x'] = mode.hdisplay - stream['kms-dst-w']
+                    stream.kms_dst_x = mode.hdisplay - stream.kms_dst_w
 
                 if display_idx // 2 == 0:
-                    stream['kms-dst-y'] = 0
+                    stream.kms_dst_y = 0
                 else:
-                    stream['kms-dst-y'] = mode.vdisplay - stream['kms-dst-h']
+                    stream.kms_dst_y = mode.vdisplay - stream.kms_dst_h
 
                 display_idx += 1
 
                 assert res is not None
                 assert crtc is not None
-                plane = res.reserve_generic_plane(crtc, stream['kms-format'])
+                plane = res.reserve_generic_plane(crtc, stream.kms_format)
                 assert(plane)
-                stream['plane'] = plane
+                stream.plane = plane
 
     def alloc_fbs(self, stream: Stream):
         fbs = []
-        cap = stream['cap']
-        for i in range(stream['num_bufs']):
-            fb = kms.DumbFramebuffer(self.card, stream['kms-buf-w'], stream['kms-buf-h'], stream['kms-format'])
+        cap = stream.cap
+        for i in range(stream.num_bufs):
+            fb = kms.DumbFramebuffer(self.card, stream.kms_buf_w, stream.kms_buf_h, stream.kms_format)
             fbs.append(fb)
 
             if isinstance(cap.format, v4l2.PixelFormat):
@@ -146,7 +140,7 @@ class KmsContext:
             else:
                 pass
 
-        stream['fbs'] = fbs
+        stream.fbs = fbs
 
     def setup_stream(self, stream: Stream):
         ctx = self.ctx
@@ -154,25 +148,25 @@ class KmsContext:
         assert(ctx.buf_type == 'drm')
 
         # Set fb0 to screen
-        fb = stream['fbs'][0]
-        plane = stream['plane']
+        fb = stream.fbs[0]
+        plane = stream.plane
 
         plane.set_props({
             'FB_ID': fb.id,
             'CRTC_ID': self.crtc.id,
-            'SRC_X': stream['kms-src-x'] << 16,
-            'SRC_Y': stream['kms-src-y'] << 16,
-            'SRC_W': stream['kms-src-w'] << 16,
-            'SRC_H': stream['kms-src-h'] << 16,
-            'CRTC_X': stream['kms-dst-x'],
-            'CRTC_Y': stream['kms-dst-y'],
-            'CRTC_W': stream['kms-dst-w'],
-            'CRTC_H': stream['kms-dst-h'],
+            'SRC_X': stream.kms_src_x << 16,
+            'SRC_Y': stream.kms_src_y << 16,
+            'SRC_W': stream.kms_src_w << 16,
+            'SRC_H': stream.kms_src_h << 16,
+            'CRTC_X': stream.kms_dst_x,
+            'CRTC_Y': stream.kms_dst_y,
+            'CRTC_W': stream.kms_dst_w,
+            'CRTC_H': stream.kms_dst_h,
         })
 
-        stream['kms_old_fb'] = None
-        stream['kms_fb'] = fb
-        stream['kms_fb_queue'] = deque()
+        stream.kms_old_fb = None
+        stream.kms_fb = fb
+        stream.kms_fb_queue = deque()
 
 
     def init_modeset(self):
@@ -187,8 +181,8 @@ class KmsContext:
                 'MODE_ID': self.modeb.id})
 
         for stream in streams:
-            if 'plane' in stream:
-                req.add(stream['plane'], 'FB_ID', stream['kms_fb'].id)
+            if stream.display:
+                req.add(stream.plane, 'FB_ID', stream.kms_fb.id)
 
         req.commit_sync(allow_modeset = True)
 
@@ -211,32 +205,32 @@ class KmsContext:
         do_commit = False
 
         for stream in streams:
-            if not stream['display']:
+            if not stream.display:
                 continue
 
-            #print(f'Page flip {stream['dev_path']}: kms_fb_queue {len(stream['kms_fb_queue'])}, new_fb {stream['kms_fb']}, old_fb {stream['kms_old_fb']}')
+            #print(f'Page flip {stream.dev_path}: kms_fb_queue {len(stream.kms_fb_queue)}, new_fb {stream.kms_fb}, old_fb {stream.kms_old_fb}')
 
-            cap = stream['cap']
+            cap = stream.cap
 
-            if stream['kms_old_fb']:
-                fb = stream['kms_old_fb']
+            if stream.kms_old_fb:
+                fb = stream.kms_old_fb
 
                 # XXX we should just track the vbufs in streams, instead of looking
                 # for the vbuf based on the drm fb
                 vbuf = next(vbuf for vbuf in cap.vbuffers if vbuf.fd == fb.fd(0))
 
                 cap.queue(vbuf)
-                stream['kms_old_fb'] = None
+                stream.kms_old_fb = None
 
-            if len(stream['kms_fb_queue']) == 0:
+            if len(stream.kms_fb_queue) == 0:
                 continue
 
-            stream['kms_old_fb'] = stream['kms_fb']
+            stream.kms_old_fb = stream.kms_fb
 
-            fb = stream['kms_fb_queue'].popleft()
-            stream['kms_fb'] = fb
+            fb = stream.kms_fb_queue.popleft()
+            stream.kms_fb = fb
 
-            plane = stream['plane']
+            plane = stream.plane
 
             req.add(plane, 'FB_ID', fb.id)
 
@@ -262,7 +256,7 @@ class DisplayConsumer(Consumer):
     def setup_stream(self, ctx: Context, stream: Stream):
         if ctx.buf_type == 'drm':
             self.kms_ctx.alloc_fbs(stream)
-        if stream['display']:
+        if stream.display:
             self.kms_ctx.setup_stream(stream)
 
     def setup_streams_done(self, ctx: Context):
@@ -275,15 +269,15 @@ class DisplayConsumer(Consumer):
         fb = None
 
         if ctx.buf_type == 'drm':
-            fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
+            fb = next((fb for fb in stream.fbs if fb.fd(0) == vbuf.fd), None)
             assert fb is not None
 
-        if stream['display']:
+        if stream.display:
             assert fb is not None
-            stream['kms_fb_queue'].append(fb)
+            stream.kms_fb_queue.append(fb)
 
-            if len(stream['kms_fb_queue']) >= stream['num_bufs'] - 1:
-                print('WARNING fb_queue {}'.format(len(stream['kms_fb_queue'])))
+            if len(stream.kms_fb_queue) >= stream.num_bufs - 1:
+                print('WARNING fb_queue {}'.format(len(stream.kms_fb_queue)))
 
             if not ctx.kms_committed:
                 self.kms_ctx.handle_pageflip()

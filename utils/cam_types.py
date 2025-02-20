@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections import deque
 from selectors import BaseSelector
-from typing import TypedDict, Callable
+from typing import Callable
 import types
 
 from kms import DumbFramebuffer, Plane
@@ -20,45 +20,41 @@ class Updater(ABC):
     def update(self):
         pass
 
-Stream = TypedDict(
-    'Stream',
-    {
-        'id': int,
-        'num_bufs': int,
-        'display': bool,
-        'embedded': bool,
-        'fmt': tuple[int, int, pix_or_meta_fmt] | tuple[int, pix_or_meta_fmt],
-        'w': int,
-        'h': int,
-        'size': int | tuple[int, int],
-        'format': pix_or_meta_fmt,
-        'entity': str,
-        'dev_path': str,
-        'dev': VideoDevice,
-        'device': tuple[str, str],
-        'cap': CaptureStreamer,
-        'fbs': list[DumbFramebuffer],
-        'kms-buf-w': int,
-        'kms-buf-h': int,
-        'kms-format': PixelFormat,
-        'kms-src-w': int,
-        'kms-src-h': int,
-        'kms-src-x': int,
-        'kms-src-y': int,
-        'kms-dst-w': int,
-        'kms-dst-h': int,
-        'kms-dst-x': int,
-        'kms-dst-y': int,
-        'kms_old_fb': DumbFramebuffer | None,
-        'kms_fb': DumbFramebuffer,
-        'kms_fb_queue': deque,
-        'plane': Plane,
-        'total_num_frames': int,
-        'last_framenum': int,
-        'last_timestamp': float,
-        'tx_buf': VideoBuffer | None,
-    },
-)
+class Stream:
+    id: int
+    num_bufs: int
+    display: bool
+    embedded: bool
+    fmt: tuple[int, int, pix_or_meta_fmt] | tuple[int, pix_or_meta_fmt]
+    w: int
+    h: int
+    size: int | tuple[int, int]
+    format: pix_or_meta_fmt
+    entity: str
+    dev_path: str
+    dev: VideoDevice
+    device: tuple[str, str]
+    cap: CaptureStreamer
+    fbs: list[DumbFramebuffer]
+    kms_buf_w: int
+    kms_buf_h: int
+    kms_format: PixelFormat
+    kms_src_w: int
+    kms_src_h: int
+    kms_src_x: int
+    kms_src_y: int
+    kms_dst_w: int
+    kms_dst_h: int
+    kms_dst_x: int
+    kms_dst_y: int
+    kms_old_fb: DumbFramebuffer | None
+    kms_fb: DumbFramebuffer
+    kms_fb_queue: deque
+    plane: Plane
+    total_num_frames: int
+    last_framenum: int
+    last_timestamp: float
+    tx_buf: VideoBuffer | None
 
 # Media device context
 class Subcontext:

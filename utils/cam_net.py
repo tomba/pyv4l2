@@ -19,7 +19,7 @@ class NetTX:
         self.sock.connect((host, port))
 
     def tx(self, stream: Stream, vbuf, is_drm):
-        cap = stream['cap']
+        cap = stream.cap
 
         plane_sizes = cap.buffersizes
         strides = cap.strides
@@ -28,7 +28,7 @@ class NetTX:
         plane_sizes.extend(0 for _ in range(4 - len(plane_sizes)))
         strides.extend(0 for _ in range(4 - len(strides)))
 
-        fmt = stream['format']
+        fmt = stream.format
 
         if isinstance(fmt, MetaFormat):
             num_planes = 1
@@ -36,9 +36,9 @@ class NetTX:
             num_planes = len(fmt.planes)
 
         hdr = NetTX.struct_fmt.pack(
-            stream['id'],
-            stream['w'],
-            stream['h'],
+            stream.id,
+            stream.w,
+            stream.h,
             *strides,
             bytes(fmt.name, 'ascii'),
             num_planes,
@@ -48,7 +48,7 @@ class NetTX:
         self.sock.sendall(hdr)
 
         if is_drm:
-            fb = next((fb for fb in stream['fbs'] if fb.fd(0) == vbuf.fd), None)
+            fb = next((fb for fb in stream.fbs if fb.fd(0) == vbuf.fd), None)
             assert fb is not None
 
             with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
@@ -72,7 +72,7 @@ class NetConsumer(Consumer):
         self.net_thread = None
 
     def setup_stream(self, ctx: Context, stream: Stream):
-        stream['tx_buf'] = None
+        stream.tx_buf = None
 
     def setup_streams_done(self, ctx: Context):
         self.net_thread = threading.Thread(target=self.net_main)
@@ -81,14 +81,14 @@ class NetConsumer(Consumer):
     def handle_frame(self, ctx: Context, stream: Stream, vbuf):
         assert ctx.tx
 
-        if ctx.tx != ['all'] and str(stream['id']) not in ctx.tx:
+        if ctx.tx != ['all'] and str(stream.id) not in ctx.tx:
             return
 
-        if stream['tx_buf']:
+        if stream.tx_buf:
             # Already sending a frame
             return
 
-        stream['tx_buf'] = vbuf
+        stream.tx_buf = vbuf
         self.net_tx_queue.put((stream, vbuf, ctx.buf_type == 'drm'))
 
     def cleanup(self, ctx: Context):
@@ -108,7 +108,7 @@ class NetConsumer(Consumer):
     def handle_tick(self, ctx: Context):
         while not self.net_done_queue.empty():
             stream, vbuf = self.net_done_queue.get()
-            stream['tx_buf'] = None
+            stream.tx_buf = None
 
-            cap = stream['cap']
+            cap = stream.cap
             cap.queue(vbuf)

@@ -37,15 +37,15 @@ def run_ipython(ctx, sel):
 
             ts = time.perf_counter()
 
-            diff = ts - stream['last_timestamp']
-            num_frames = stream['total_num_frames'] - stream['last_framenum']
+            diff = ts - stream.last_timestamp
+            num_frames = stream.total_num_frames - stream.last_framenum
 
             fps = num_frames / diff
 
             fps_str = '[frames:{:8} fps:{:5.2f}]\n'.format(ctx.streams[0]['total_num_frames'], fps)
 
-            stream['last_timestamp'] = ts
-            stream['last_framenum'] = stream['total_num_frames']
+            stream.last_timestamp = ts
+            stream.last_framenum = stream.total_num_frames
 
             return [
                 (Token, fps_str),
