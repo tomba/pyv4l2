@@ -11,26 +11,26 @@ from cam_types import Stream, Context, Consumer
 
 class KmsStream:
     stream: Stream
-    kms_buf_w: int
-    kms_buf_h: int
-    kms_format: kms.PixelFormat
-    kms_src_w: int
-    kms_src_h: int
-    kms_src_x: int
-    kms_src_y: int
-    kms_dst_w: int
-    kms_dst_h: int
-    kms_dst_x: int
-    kms_dst_y: int
-    kms_old_fb: kms.DumbFramebuffer | None
-    kms_fb: kms.DumbFramebuffer
-    kms_fb_queue: deque
+    buf_w: int
+    buf_h: int
+    format: kms.PixelFormat
+    src_w: int
+    src_h: int
+    src_x: int
+    src_y: int
+    dst_w: int
+    dst_h: int
+    dst_x: int
+    dst_y: int
+    old_fb: kms.DumbFramebuffer | None
+    fb: kms.DumbFramebuffer
+    fb_queue: deque
     plane: kms.Plane
 
 class KmsContext:
     def __init__(self, ctx: Context) -> None:
         self.ctx = ctx
-        self.kms_committed = False
+        self.committed = False
 
         self.kms_streams: dict[int, KmsStream] = {}
 
@@ -69,92 +69,92 @@ class KmsContext:
             stream = kms_stream.stream
 
             if isinstance(stream.size, int):
-                kms_stream.kms_buf_w = stream.size
-                kms_stream.kms_buf_h = 1
+                kms_stream.buf_w = stream.size
+                kms_stream.buf_h = 1
             else:
-                kms_stream.kms_buf_w = stream.w
-                kms_stream.kms_buf_h = stream.h
+                kms_stream.buf_w = stream.w
+                kms_stream.buf_h = stream.h
 
             if not hasattr(stream, 'kms_format'):
                 if isinstance(stream.format, v4l2.MetaFormat):
                     raise RuntimeError('No KMS format specified')
 
-                kms_stream.kms_format = stream.format
+                kms_stream.format = stream.format
             else:
-                kms_stream.kms_format = stream.kms_format
+                kms_stream.format = stream.kms_format
 
-            if not kms_stream.kms_format.drm_fourcc:
+            if not kms_stream.format.drm_fourcc:
                 raise RuntimeError('No KMS format available or specified')
 
-            if stream.format != kms_stream.kms_format:
+            if stream.format != kms_stream.format:
                 if (isinstance(stream.format, v4l2.PixelFormat) and
                     len(stream.format.planes) > 1):
                     raise RuntimeError('Unable to adjust formats with more than one plane')
 
-                print(f'Aligning V4L2 and KMS formats: {stream.format}, {kms_stream.kms_format}')
+                print(f'Aligning V4L2 and KMS formats: {stream.format}, {kms_stream.format}')
 
-                kms_w = kms_stream.kms_buf_w
+                kms_w = kms_stream.buf_w
 
                 if isinstance(stream.format, v4l2.MetaFormat):
                     v4l2_stride = stream.format.stride(kms_w)
                 else:
                     v4l2_stride = stream.format.stride(kms_w, plane=0)
 
-                kms_stride = kms_stream.kms_format.stride(kms_w, plane=0)
+                kms_stride = kms_stream.format.stride(kms_w, plane=0)
 
                 if kms_stride % v4l2_stride == 0:
-                    kms_stream.kms_buf_w //= kms_stride // v4l2_stride
+                    kms_stream.buf_w //= kms_stride // v4l2_stride
                 else:
                     raise RuntimeError('Unable to adjust formats')
 
-                if kms_w != kms_stream.kms_buf_w:
-                    print(f'Adjusted kms width from {kms_w} to {kms_stream.kms_buf_w}')
+                if kms_w != kms_stream.buf_w:
+                    print(f'Adjusted kms width from {kms_w} to {kms_stream.buf_w}')
 
             if ctx.buf_type == 'drm' and stream.embedded:
                 divs = [16, 8, 4, 2, 1]
                 div = None
                 w = None
                 for div in divs:
-                    w = kms_stream.kms_buf_w // div
+                    w = kms_stream.buf_w // div
                     if w % 2 == 0:
                         break
 
                 assert div is not None
                 assert w is not None
 
-                h = kms_stream.kms_buf_h * div
+                h = kms_stream.buf_h * div
 
-                kms_stream.kms_buf_w = w
-                kms_stream.kms_buf_h = h
+                kms_stream.buf_w = w
+                kms_stream.buf_h = h
 
             if stream.display:
                 assert mode is not None
                 max_w = mode.hdisplay // (1 if num_planes == 1 else 2)
                 max_h = mode.vdisplay // (1 if num_planes <= 2 else 2)
 
-                kms_stream.kms_src_w = min(kms_stream.kms_buf_w, max_w)
-                kms_stream.kms_src_h = min(kms_stream.kms_buf_h, max_h)
-                kms_stream.kms_src_x = (kms_stream.kms_buf_w - kms_stream.kms_src_w) // 2
-                kms_stream.kms_src_y = (kms_stream.kms_buf_h - kms_stream.kms_src_h) // 2
+                kms_stream.src_w = min(kms_stream.buf_w, max_w)
+                kms_stream.src_h = min(kms_stream.buf_h, max_h)
+                kms_stream.src_x = (kms_stream.buf_w - kms_stream.src_w) // 2
+                kms_stream.src_y = (kms_stream.buf_h - kms_stream.src_h) // 2
 
-                kms_stream.kms_dst_w  =kms_stream.kms_src_w
-                kms_stream.kms_dst_h = kms_stream.kms_src_h
+                kms_stream.dst_w  =kms_stream.src_w
+                kms_stream.dst_h = kms_stream.src_h
 
                 if display_idx % 2 == 0:
-                    kms_stream.kms_dst_x = 0
+                    kms_stream.dst_x = 0
                 else:
-                    kms_stream.kms_dst_x = mode.hdisplay - kms_stream.kms_dst_w
+                    kms_stream.dst_x = mode.hdisplay - kms_stream.dst_w
 
                 if display_idx // 2 == 0:
-                    kms_stream.kms_dst_y = 0
+                    kms_stream.dst_y = 0
                 else:
-                    kms_stream.kms_dst_y = mode.vdisplay - kms_stream.kms_dst_h
+                    kms_stream.dst_y = mode.vdisplay - kms_stream.dst_h
 
                 display_idx += 1
 
                 assert res is not None
                 assert crtc is not None
-                plane = res.reserve_generic_plane(crtc, kms_stream.kms_format)
+                plane = res.reserve_generic_plane(crtc, kms_stream.format)
                 assert(plane)
                 kms_stream.plane = plane
 
@@ -165,7 +165,7 @@ class KmsContext:
         fbs = []
         cap = stream.cap
         for i in range(stream.num_bufs):
-            fb = kms.DumbFramebuffer(self.card, kms_stream.kms_buf_w, kms_stream.kms_buf_h, kms_stream.kms_format)
+            fb = kms.DumbFramebuffer(self.card, kms_stream.buf_w, kms_stream.buf_h, kms_stream.format)
             fbs.append(fb)
 
             if isinstance(cap.format, v4l2.PixelFormat):
@@ -191,19 +191,19 @@ class KmsContext:
         plane.set_props({
             'FB_ID': fb.id,
             'CRTC_ID': self.crtc.id,
-            'SRC_X': kms_stream.kms_src_x << 16,
-            'SRC_Y': kms_stream.kms_src_y << 16,
-            'SRC_W': kms_stream.kms_src_w << 16,
-            'SRC_H': kms_stream.kms_src_h << 16,
-            'CRTC_X': kms_stream.kms_dst_x,
-            'CRTC_Y': kms_stream.kms_dst_y,
-            'CRTC_W': kms_stream.kms_dst_w,
-            'CRTC_H': kms_stream.kms_dst_h,
+            'SRC_X': kms_stream.src_x << 16,
+            'SRC_Y': kms_stream.src_y << 16,
+            'SRC_W': kms_stream.src_w << 16,
+            'SRC_H': kms_stream.src_h << 16,
+            'CRTC_X': kms_stream.dst_x,
+            'CRTC_Y': kms_stream.dst_y,
+            'CRTC_W': kms_stream.dst_w,
+            'CRTC_H': kms_stream.dst_h,
         })
 
-        kms_stream.kms_old_fb = None
-        kms_stream.kms_fb = fb
-        kms_stream.kms_fb_queue = deque()
+        kms_stream.old_fb = None
+        kms_stream.fb = fb
+        kms_stream.fb_queue = deque()
 
 
     def init_modeset(self):
@@ -216,7 +216,7 @@ class KmsContext:
                 'MODE_ID': self.modeb.id})
 
         for kms_stream in self.kms_streams.values():
-            req.add(kms_stream.plane, 'FB_ID', kms_stream.kms_fb.id)
+            req.add(kms_stream.plane, 'FB_ID', kms_stream.fb.id)
 
         req.commit_sync(allow_modeset = True)
 
@@ -230,7 +230,7 @@ class KmsContext:
 
         assert ctx.buf_type == 'drm'
 
-        self.kms_committed = False
+        self.committed = False
 
         req = kms.AtomicReq(self.card)
 
@@ -243,23 +243,23 @@ class KmsContext:
 
             cap = stream.cap
 
-            if kms_stream.kms_old_fb:
-                fb = kms_stream.kms_old_fb
+            if kms_stream.old_fb:
+                fb = kms_stream.old_fb
 
                 # XXX we should just track the vbufs in streams, instead of looking
                 # for the vbuf based on the drm fb
                 vbuf = next(vbuf for vbuf in cap.vbuffers if vbuf.fd == fb.fd(0))
 
                 cap.queue(vbuf)
-                kms_stream.kms_old_fb = None
+                kms_stream.old_fb = None
 
-            if len(kms_stream.kms_fb_queue) == 0:
+            if len(kms_stream.fb_queue) == 0:
                 continue
 
-            kms_stream.kms_old_fb = kms_stream.kms_fb
+            kms_stream.old_fb = kms_stream.fb
 
-            fb = kms_stream.kms_fb_queue.popleft()
-            kms_stream.kms_fb = fb
+            fb = kms_stream.fb_queue.popleft()
+            kms_stream.fb = fb
 
             plane = kms_stream.plane
 
@@ -269,7 +269,7 @@ class KmsContext:
 
         if do_commit:
             req.commit(allow_modeset = False)
-            self.kms_committed = True
+            self.committed = True
 
     def readdrm(self):
         #print('EVENT')
@@ -310,12 +310,12 @@ class DisplayConsumer(Consumer):
             assert fb is not None
 
         assert fb is not None
-        kms_stream.kms_fb_queue.append(fb)
+        kms_stream.fb_queue.append(fb)
 
-        if len(kms_stream.kms_fb_queue) >= stream.num_bufs - 1:
-            print('WARNING fb_queue {}'.format(len(kms_stream.kms_fb_queue)))
+        if len(kms_stream.fb_queue) >= stream.num_bufs - 1:
+            print('WARNING fb_queue {}'.format(len(kms_stream.fb_queue)))
 
-        if not self.kms_ctx.kms_committed:
+        if not self.kms_ctx.committed:
             self.kms_ctx.handle_pageflip()
 
     def cleanup(self, ctx: Context):
