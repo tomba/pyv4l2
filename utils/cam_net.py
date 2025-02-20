@@ -70,9 +70,10 @@ class NetConsumer(Consumer):
         self.net_tx_queue = queue.Queue()
         self.net_done_queue = queue.Queue()
         self.net_thread = None
+        self.current_buf = { }
 
     def setup_stream(self, ctx: Context, stream: Stream):
-        stream.tx_buf = None
+        self.current_buf[stream.id] = None
 
     def setup_streams_done(self, ctx: Context):
         self.net_thread = threading.Thread(target=self.net_main)
@@ -84,11 +85,11 @@ class NetConsumer(Consumer):
         if ctx.tx != ['all'] and str(stream.id) not in ctx.tx:
             return
 
-        if stream.tx_buf:
+        if self.current_buf[stream.id]:
             # Already sending a frame
             return
 
-        stream.tx_buf = vbuf
+        self.current_buf[stream.id] = vbuf
         self.net_tx_queue.put((stream, vbuf, ctx.buf_type == 'drm'))
 
     def cleanup(self, ctx: Context):
@@ -108,7 +109,7 @@ class NetConsumer(Consumer):
     def handle_tick(self, ctx: Context):
         while not self.net_done_queue.empty():
             stream, vbuf = self.net_done_queue.get()
-            stream.tx_buf = None
+            self.current_buf[stream.id] = None
 
             cap = stream.cap
             cap.queue(vbuf)

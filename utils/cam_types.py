@@ -10,7 +10,7 @@ from kms import DumbFramebuffer, Plane
 
 import v4l2
 from v4l2 import PixelFormat, MetaFormat
-from v4l2.videodev import CaptureStreamer, VideoBuffer, VideoDevice
+from v4l2.videodev import CaptureStreamer, VideoDevice
 
 
 pix_or_meta_fmt = PixelFormat | MetaFormat
@@ -21,7 +21,7 @@ class Updater(ABC):
         pass
 
 class Stream:
-    id: int
+    id: int # Unique stream ID
     num_bufs: int
     display: bool
     embedded: bool
@@ -54,7 +54,6 @@ class Stream:
     total_num_frames: int
     last_framenum: int
     last_timestamp: float
-    tx_buf: VideoBuffer | None
 
 # Media device context
 class Subcontext:
