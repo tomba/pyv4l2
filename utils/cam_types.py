@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections import deque
 from selectors import BaseSelector
 from typing import Callable
 import types
 
-from kms import DumbFramebuffer, Plane
+from kms import DumbFramebuffer
 
 import v4l2
 from v4l2 import PixelFormat, MetaFormat
@@ -35,25 +34,13 @@ class Stream:
     dev: VideoDevice
     device: tuple[str, str]
     cap: CaptureStreamer
-    fbs: list[DumbFramebuffer]
-    kms_buf_w: int
-    kms_buf_h: int
-    kms_format: PixelFormat
-    kms_src_w: int
-    kms_src_h: int
-    kms_src_x: int
-    kms_src_y: int
-    kms_dst_w: int
-    kms_dst_h: int
-    kms_dst_x: int
-    kms_dst_y: int
-    kms_old_fb: DumbFramebuffer | None
-    kms_fb: DumbFramebuffer
-    kms_fb_queue: deque
-    plane: Plane
+    fbs: list[DumbFramebuffer] # XXX used from cam_net...
     total_num_frames: int
     last_framenum: int
     last_timestamp: float
+
+    # XXX Hack to get the format from the config to the kms consumer
+    kms_format: PixelFormat
 
 # Media device context
 class Subcontext:
@@ -71,7 +58,6 @@ class Context:
     user_script: types.ModuleType | None
     buf_type: str
     use_display: bool
-    kms_committed: bool
     print_config: bool
     config_only: bool
     delay: int
