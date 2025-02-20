@@ -221,14 +221,21 @@ def setup_sctx(sctx: Subcontext):
 
     for stream in streams:
         cap = stream.cap
-        if ctx.consumer:
-            ctx.consumer.setup_stream(ctx, stream)
 
         if ctx.buf_type == 'drm':
+            # The DisplayConsumer also acts as a DRM buffer allocator...
+
+            import cam_kms
+            kms_consumer = typing.cast(cam_kms.DisplayConsumer, ctx.consumer)
+            kms_consumer.alloc_buffers(ctx, stream)
+
             fds = [fb.fd(0) for fb in stream.fbs]
             cap.reserve_buffers_dmabuf(fds)
         else:
             cap.reserve_buffers(stream.num_bufs)
+
+        if ctx.consumer:
+            ctx.consumer.setup_stream(ctx, stream)
 
         first_buf = 1 if stream.display else 0
 

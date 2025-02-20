@@ -253,9 +253,11 @@ class DisplayConsumer(Consumer):
     def __init__(self, ctx: Context):
         self.kms_ctx = KmsContext(ctx)
 
-    def setup_stream(self, ctx: Context, stream: Stream):
+    def alloc_buffers(self, ctx: Context, stream: Stream):
         if ctx.buf_type == 'drm':
             self.kms_ctx.alloc_fbs(stream)
+
+    def setup_stream(self, ctx: Context, stream: Stream):
         if stream.display:
             self.kms_ctx.setup_stream(stream)
 
