@@ -66,6 +66,7 @@ class Context:
     run_ipython: Callable
     exit: bool
     exit_num_frames: int
+    gl_drm: bool
 
     net_host: str
     net_port: int

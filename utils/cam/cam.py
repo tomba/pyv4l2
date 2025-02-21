@@ -30,6 +30,7 @@ def parse_args(ctx: Context):
     parser.add_argument('-H', '--host', default='192.168.88.20', type=str)
     parser.add_argument('-P', '--port', default=43242, type=int)
     parser.add_argument('-n', '--numframes', default=0, type=int, help='Number of frames to capture')
+    parser.add_argument('--gldrm', action='store_true', default=False, help='show frames on screen with GL + DRM')
     parser.add_argument('config_names', nargs='*', help='<config name>[:<stream name>[,<stream name>...]]')
     args = parser.parse_args()
 
@@ -41,6 +42,7 @@ def parse_args(ctx: Context):
     ctx.exit_num_frames = args.numframes
 
     ctx.use_ipython = args.ipython
+    ctx.gl_drm = args.gldrm
 
     if ctx.use_ipython:
         from cam_ipython import run_ipython
@@ -385,6 +387,10 @@ def main():
     if ctx.tx:
         from cam_net import NetConsumer
         ctx.consumer = NetConsumer(host=ctx.net_host, port=ctx.net_port)
+
+    if ctx.gl_drm:
+        from cam_gl_drm import GLDRMConsumer
+        ctx.consumer = GLDRMConsumer(ctx)
 
     if ctx.print_config:
         for sctx in ctx.subcontexts:
