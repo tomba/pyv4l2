@@ -27,8 +27,8 @@ class KmsStream:
     fb_queue: deque
     plane: kms.Plane
 
-class KmsContext:
-    def __init__(self, ctx: Context) -> None:
+class DisplayConsumer(Consumer):
+    def __init__(self, ctx: Context):
         self.ctx = ctx
         self.committed = False
 
@@ -158,6 +158,10 @@ class KmsContext:
                 assert(plane)
                 kms_stream.plane = plane
 
+    def alloc_buffers(self, ctx: Context, stream: Stream):
+        if ctx.buf_type == 'drm':
+            self.alloc_fbs(stream)
+
     def alloc_fbs(self, stream: Stream):
         # XXX I don't think alloc works for drm buffers that are not displayed (e.g. embedded)
         kms_stream = self.kms_streams[stream.id]
@@ -177,7 +181,14 @@ class KmsContext:
 
         stream.fbs = fbs
 
-    def setup_stream(self, stream: Stream):
+    def setup_stream(self, ctx: Context, stream: Stream) -> bool:
+        if stream.display:
+            self._setup_stream(stream)
+            return True
+        else:
+            return False
+
+    def _setup_stream(self, stream: Stream):
         kms_stream = self.kms_streams[stream.id]
 
         ctx = self.ctx
@@ -205,6 +216,9 @@ class KmsContext:
         kms_stream.fb = fb
         kms_stream.fb_queue = deque()
 
+    def setup_streams_done(self, ctx: Context):
+        if ctx.use_display:
+            self.init_modeset()
 
     def init_modeset(self):
         ctx = self.ctx
@@ -224,6 +238,26 @@ class KmsContext:
             print(f'Waiting for {ctx.delay} seconds')
             time.sleep(ctx.delay)
 
+    def handle_frame(self, ctx: Context, stream: Stream, vbuf):
+        if stream.id not in self.kms_streams:
+            return
+
+        kms_stream = self.kms_streams[stream.id]
+
+        fb = None
+
+        if ctx.buf_type == 'drm':
+            fb = next((fb for fb in stream.fbs if fb.fd(0) == vbuf.fd), None)
+            assert fb is not None
+
+        assert fb is not None
+        kms_stream.fb_queue.append(fb)
+
+        if len(kms_stream.fb_queue) >= stream.num_bufs - 1:
+            print('WARNING fb_queue {}'.format(len(kms_stream.fb_queue)))
+
+        if not self.committed:
+            self.handle_pageflip()
 
     def handle_pageflip(self):
         ctx = self.ctx
@@ -238,8 +272,6 @@ class KmsContext:
 
         for kms_stream in self.kms_streams.values():
             stream = kms_stream.stream
-
-            #print(f'Page flip {stream.dev_path}: kms_fb_queue {len(stream.kms_fb_queue)}, new_fb {stream.kms_fb}, old_fb {stream.kms_old_fb}')
 
             cap = stream.cap
 
@@ -272,57 +304,12 @@ class KmsContext:
             self.committed = True
 
     def readdrm(self):
-        #print('EVENT')
         for ev in self.card.read_events():
             if ev.type == kms.DrmEventType.FLIP_COMPLETE:
                 self.handle_pageflip()
-
-    def register_selector(self, sel: BaseSelector):
-        sel.register(self.card.fd, EVENT_READ, lambda: self.readdrm())
-
-class DisplayConsumer(Consumer):
-    def __init__(self, ctx: Context):
-        self.kms_ctx = KmsContext(ctx)
-
-    def alloc_buffers(self, ctx: Context, stream: Stream):
-        if ctx.buf_type == 'drm':
-            self.kms_ctx.alloc_fbs(stream)
-
-    def setup_stream(self, ctx: Context, stream: Stream) -> bool:
-        if stream.display:
-            self.kms_ctx.setup_stream(stream)
-            return True
-        else:
-            return False
-
-    def setup_streams_done(self, ctx: Context):
-
-        if ctx.use_display:
-            self.kms_ctx.init_modeset()
-
-    def handle_frame(self, ctx: Context, stream: Stream, vbuf):
-        if stream.id not in self.kms_ctx.kms_streams:
-            return
-
-        kms_stream = self.kms_ctx.kms_streams[stream.id]
-
-        fb = None
-
-        if ctx.buf_type == 'drm':
-            fb = next((fb for fb in stream.fbs if fb.fd(0) == vbuf.fd), None)
-            assert fb is not None
-
-        assert fb is not None
-        kms_stream.fb_queue.append(fb)
-
-        if len(kms_stream.fb_queue) >= stream.num_bufs - 1:
-            print('WARNING fb_queue {}'.format(len(kms_stream.fb_queue)))
-
-        if not self.kms_ctx.committed:
-            self.kms_ctx.handle_pageflip()
 
     def cleanup(self, ctx: Context):
         pass
 
     def register_selector(self, sel: BaseSelector):
-        self.kms_ctx.register_selector(sel)
+        sel.register(self.card.fd, EVENT_READ, lambda: self.readdrm())
