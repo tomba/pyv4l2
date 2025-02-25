@@ -21,6 +21,7 @@ class GLBuffer:
     fd: int
     tex: int
     img: egl.EGLImageKHR
+    vbuf_offset: int
 
     def update(self):
         dmabuf_egl_img.update_texture_from_dmabuf(self.display, self.tex, self.img)
@@ -36,3 +37,4 @@ class GLStream:
     current_buf: int
     in_queue: deque[int]
     out_queue: deque[int]
+    cap: VideoCaptureStreamer
