@@ -1,4 +1,5 @@
-#version 300 es
+#version 310 es
+
 precision mediump float;
 precision mediump sampler2D;
 
