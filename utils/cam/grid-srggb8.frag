@@ -17,8 +17,10 @@ out vec4 fragColor;
 // Helper function to fetch and apply black level subtraction
 float fetchPixel(sampler2D tex, ivec2 pos) {
     float rawValue = texelFetch(tex, pos, 0).r;
+    return max(0.0, rawValue - blackLevel); // Prevent negative values
     // Subtract black level and normalize to [0,1] range
-    return max(0.0, (rawValue - blackLevel) / (whiteLevel - blackLevel));
+    //return max(0.0, (rawValue - blackLevel) / (whiteLevel - blackLevel));
+
 }
 
 vec4 demosaic(sampler2D tex, ivec2 pixel) {

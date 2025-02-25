@@ -193,7 +193,6 @@ class GLDRMConsumer(Consumer):
                 gl_stream.stream = stream
                 gl_stream.in_queue = deque()
                 gl_stream.out_queue = deque()
-                gl_stream.cap = cap
 
                 # Add initial buffer
                 gl_stream.in_queue.append(0)
@@ -213,7 +212,6 @@ class GLDRMConsumer(Consumer):
                     gl_buf = GLBuffer()
                     gl_buf.display = egl_state.display
                     gl_buf.fd = vbuf.fd
-                    gl_buf.vbuf_offset = vbuf.offset
                     gl_buf.tex, gl_buf.img = dmabuf_egl_img.create_texture_from_dmabuf(egl_state.display,
                                                                                        vbuf.fd,
                                                                                        gl_stream.width, gl_stream.height,
