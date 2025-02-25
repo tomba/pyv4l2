@@ -64,35 +64,37 @@ void main() {
     ivec2 texSize;
     ivec2 pixel;
 
+    vec2 flippedCoord = vec2(vTexCoord.x, 1.0 - vTexCoord.y);
+
     switch(vTileIndex) {
         case 0:
             texSize = textureSize(textures[0], 0);
-            pixel = ivec2(vTexCoord * vec2(texSize));
+            pixel = ivec2(flippedCoord * vec2(texSize));
             fragColor = demosaic(textures[0], pixel);
             break;
         case 1:
             texSize = textureSize(textures[1], 0);
-            pixel = ivec2(vTexCoord * vec2(texSize));
+            pixel = ivec2(flippedCoord * vec2(texSize));
             fragColor = demosaic(textures[1], pixel);
             break;
         case 2:
             texSize = textureSize(textures[2], 0);
-            pixel = ivec2(vTexCoord * vec2(texSize));
+            pixel = ivec2(flippedCoord * vec2(texSize));
             fragColor = demosaic(textures[2], pixel);
             break;
         case 3:
             texSize = textureSize(textures[3], 0);
-            pixel = ivec2(vTexCoord * vec2(texSize));
+            pixel = ivec2(flippedCoord * vec2(texSize));
             fragColor = demosaic(textures[3], pixel);
             break;
         case 4:
             texSize = textureSize(textures[4], 0);
-            pixel = ivec2(vTexCoord * vec2(texSize));
+            pixel = ivec2(flippedCoord * vec2(texSize));
             fragColor = demosaic(textures[4], pixel);
             break;
         case 5:
             texSize = textureSize(textures[5], 0);
-            pixel = ivec2(vTexCoord * vec2(texSize));
+            pixel = ivec2(flippedCoord * vec2(texSize));
             fragColor = demosaic(textures[5], pixel);
             break;
         default:
