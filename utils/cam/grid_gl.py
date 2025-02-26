@@ -176,15 +176,26 @@ class GlScene:
         gl.glDeleteShader(fs)
         gl.glUseProgram(program)
 
+        black_level = 16 / 255
+        white_level = 1.0
+        white_balance = [1.8, 1.0, 1.5]  # R, G, B (default)
+        gamma = 2.2
+
         # Set the black level uniform
-        black_level = 0.1
         black_level_loc = gl.glGetUniformLocation(program, 'blackLevel')
         gl.glUniform1f(black_level_loc, black_level)
 
+        # Set the white level uniform
+        white_level_loc = gl.glGetUniformLocation(program, 'whiteLevel')
+        gl.glUniform1f(white_level_loc, white_level)
+
         # Set white balance gains
-        white_balance = [1.8, 1.0, 1.5] # R, G, B
         wb_loc = gl.glGetUniformLocation(program, 'whiteBalance')
         gl.glUniform3fv(wb_loc, 1, np.array(white_balance, dtype=np.float32))
+
+        # Set the gamma uniform
+        gamma_loc = gl.glGetUniformLocation(program, 'gamma')
+        gl.glUniform1f(gamma_loc, gamma)
 
         # Set up texture uniforms
         for i in range(self.num_tiles):

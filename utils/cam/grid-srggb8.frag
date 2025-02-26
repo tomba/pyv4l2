@@ -8,54 +8,65 @@ in vec2 vTexCoord;
 flat in int vTileIndex;
 
 uniform float blackLevel;
+uniform float whiteLevel;
 uniform vec3 whiteBalance;
+uniform float gamma;
 uniform sampler2D textures[6];
-const float whiteLevel = 1.0;
 
 out vec4 fragColor;
 
 // Helper function to fetch and apply black level subtraction
 float fetchPixel(sampler2D tex, ivec2 pos) {
     float rawValue = texelFetch(tex, pos, 0).r;
-    return max(0.0, rawValue - blackLevel); // Prevent negative values
-    // Subtract black level and normalize to [0,1] range
-    //return max(0.0, (rawValue - blackLevel) / (whiteLevel - blackLevel));
 
+    // Black level adjustment
+    rawValue = max(0.0, rawValue - blackLevel);
+
+    // White level adjustment
+    rawValue = rawValue / (whiteLevel - blackLevel);
+
+    return rawValue;
 }
 
 vec4 demosaic(sampler2D tex, ivec2 pixel) {
     int x = pixel.x % 2;
     int y = pixel.y % 2;
 
-    float r = 0.0, g = 0.0, b = 0.0;
+    float r, g, b;
 
     if (y == 0) {
         if (x == 0) {
             // Red pixel
-            r = fetchPixel(tex, pixel) * whiteBalance.r;
-            g = (fetchPixel(tex, pixel + ivec2(1, 0)) +
-                 fetchPixel(tex, pixel + ivec2(0, 1))) * 0.5 * whiteBalance.g;
-            b = fetchPixel(tex, pixel + ivec2(1, 1)) * whiteBalance.b;
+            r = fetchPixel(tex, pixel);
+            g = (fetchPixel(tex, pixel + ivec2(1, 0)) + fetchPixel(tex, pixel + ivec2(0, 1))) * 0.5;
+            b = fetchPixel(tex, pixel + ivec2(1, 1));
         } else {
             // Green pixel (in red row)
-            g = fetchPixel(tex, pixel) * whiteBalance.g;
-            r = fetchPixel(tex, pixel - ivec2(1, 0)) * whiteBalance.r;
-            b = fetchPixel(tex, pixel + ivec2(0, 1)) * whiteBalance.b;
+            g = fetchPixel(tex, pixel);
+            r = fetchPixel(tex, pixel - ivec2(1, 0));
+            b = fetchPixel(tex, pixel + ivec2(0, 1));
         }
     } else {
         if (x == 0) {
             // Green pixel (in blue row)
-            g = fetchPixel(tex, pixel) * whiteBalance.g;
-            r = fetchPixel(tex, pixel - ivec2(0, 1)) * whiteBalance.r;
-            b = fetchPixel(tex, pixel + ivec2(1, 0)) * whiteBalance.b;
+            g = fetchPixel(tex, pixel);
+            r = fetchPixel(tex, pixel - ivec2(0, 1));
+            b = fetchPixel(tex, pixel + ivec2(1, 0));
         } else {
             // Blue pixel
-            b = fetchPixel(tex, pixel) * whiteBalance.b;
-            g = (fetchPixel(tex, pixel - ivec2(1, 0)) +
-                 fetchPixel(tex, pixel - ivec2(0, 1))) * 0.5 * whiteBalance.g;
-            r = fetchPixel(tex, pixel - ivec2(1, 1)) * whiteBalance.r;
+            b = fetchPixel(tex, pixel);
+            g = (fetchPixel(tex, pixel - ivec2(1, 0)) + fetchPixel(tex, pixel - ivec2(0, 1))) * 0.5;
+            r = fetchPixel(tex, pixel - ivec2(1, 1));
         }
     }
+
+    r *= whiteBalance.r;
+    g *= whiteBalance.g;
+    b *= whiteBalance.b;
+
+    r = pow(r, 1.0/gamma);
+    g = pow(g, 1.0/gamma);
+    b = pow(b, 1.0/gamma);
 
     return vec4(r, g, b, 1.0);
 }
