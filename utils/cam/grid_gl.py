@@ -192,6 +192,7 @@ class GlScene:
         # Set white balance gains
         wb_loc = gl.glGetUniformLocation(program, 'whiteBalance')
         gl.glUniform3fv(wb_loc, 1, np.array(white_balance, dtype=np.float32))
+        self.wb_loc = wb_loc
 
         # Set the gamma uniform
         gamma_loc = gl.glGetUniformLocation(program, 'gamma')
@@ -229,5 +230,10 @@ class GlScene:
             texture = gl_stream.bufs[cur_idx].tex
 
             gl.glBindTexture(gl.GL_TEXTURE_2D, texture)
+
+        # Use wb coefficients from the first stream for all streams
+        if hasattr(self.gl_streams[0], 'coefs'):
+            coefs = self.gl_streams[0].coefs
+            gl.glUniform3fv(self.wb_loc, 1, coefs)
 
         gl.glDrawArrays(gl.GL_TRIANGLES, 0, 3 * 2 * self.num_tiles)

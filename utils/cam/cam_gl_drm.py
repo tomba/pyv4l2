@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections import deque
+import mmap
 import os
 import time
 import sys
-
 import selectors
 import typing
+
+import numpy as np
 
 import kms
 from cam_types import Context, Consumer
@@ -159,6 +161,12 @@ class GLDRMConsumer(Consumer):
     def __init__(self, ctx: Context):
         self.ctx = ctx
 
+        # Black level and white level scaling LUT
+
+        bl = 16 # Black level
+        wl = 255 # White level
+        self.lut = (np.clip((np.arange(256) - bl), 0, 255) * (255 / (wl - bl))).astype(np.uint8)
+
     def setup_stream(self, ctx, stream):
         # First buffer is taken by the consumer
         return True
@@ -232,10 +240,53 @@ class GLDRMConsumer(Consumer):
 
         self.out = out
 
+
+    def calculate_wb_coefficients(self, raw_image):
+        # Black level and white level scaling with LUT
+        raw_image = self.lut[raw_image]
+
+        # Extract channels based on RGGB pattern
+        R = raw_image[0::2, 0::2]
+        G1 = raw_image[0::2, 1::2]
+        G2 = raw_image[1::2, 0::2]
+        B = raw_image[1::2, 1::2]
+
+        # Calculate channel averages with implicit conversion to float
+        R_avg = np.mean(R)
+        G_avg = (np.mean(G1) + np.mean(G2)) / 2
+        B_avg = np.mean(B)
+
+        # Gray world assumption - normalize to green
+        r_gain = G_avg / R_avg
+        g_gain = 1.0
+        b_gain = G_avg / B_avg
+
+        #print(
+        #    f'avgs: {R_avg:6.2f}, {G_avg:6.2f}, {B_avg:6.2f} coefs: {r_gain:4.2f}, {g_gain:4.2f}, {b_gain:4.2f}'
+        #)
+
+        return [r_gain, g_gain, b_gain]
+
     def handle_frame(self, ctx, stream, vbuf):
         gl_stream = self.gl_streams[stream.id]
         gl_stream.in_queue.append(vbuf.index)
         gl_stream.bufs[vbuf.index].update()
+
+        # Calculate white balance coefficients only for first stream
+        if stream.id == 0:
+            cap = typing.cast(VideoCaptureStreamer, stream.cap)
+            with mmap.mmap(
+                cap.fd,
+                cap.framesize,
+                mmap.MAP_SHARED,
+                mmap.PROT_READ | mmap.PROT_WRITE,
+                offset=vbuf.offset,
+            ) as b:
+                buf = np.frombuffer(b, dtype=np.uint8).reshape((stream.h, stream.w))
+                coefs = self.calculate_wb_coefficients(buf)
+                buf = None
+
+            gl_stream.coefs = coefs
 
     def readdrm(self):
         for ev in self.card.read_events():

@@ -36,3 +36,4 @@ class GLStream:
     current_buf: int
     in_queue: deque[int]
     out_queue: deque[int]
+    coefs: list[float]
