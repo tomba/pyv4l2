@@ -57,7 +57,7 @@ def gen_imx219_pixel(port):
                 ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
-                    (v4l2.uapi.V4L2_CID_DIGITAL_GAIN, 1024),
+                    (v4l2.uapi.V4L2_CID_DIGITAL_GAIN, 512),
                 ],
             },
 
