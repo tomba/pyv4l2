@@ -338,8 +338,8 @@ def run(ctx: Context):
 
     sel = selectors.DefaultSelector()
 
-    # Register stdin only if we are not in IPython mode
-    if not ctx.use_ipython:
+    # Register stdin only it's a tty and we are not in IPython mode
+    if sys.stdin.isatty() and not ctx.use_ipython:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
 
     if ctx.consumer:
