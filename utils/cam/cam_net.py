@@ -38,6 +38,8 @@ class NetConsumer(Consumer):
 
         if self.current_buf[stream.id]:
             # Already sending a frame
+            cap = stream.cap
+            cap.queue(vbuf)
             return
 
         self.current_buf[stream.id] = vbuf
