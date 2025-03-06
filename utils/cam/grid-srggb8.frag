@@ -14,6 +14,7 @@ uniform float blackLevel;
 uniform float whiteLevel;
 uniform vec3 whiteBalance;
 uniform float gamma;
+uniform mat3 colorCorrectionMatrix;
 uniform samplerExternalOES textures[6];
 
 out vec4 fragColor;
@@ -63,15 +64,17 @@ vec4 demosaic(samplerExternalOES tex, ivec2 pixel) {
         }
     }
 
-    r *= whiteBalance.r;
-    g *= whiteBalance.g;
-    b *= whiteBalance.b;
+    vec3 c = vec3(r, g, b);
 
-    r = pow(r, 1.0/gamma);
-    g = pow(g, 1.0/gamma);
-    b = pow(b, 1.0/gamma);
+    c *= whiteBalance;
+    c = clamp(c, 0.0, 1.0);
 
-    return vec4(r, g, b, 1.0);
+    c *= colorCorrectionMatrix;
+    c = clamp(c, 0.0, 1.0);
+
+    c = pow(c, vec3(1.0/gamma));
+
+    return vec4(c, 1.0);
 }
 
 void main() {

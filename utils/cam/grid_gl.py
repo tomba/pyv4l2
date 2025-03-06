@@ -173,6 +173,15 @@ class GlScene:
         gamma_loc = gl.glGetUniformLocation(program, 'gamma')
         gl.glUniform1f(gamma_loc, gamma)
 
+        # Set the color correction matrix uniform
+        ccm_loc = gl.glGetUniformLocation(program, 'colorCorrectionMatrix')
+        ccm = [
+            2.18644, -0.66148, -0.52496,
+            -0.77828, 2.69474, -0.91645,
+            -0.25239, -0.83059, 2.08298
+        ]
+        gl.glUniformMatrix3fv(ccm_loc, 1, False, ccm)
+
         # Set up texture uniforms
         for i in range(self.num_tiles):
             location = gl.glGetUniformLocation(program, f'textures[{i}]')
