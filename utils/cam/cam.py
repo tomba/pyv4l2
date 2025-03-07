@@ -158,7 +158,10 @@ def init_viddevs_sctx(sctx: Subcontext):
             raise RuntimeError()
 
         if sctx.md:
-            vid_ent = sctx.md.find_entity(stream.entity)
+            if isinstance(stream.entity, v4l2.MediaEntity):
+                vid_ent = stream.entity
+            else:
+                vid_ent = sctx.md.find_entity(stream.entity)
             assert(vid_ent)
 
             if not stream.dev_path:
