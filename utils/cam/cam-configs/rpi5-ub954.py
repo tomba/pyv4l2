@@ -1,59 +1,48 @@
 import v4l2
 import v4l2.uapi
+from cam_helpers import merge_configs
 
 # Pixel
 
-imx219_w = 640
-imx219_h = 480
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-#imx219_pix_fmt = v4l2.PixelFormats.SRGGB10P
-imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-# To remap to 16-bit, csi2_bus_fmt must be set to a 16-bit format
-csi2_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
-
-mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
-mbus_fmt_csi2 = (imx219_w, imx219_h, csi2_bus_fmt)
-fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
-
-# Meta
-
-imx219_meta_w = imx219_w
-imx219_meta_h = 2
-imx219_meta_bus_fmt = v4l2.BusFormat.META_8
-imx219_meta_pix_fmt = v4l2.MetaFormats.GENERIC_8
-
-meta_mbus_fmt_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_bus_fmt)
-meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)
-
-tpg_fmts = [
-    (640, 480, v4l2.BusFormat.UYVY8_1X16, v4l2.PixelFormats.UYVY, (1, 15)),
-    (640, 480, v4l2.BusFormat.UYVY8_1X16, v4l2.PixelFormats.UYVY, (1, 15)),
+cam_fmts = [
+    ( 640, 480, v4l2.BusFormat.SRGGB8_1X8, v4l2.PixelFormats.SRGGB8 ),
+    ( 640, 480, v4l2.BusFormat.SRGGB8_1X8, v4l2.PixelFormats.SRGGB8 ),
 ]
 
-#tpg_w = 640//2
-#tpg_h = 480//2
-#mbus_fmt_tpg = (tpg_w, tpg_h, v4l2.BusFormat.UYVY8_1X16)
-#fmt_tpg = (tpg_w, tpg_h, v4l2.PixelFormat.UYVY)
+meta_fmts = [
+    ( 640, 2, v4l2.BusFormat.META_8, v4l2.MetaFormats.GENERIC_8 ),
+    ( 640, 2, v4l2.BusFormat.META_8, v4l2.MetaFormats.GENERIC_8 ),
+]
 
-configurations = {}
+tpg_fmts = [
+    ( 640, 480, v4l2.BusFormat.UYVY8_1X16, v4l2.PixelFormats.UYVY, (1, 15) ),
+    ( 640, 480, v4l2.BusFormat.UYVY8_1X16, v4l2.PixelFormats.UYVY, (1, 15) ),
+]
 
-main_i2c_bus = 4
-first_imx_i2c_bus = 13
+def gen_imx219_pixel(mdata: dict, idx: int):
+    ser_ent = mdata['cams'][idx][0]
+    sensor_ent = mdata['cams'][idx][1]
+    des_ent = mdata['deser']
+    csi2_ent = mdata['csi2']
+    vnode = mdata['vnodes'].pop(0) # Consume the vnode
 
-def gen_imx219_pixel(port):
-    sensor_ent = f'imx219 {port + first_imx_i2c_bus}-0010'
-    ser_ent = f'ds90ub953 {main_i2c_bus}-004{4 + port}'
+    des_in_port = ser_ent.get_remote_pad(1).index
+    des_csi2_stream = idx
+
+    csi2_out_port = vnode.get_remote_pad(0).index
+
+    w = cam_fmts[idx][0]
+    h = cam_fmts[idx][1]
+    mbus_fmt = (w, h, cam_fmts[idx][2])
+    pix_fmt = (w, h, cam_fmts[idx][3])
 
     return {
-        'media': ('platform:1f00128000.csi', 'bus_info'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (0, 0), 'fmt': mbus_fmt },
                 ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
@@ -68,64 +57,75 @@ def gen_imx219_pixel(port):
                     { 'src': (0, 0), 'dst': (1, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (0, 0), 'fmt': mbus_fmt },
+                    { 'pad': (1, 0), 'fmt': mbus_fmt },
                 ],
             },
+
             # Deserializer
             {
-                'entity': f'ds90ub960 {main_i2c_bus}-0030',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (2, port) },
+                    { 'src': (des_in_port, 0), 'dst': (2, des_csi2_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (2, port), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (des_in_port, 0), 'fmt': mbus_fmt },
+                    { 'pad': (2, des_csi2_stream), 'fmt': mbus_fmt },
                 ],
             },
 
             # CSI-2 RX
             {
-                'entity': 'csi2',
+                'entity': csi2_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    { 'src': (0, des_csi2_stream), 'dst': (csi2_out_port, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_csi2 },
+                    { 'pad': (0, des_csi2_stream), 'fmt': mbus_fmt },
+                    { 'pad': (csi2_out_port, 0), 'fmt': mbus_fmt },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port}',
-                'fmt': fmt_pix_imx219,
-                'kms-format': v4l2.PixelFormats.RGB565,
+                'entity': vnode,
+                'fmt': pix_fmt,
             },
         ],
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': (f'ds90ub960 {main_i2c_bus}-0030', port) },
-            { 'src': (f'ds90ub960 {main_i2c_bus}-0030', 2), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, des_in_port) },
+            { 'src': (des_ent, 2), 'dst': (csi2_ent, 0) },
+            { 'src': (csi2_ent, csi2_out_port), 'dst': (vnode, 0) },
         ],
     }
 
-def gen_imx219_meta(port):
-    sensor_ent = f'imx219 {port + first_imx_i2c_bus}-0010'
-    ser_ent = f'ds90ub953 6-004{4 + port}'
+def gen_imx219_meta(mdata: dict, idx: int):
+    ser_ent = mdata['cams'][idx][0]
+    sensor_ent = mdata['cams'][idx][1]
+    des_ent = mdata['deser']
+    csi2_ent = mdata['csi2']
+    vnode = mdata['vnodes'].pop(0) # Consume the vnode
+
+    des_in_port = ser_ent.get_remote_pad(1).index
+    des_csi2_stream = idx + 10
+
+    csi2_out_port = vnode.get_remote_pad(0).index
+
+    w = meta_fmts[idx][0]
+    h = meta_fmts[idx][1]
+    mbus_fmt = (w, h, meta_fmts[idx][2])
+    pix_fmt = (w, h, meta_fmts[idx][3])
 
     return {
-        'media': ('rp1-cfe', 'model'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
+                    { 'pad': (0, 1), 'fmt': mbus_fmt },
                 ],
             },
 
@@ -136,63 +136,69 @@ def gen_imx219_meta(port):
                     { 'src': (0, 1), 'dst': (1, 1) },
                 ],
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (1, 1), 'fmt': meta_mbus_fmt_imx219 },
+                    { 'pad': (0, 1), 'fmt': mbus_fmt },
+                    { 'pad': (1, 1), 'fmt': mbus_fmt },
                 ],
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 6-0030',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 1), 'dst': (2, port + 2) },
+                    { 'src': (des_in_port, 1), 'dst': (2, des_csi2_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 1), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (2, port + 2), 'fmt': meta_mbus_fmt_imx219 },
+                    { 'pad': (des_in_port, 1), 'fmt': mbus_fmt },
+                    { 'pad': (2, des_csi2_stream), 'fmt': mbus_fmt },
                 ],
             },
 
             # CSI-2 RX
             {
-                'entity': 'csi2',
+                'entity': csi2_ent,
                 'routing': [
-                    { 'src': (0, port + 2), 'dst': (1 + port + 2, 0) },
+                    { 'src': (0, des_csi2_stream), 'dst': (csi2_out_port, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port + 2), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (1 + port + 2, 0), 'fmt': meta_mbus_fmt_imx219 },
+                    { 'pad': (0, des_csi2_stream), 'fmt': mbus_fmt },
+                    { 'pad': (csi2_out_port, 0), 'fmt': mbus_fmt },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port+2}',
-                'fmt': meta_fmt_pix_imx219,
+                'entity': vnode,
+                'fmt': pix_fmt,
                 'embedded': True,
             },
         ],
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 2), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, des_in_port) },
+            { 'src': (des_ent, 2), 'dst': (csi2_ent, 0) },
+            { 'src': (csi2_ent, csi2_out_port), 'dst': (vnode, 0) },
         ],
     }
 
-def gen_ub953_tpg(port):
-    ser_ent = f'ds90ub953 6-004{4 + port}'
+def gen_ub953_tpg(mdata: dict, idx: int):
+    ser_ent = mdata['cams'][idx][0]
+    des_ent = mdata['deser']
+    csi2_ent = mdata['csi2']
+    vnode = mdata['vnodes'].pop(0) # Consume the vnode
 
-    tpg_w = tpg_fmts[port][0]
-    tpg_h = tpg_fmts[port][1]
-    mbus_fmt_tpg = (tpg_w, tpg_h, tpg_fmts[port][2])
-    fmt_tpg = (tpg_w, tpg_h, tpg_fmts[port][3])
-    ival = tpg_fmts[port][4]
+    des_in_port = ser_ent.get_remote_pad(1).index
+    des_csi2_stream = idx
+
+    csi2_out_port = vnode.get_remote_pad(0).index
+
+    tpg_w = tpg_fmts[idx][0]
+    tpg_h = tpg_fmts[idx][1]
+    mbus_fmt_tpg = (tpg_w, tpg_h, tpg_fmts[idx][2])
+    fmt_tpg = (tpg_w, tpg_h, tpg_fmts[idx][3])
+    ival = tpg_fmts[idx][4]
 
     return {
-        'media': ('rp1-cfe', 'model'),
-
         'subdevs': [
             # Serializer
             {
@@ -207,13 +213,13 @@ def gen_ub953_tpg(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 6-0030',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (2, port) },
+                    { 'src': (des_in_port, 0), 'dst': (2, des_csi2_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (2, port), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (des_in_port, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (2, des_csi2_stream), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -221,38 +227,93 @@ def gen_ub953_tpg(port):
             {
                 'entity': 'csi2',
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    { 'src': (0, des_csi2_stream), 'dst': (csi2_out_port, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (0, des_csi2_stream), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (csi2_out_port, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port}',
+                'entity': vnode,
                 'fmt': fmt_tpg,
             },
         ],
 
         'links': [
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 2), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, des_in_port) },
+            { 'src': (des_ent, 2), 'dst': (csi2_ent, 0) },
+            { 'src': (csi2_ent, csi2_out_port), 'dst': (vnode, 0) },
         ],
     }
 
+def resolve_media_graph():
+    #mdev_name = ('rp1-cfe', 'model')
+    mdev_name = ('platform:1f00128000.csi', 'bus_info')
+    md = v4l2.MediaDevice(*mdev_name)
+    assert md
 
-configurations['cam0'] = gen_imx219_pixel(0)
-configurations['cam1'] = gen_imx219_pixel(1)
+    csi2rx = md.find_entity('csi2')
+    assert csi2rx
 
-configurations['cam0-meta'] = gen_imx219_meta(0)
-configurations['cam1-meta'] = gen_imx219_meta(1)
+    vnodes = []
+    for p in csi2rx.pads:
+        if not p.is_source:
+            continue
+        # Get the csi2 node, not the fe node
+        vnode = next(e for e in p.get_remote_entities() if 'csi2' in e.name)
+        assert vnode
+        vnodes.append(vnode)
 
-configurations['cam0-tpg'] = gen_ub953_tpg(0)
-configurations['cam1-tpg'] = gen_ub953_tpg(1)
+    deser = csi2rx.get_remote_entity(0)
+    assert deser
 
-def get_configs():
-    return (configurations, ['cam0'])
+    cams = []
+    for p in deser.pads:
+        if not p.is_sink:
+            continue
+
+        ser = p.get_remote_entity()
+        if not ser:
+            continue
+
+        cam = ser.get_remote_entity(0)
+        assert cam
+
+        cams.append((ser, cam))
+
+    return {
+        'mdev': mdev_name,
+        'vnodes': vnodes,
+        'csi2': csi2rx,
+        'deser': deser,
+        'cams': cams,
+    }
+
+def get_configs(config_names):
+    mdata = resolve_media_graph()
+
+    if not config_names:
+        config_names = [f'cam{i}' for i in range(len(mdata['cams']))]
+
+    cfgs = []
+
+    for cname in config_names:
+        num = int(cname[-1])
+        cname = cname[:-1]
+
+        if cname == 'cam':
+            cfgs.append(gen_imx219_pixel(mdata, num))
+        elif cname == 'meta':
+            cfgs.append(gen_imx219_meta(mdata, num))
+        elif cname == 'tpg':
+            cfgs.append(gen_ub953_tpg(mdata, num))
+
+    merged_config = merge_configs(cfgs)
+
+    merged_config['media'] = mdata['mdev']
+
+    return merged_config

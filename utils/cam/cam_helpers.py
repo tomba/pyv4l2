@@ -110,18 +110,11 @@ def read_config(config_name):
 
     config_names = [c for c in config_names if len(c) > 0]
 
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/cam-configs')
-    configurations, default_configurations = importlib.import_module(config_file).get_configs()
+    cam_configs_path = os.path.dirname(os.path.abspath(__file__)) + '/cam-configs'
+    sys.path.append(cam_configs_path)
 
-    if len(config_names) == 0:
-        config_names = default_configurations
-
-    for cfg in config_names:
-        if cfg not in configurations:
-            print('Cannot find config "{}"'.format(cfg))
-            sys.exit(-1)
-
-    config = merge_configs([configurations[x] for x in config_names])
+    cam_config_module = importlib.import_module(config_file)
+    config = cam_config_module.get_configs(config_names)
 
     return config
 
