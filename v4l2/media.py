@@ -74,6 +74,14 @@ class MediaEntity(MediaObject):
     def pad_links(self) -> list[MediaLink]:
         return [l for p in self.pads for l in p.links]
 
+    def get_remote_pad(self, pad_idx: int) -> None | MediaPad:
+        pad = self.pads[pad_idx]
+        return pad.get_remote_pad()
+
+    def get_remote_entity(self, pad_idx: int) -> None | MediaEntity:
+        pad = self.pads[pad_idx]
+        return pad.get_remote_entity()
+
 
 class MediaInterface(MediaObject):
     def __init__(self, md, media_iface: v4l2.uapi.media_v2_interface) -> None:
@@ -127,6 +135,45 @@ class MediaPad(MediaObject):
     @property
     def flags(self) -> MediaPadFlag:
         return MediaPadFlag(self.media_pad.flags)
+
+    def get_remote_pad(self) -> None | MediaPad:
+        if len(self.links) == 0:
+            return None
+
+        assert len(self.links) == 1
+
+        if self.is_sink:
+            pad = self.links[0].source_pad
+        elif self.is_source:
+            pad = self.links[0].sink_pad
+        else:
+            raise RuntimeError('Pad is not source or sink')
+
+        assert pad
+        return pad
+
+    def get_remote_entity(self) -> None | MediaEntity:
+        rpad = self.get_remote_pad()
+        if not rpad:
+            return None
+
+        assert rpad.entity
+        return rpad.entity
+
+    def get_remote_entities(self) -> list[MediaEntity]:
+        l = []
+        for link in self.links:
+            if self.is_sink:
+                ent = link.source_pad.entity
+            elif self.is_source:
+                ent = link.sink_pad.entity
+            else:
+                raise RuntimeError('Pad is not source or sink')
+
+            assert ent
+            l.append(ent)
+
+        return l
 
 
 class MediaLink(MediaObject):
