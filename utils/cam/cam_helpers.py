@@ -139,13 +139,15 @@ def setup_links(sctx: Subcontext, config):
         sink_ent, sink_pad = l['dst']
 
         try:
-            source_ent = md.find_entity(source_ent)
-            if source_ent is None:
-                raise RuntimeError(f'Failed to find entity {l["src"]}')
+            if not isinstance(source_ent, v4l2.MediaEntity):
+                source_ent = md.find_entity(source_ent)
+                if source_ent is None:
+                    raise RuntimeError(f'Failed to find entity {l["src"]}')
 
-            sink_ent = md.find_entity(sink_ent)
-            if sink_ent is None:
-                raise RuntimeError(f'Failed to find entity {l["dst"]}')
+            if not isinstance(sink_ent, v4l2.MediaEntity):
+                sink_ent = md.find_entity(sink_ent)
+                if sink_ent is None:
+                    raise RuntimeError(f'Failed to find entity {l["dst"]}')
 
             if sctx.ctx.verbose:
                 print(f'Link {source_ent.name} -> {sink_ent.name}')
@@ -164,7 +166,10 @@ def configure_subdevs(sctx: Subcontext, config):
     subdevices = {}
 
     for e in config.get('subdevs', []):
-        ent = md.find_entity(e['entity'])
+        if isinstance(e['entity'], v4l2.MediaEntity):
+            ent = e['entity']
+        else:
+            ent = md.find_entity(e['entity'])
         assert ent
         subdev = v4l2.SubDevice(ent.interface.dev_path)
 
