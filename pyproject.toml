@@ -6,7 +6,6 @@ build-backend = 'setuptools.build_meta'
 name = 'pyv4l2'
 version = '0.1'
 dependencies = [
-  'pykms @ git+https://github.com/tomba/pykms.git',
   'pixutils @ git+https://github.com/tomba/pixutils.git',
 ]
 requires-python = '>=3.8'
@@ -54,3 +53,11 @@ multiline-quotes = 'single'
 
 [tool.ruff.format]
 quote-style = 'single'
+
+[project.optional-dependencies]
+extras = [
+    'numpy',
+    'pykms @ git+https://github.com/tomba/pykms.git',
+    'PyQt6',
+    'ipython',
+]
