@@ -278,13 +278,13 @@ def main():
             if args.all:
                 links = flatten([ p.links for p in ent.pads ])
 
-                print_queue += [ l.sink.entity for l in links ]
-                print_queue += [ l.source.entity for l in links ]
+                print_queue += [ l.sink_pad.entity for l in links ]
+                print_queue += [ l.source_pad.entity for l in links ]
             else:
                 links = flatten([ p.links for p in ent.pads if p.is_source ])
                 links = [l for l in links if l.is_enabled]
 
-                print_queue += [ l.sink.entity for l in links ]
+                print_queue += [ l.sink_pad.entity for l in links ]
 
         print_entity(ent, only_graph=args.graph, print_supported=args.supported)
 
