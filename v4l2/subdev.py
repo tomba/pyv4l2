@@ -259,7 +259,8 @@ class SubDevice:
         v4l2_ival.pad = pad
         v4l2_ival.stream = stream
         v4l2_ival.which = which
-        v4l2_ival.interval = interval
+        v4l2_ival.interval.numerator = interval[0]
+        v4l2_ival.interval.denominator = interval[1]
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_FRAME_INTERVAL, v4l2_ival, True)
 
