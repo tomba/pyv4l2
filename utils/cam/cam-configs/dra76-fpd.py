@@ -1,70 +1,55 @@
 import v4l2
+from cam_helpers import merge_configs
 
-ov10635_w = 1280
-ov10635_h = 720
-ov10635_bus_fmt_1 = v4l2.BusFormat.UYVY8_2X8
-ov10635_bus_fmt_2 = v4l2.BusFormat.UYVY8_1X16
-ov10635_pix_fmt = v4l2.PixelFormats.UYVY
-ov10635_meta_h = 1
+ov10635_fmt = (
+    ( 1280, 720, v4l2.BusFormat.UYVY8_2X8 ),
+    ( 1280, 720, v4l2.BusFormat.UYVY8_1X16 ),
+    ( 1280, 720, v4l2.PixelFormats.UYVY ),
+)
 
-imx390_w = 1936
-imx390_h = 1100
-imx390_bus_fmt = v4l2.BusFormat.SRGGB12_1X12
-imx390_pix_fmt = v4l2.PixelFormats.SRGGB12
-imx390_meta_h = 1
+ov10635_meta_fmt = ( 1280, 1, v4l2.BusFormat.META_8, v4l2.MetaFormats.GENERIC_8 )
 
-mbus_fmt_ov10635_1 = (ov10635_w, ov10635_h, ov10635_bus_fmt_1)
-mbus_fmt_ov10635_2 = (ov10635_w, ov10635_h, ov10635_bus_fmt_2)
-fmt_pix_ov10635 = (ov10635_w, ov10635_h, ov10635_pix_fmt)
+imx390_fmt = (
+    ( 1936, 1100, v4l2.BusFormat.SRGGB12_1X12 ),
+    ( 1936, 1100, v4l2.BusFormat.SRGGB12_1X12 ),
+    ( 1936, 1100, v4l2.PixelFormats.SRGGB12 ),
+)
 
-mbus_fmt_ov10635_meta = (ov10635_w, ov10635_meta_h, v4l2.BusFormat.META_8)
-fmt_pix_ov10635_meta = (ov10635_w, ov10635_meta_h, v4l2.MetaFormats.GENERIC_8)
+imx390_meta_fmt = ( 1936, 1, v4l2.BusFormat.META_12, v4l2.MetaFormats.GENERIC_CSI2_12 )
 
-mbus_fmt_imx390 = (imx390_w, imx390_h, imx390_bus_fmt)
-fmt_pix_imx390 = (imx390_w, imx390_h, imx390_pix_fmt)
+tpg_fmt = ( 1920, 1024, v4l2.BusFormat.RGB888_1X24, v4l2.PixelFormats.BGR888 )
 
-mbus_fmt_imx390_meta = (imx390_w, imx390_meta_h, v4l2.BusFormat.META_12)
-fmt_pix_imx390_meta = (imx390_w, imx390_meta_h, v4l2.MetaFormats.GENERIC_CSI2_12)
+def gen_cam_pixel(mdata: dict, idx):
+    ser_ent = mdata['cams'][idx][0]
+    sensor_ent = mdata['cams'][idx][1]
+    des_ent = mdata['deser']
+    csi2_ent = mdata['csi2']
+    vnode = mdata['vnodes'].pop(0) # Consume the vnode
+    csi2_out_port = mdata['cal_ports'].pop(0)
 
-# IMX219
+    des_in_port = ser_ent.get_remote_pad(1).index
+    des_out_port = csi2_ent.get_remote_pad(0).index
+    des_csi2_stream = idx
 
-imx219_w = 640
-imx219_h = 480
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-#imx219_pix_fmt = v4l2.PixelFormat.SRGGB10P
-imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
+    if sensor_ent.name.startswith('imx390'):
+        fmt = imx390_fmt
+    elif sensor_ent.name.startswith('ov1063'):
+        fmt = ov10635_fmt
+    else:
+        raise RuntimeError('Unknown sensor type')
 
-mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
-fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
-
-mbus_fmt_imx219_meta = (imx219_w, 2, v4l2.BusFormat.META_8)
-fmt_pix_imx219_meta = (imx219_w, 2, v4l2.MetaFormats.GENERIC_8)
-
-# TPG
-
-mbus_fmt_tpg = (1920, 1024, v4l2.BusFormat.UYVY8_1X16)
-fmt_tpg = (1920, 1024, v4l2.PixelFormats.UYVY)
-
-configurations = {}
-
-OVNAME='ov10635'
-#OVNAME="ov1063x"
-
-def gen_imx390_pixel(port):
-    sensor_ent = f'imx390 {port + 5}-0021'
-    ser_ent = f'ds90ub953 4-004{4 + port}'
+    cam_mbus_fmt = fmt[0]
+    mbus_fmt = fmt[1]
+    pix_fmt = fmt[2]
 
     return {
-        'media': ('CAL', 'model'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx390 },
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx390 },
+                    { 'pad': (1, 0), 'fmt': cam_mbus_fmt },
+                    { 'pad': (0, 0), 'fmt': cam_mbus_fmt },
                 ],
                 'routing': [
                    { 'src': (1, 0), 'dst': (0, 0) },
@@ -77,53 +62,73 @@ def gen_imx390_pixel(port):
                     { 'src': (0, 0), 'dst': (1, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx390 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx390 },
+                    { 'pad': (0, 0), 'fmt': cam_mbus_fmt },
+                    { 'pad': (1, 0), 'fmt': mbus_fmt },
                 ],
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 4-003d',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
+                    { 'src': (des_in_port, 0), 'dst': (des_out_port, des_csi2_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_imx390 },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_imx390 },
+                    { 'pad': (des_in_port, 0), 'fmt': mbus_fmt },
+                    { 'pad': (des_out_port, des_csi2_stream), 'fmt': mbus_fmt },
                 ],
             },
             # CSI-2 RX
             {
-                'entity': 'CAMERARX0',
+                'entity': csi2_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    { 'src': (0, des_csi2_stream), 'dst': (csi2_out_port, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_imx390 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx390 },
+                    { 'pad': (0, des_csi2_stream), 'fmt': mbus_fmt },
+                    { 'pad': (csi2_out_port, 0), 'fmt': mbus_fmt },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'CAL output {port}',
-                'fmt': fmt_pix_imx390,
+                'entity': vnode,
+                'fmt': pix_fmt,
                 'kms-format': v4l2.PixelFormats.RGB565,
             },
         ],
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port), 'dst': (f'CAL output {port}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, des_in_port) },
+            { 'src': (des_ent, des_out_port), 'dst': (csi2_ent, 0) },
+            { 'src': (csi2_ent, csi2_out_port), 'dst': (vnode, 0) },
         ],
     }
 
-def gen_imx390_meta(port):
-    sensor_ent = f'imx390 {port + 5}-0021'
-    ser_ent = f'ds90ub953 4-004{4 + port}'
+def gen_cam_meta(mdata: dict, idx):
+    ser_ent = mdata['cams'][idx][0]
+    sensor_ent = mdata['cams'][idx][1]
+    des_ent = mdata['deser']
+    csi2_ent = mdata['csi2']
+    vnode = mdata['vnodes'].pop(0) # Consume the vnode
+    csi2_out_port = mdata['cal_ports'].pop(0)
+
+    des_in_port = ser_ent.get_remote_pad(1).index
+    des_out_port = csi2_ent.get_remote_pad(0).index
+    des_csi2_stream = idx + 10
+
+    if sensor_ent.name.startswith('imx390'):
+        fmt = imx390_meta_fmt
+    elif sensor_ent.name.startswith('ov1063'):
+        fmt = ov10635_meta_fmt
+    else:
+        raise RuntimeError('Unknown sensor type')
+
+    w = fmt[0]
+    h = fmt[1]
+    mbus_fmt = (w, h, fmt[2])
+    pix_fmt = (w, h, fmt[3])
 
     return {
         'subdevs': [
@@ -131,8 +136,8 @@ def gen_imx390_meta(port):
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_imx390_meta },
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx390_meta },
+                    { 'pad': (2, 0), 'fmt': mbus_fmt },
+                    { 'pad': (0, 1), 'fmt': mbus_fmt },
                 ],
                 'routing': [
                    { 'src': (2, 0), 'dst': (0, 1) },
@@ -145,38 +150,38 @@ def gen_imx390_meta(port):
                     { 'src': (0, 1), 'dst': (1, 1) },
                 ],
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx390_meta },
-                    { 'pad': (1, 1), 'fmt': mbus_fmt_imx390_meta },
+                    { 'pad': (0, 1), 'fmt': mbus_fmt },
+                    { 'pad': (1, 1), 'fmt': mbus_fmt },
                 ],
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 4-003d',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 1), 'dst': (4, port + 4) },
+                    { 'src': (des_in_port, 1), 'dst': (des_out_port, des_csi2_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 1), 'fmt': mbus_fmt_imx390_meta },
-                    { 'pad': (4, port + 4), 'fmt': mbus_fmt_imx390_meta },
+                    { 'pad': (des_in_port, 1), 'fmt': mbus_fmt },
+                    { 'pad': (des_out_port, des_csi2_stream), 'fmt': mbus_fmt },
                 ],
             },
             # CSI-2 RX
             {
-                'entity': 'CAMERARX0',
+                'entity': csi2_ent,
                 'routing': [
-                    { 'src': (0, port + 4), 'dst': (1 + port + 4, 0) },
+                    { 'src': (0, des_csi2_stream), 'dst': (csi2_out_port, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port + 4), 'fmt': mbus_fmt_imx390_meta },
-                    { 'pad': (1 + port + 4, 0), 'fmt': mbus_fmt_imx390_meta },
+                    { 'pad': (0, des_csi2_stream), 'fmt': mbus_fmt },
+                    { 'pad': (csi2_out_port, 0), 'fmt': mbus_fmt },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'CAL output {port + 4}',
-                'fmt': fmt_pix_imx390_meta,
+                'entity': vnode,
+                'fmt': pix_fmt,
                 'embedded': True,
                 'display': False,
             },
@@ -184,293 +189,29 @@ def gen_imx390_meta(port):
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port + 4), 'dst': (f'CAL output {port + 4}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, des_in_port) },
+            { 'src': (des_ent, des_out_port), 'dst': (csi2_ent, 0) },
+            { 'src': (csi2_ent, csi2_out_port), 'dst': (vnode, 0) },
         ],
     }
 
+def gen_ub953_tpg(mdata: dict, idx):
+    ser_ent = mdata['cams'][idx][0]
+    des_ent = mdata['deser']
+    csi2_ent = mdata['csi2']
+    vnode = mdata['vnodes'].pop(0) # Consume the vnode
+    csi2_out_port = mdata['cal_ports'].pop(0)
 
-def gen_imx219_pixel(port):
-    sensor_ent = f'imx219 {port + 5}-0010'
-    ser_ent = f'ds90ub953 4-004{4 + port}'
+    des_in_port = ser_ent.get_remote_pad(1).index
+    des_out_port = csi2_ent.get_remote_pad(0).index
+    des_csi2_stream = idx
 
-    return {
-        'media': ('CAL', 'model'),
-
-        'subdevs': [
-            # Camera
-            {
-                'entity': sensor_ent,
-                'pads': [
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                ],
-                'routing': [
-                   { 'src': (1, 0), 'dst': (0, 0) },
-                ],
-            },
-            # Serializer
-            {
-                'entity': ser_ent,
-                'routing': [
-                    { 'src': (0, 0), 'dst': (1, 0) },
-                ],
-                'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
-                ],
-            },
-            # Deserializer
-            {
-                'entity': 'ds90ub960 4-003d',
-                'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
-                ],
-                'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_imx219 },
-                ],
-            },
-            # CSI-2 RX
-            {
-                'entity': 'CAMERARX0',
-                'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
-                ],
-                'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219 },
-                ],
-            },
-        ],
-
-        'devices': [
-            {
-                'entity': f'CAL output {port}',
-                'fmt': fmt_pix_imx219,
-            },
-        ],
-
-        'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port), 'dst': (f'CAL output {port}', 0) },
-        ],
-    }
-
-def gen_imx219_meta(port):
-    sensor_ent = f'imx219 {port + 5}-0010'
-    ser_ent = f'ds90ub953 4-004{4 + port}'
+    w = tpg_fmt[0]
+    h = tpg_fmt[1]
+    mbus_fmt = (w, h, tpg_fmt[2])
+    pix_fmt = (w, h, tpg_fmt[3])
 
     return {
-        'subdevs': [
-            # Camera
-            {
-                'entity': sensor_ent,
-                'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
-                ],
-                'routing': [
-                   { 'src': (2, 0), 'dst': (0, 1) },
-                ],
-            },
-            # Serializer
-            {
-                'entity': ser_ent,
-                'routing': [
-                    { 'src': (0, 1), 'dst': (1, 1) },
-                ],
-                'pads': [
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1, 1), 'fmt': mbus_fmt_imx219_meta },
-                ],
-            },
-            # Deserializer
-            {
-                'entity': 'ds90ub960 4-003d',
-                'routing': [
-                    { 'src': (port, 1), 'dst': (4, port + 4) },
-                ],
-                'pads': [
-                    { 'pad': (port, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (4, port + 4), 'fmt': mbus_fmt_imx219_meta },
-                ],
-            },
-            # CSI-2 RX
-            {
-                'entity': 'CAMERARX0',
-                'routing': [
-                    { 'src': (0, port + 4), 'dst': (1 + port + 4, 0) },
-                ],
-                'pads': [
-                    { 'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1 + port + 4, 0), 'fmt': mbus_fmt_imx219_meta },
-                ],
-            },
-        ],
-
-        'devices': [
-            {
-                'entity': f'CAL output {port + 4}',
-                'fmt': fmt_pix_imx219_meta,
-                'embedded': True,
-                'display': False,
-            },
-        ],
-
-        'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port + 4), 'dst': (f'CAL output {port + 4}', 0) },
-        ],
-    }
-
-
-def gen_ov10635_pixel(port):
-    sensor_ent = OVNAME + f' {port + 5}-0030'
-    ser_ent = f'ds90ub913a 4-004{4 + port}'
-
-    return {
-        'media': ('CAL', 'model'),
-
-        'subdevs': [
-            # Camera
-            {
-                'entity': sensor_ent,
-                'pads': [
-                    { 'pad': 1, 'fmt': mbus_fmt_ov10635_1 },
-                    { 'pad': 0, 'fmt': mbus_fmt_ov10635_1 },
-                ],
-                'routing': [
-                    { 'src': (1, 0), 'dst': (0, 0) },
-                ],
-            },
-            # Serializer
-            {
-                'entity': ser_ent,
-                'routing': [
-                    { 'src': (0, 0), 'dst': (1, 0) },
-                ],
-                'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_ov10635_1 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_ov10635_2 },
-                ],
-            },
-            # Deserializer
-            {
-                'entity': 'ds90ub960 4-003d',
-                'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
-                ],
-                'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_ov10635_2 },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_ov10635_2 },
-                ],
-            },
-            # CSI-2 RX
-            {
-                'entity': 'CAMERARX0',
-                'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
-                ],
-                'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_ov10635_2 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_ov10635_2 },
-                ],
-            },
-        ],
-
-        'devices': [
-            {
-                'entity': f'CAL output {port}',
-                'fmt': fmt_pix_ov10635,
-            },
-        ],
-
-        'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port), 'dst': (f'CAL output {port}', 0) },
-        ],
-    }
-
-
-def gen_ov10635_meta(port):
-    sensor_ent = OVNAME + f' {port + 5}-0030'
-    ser_ent = f'ds90ub913a 4-004{4 + port}'
-
-    return {
-        'subdevs': [
-            # Camera
-            {
-                'entity': sensor_ent,
-                'routing': [
-                   { 'src': (2, 0), 'dst': (0, 1) },
-                ],
-            },
-            # Serializer
-            {
-                'entity': ser_ent,
-                'routing': [
-                    { 'src': (0, 1), 'dst': (1, 1) },
-                ],
-                'pads': [
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_ov10635_meta },
-                    { 'pad': (1, 1), 'fmt': mbus_fmt_ov10635_meta },
-                ],
-            },
-            # Deserializer
-            {
-                'entity': 'ds90ub960 4-003d',
-                'routing': [
-                    { 'src': (port, 1), 'dst': (4, port + 4) },
-                ],
-                'pads': [
-                    { 'pad': (port, 1), 'fmt': mbus_fmt_ov10635_meta },
-                    { 'pad': (4, port + 4), 'fmt': mbus_fmt_ov10635_meta },
-                ],
-            },
-            # CSI-2 RX
-            {
-                'entity': 'CAMERARX0',
-                'routing': [
-                    { 'src': (0, port + 4), 'dst': (1 + port + 4, 0) },
-                ],
-                'pads': [
-                    { 'pad': (0, port + 4), 'fmt': mbus_fmt_ov10635_meta },
-                    { 'pad': (1 + port + 4, 0), 'fmt': mbus_fmt_ov10635_meta },
-                ],
-            },
-        ],
-
-        'devices': [
-            {
-                'entity': f'CAL output {port + 4}',
-                'fmt': fmt_pix_ov10635_meta,
-                'embedded': True,
-                'display': False,
-            },
-        ],
-
-        'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port + 4), 'dst': (f'CAL output {port + 4}', 0) },
-        ],
-    }
-
-def gen_ub953_tpg(port):
-    ser_ent = f'ds90ub953 4-004{4 + port}'
-
-    return {
-        'media': ('CAL', 'model'),
-
         'subdevs': [
             # Serializer
             {
@@ -479,61 +220,106 @@ def gen_ub953_tpg(port):
                     { 'src': (2, 0), 'dst': (1, 0) },
                 ],
                 'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (2, 0), 'fmt': mbus_fmt },
+                    { 'pad': (1, 0), 'fmt': mbus_fmt },
                 ],
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 4-003d',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
+                    { 'src': (des_in_port, 0), 'dst': (des_out_port, des_csi2_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (des_in_port, 0), 'fmt': mbus_fmt },
+                    { 'pad': (des_out_port, des_csi2_stream), 'fmt': mbus_fmt },
                 ],
             },
             # CSI-2 RX
             {
-                'entity': 'CAMERARX0',
+                'entity': csi2_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    { 'src': (0, des_csi2_stream), 'dst': (csi2_out_port, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (0, des_csi2_stream), 'fmt': mbus_fmt },
+                    { 'pad': (csi2_out_port, 0), 'fmt': mbus_fmt },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'CAL output {port}',
-                'fmt': fmt_tpg,
+                'entity': vnode,
+                'fmt': pix_fmt,
             },
         ],
 
         'links': [
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port), 'dst': (f'CAL output {port}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, des_in_port) },
+            { 'src': (des_ent, des_out_port), 'dst': (csi2_ent, 0) },
+            { 'src': (csi2_ent, csi2_out_port), 'dst': (vnode, 0) },
         ],
     }
 
-configurations['cam0-tpg'] = gen_ub953_tpg(0)
-configurations['cam1-tpg'] = gen_ub953_tpg(1)
-configurations['cam3-tpg'] = gen_ub953_tpg(3)
 
-configurations['cam0'] = gen_imx390_pixel(0)
-configurations['cam1'] = gen_imx390_pixel(1)
-configurations['cam2'] = gen_ov10635_pixel(2)
-configurations['cam3'] = gen_imx219_pixel(3)
+def resolve_media_graph():
+    mdev_name = ('CAL', 'model')
+    md = v4l2.MediaDevice(*mdev_name)
+    assert md
 
-configurations['cam0-meta'] = gen_imx390_meta(0)
-configurations['cam1-meta'] = gen_imx390_meta(1)
-configurations['cam2-meta'] = gen_ov10635_meta(2)
-configurations['cam3-meta'] = gen_imx219_meta(3)
+    csi2rx = md.find_entity('CAMERARX0')
+    assert csi2rx
 
-def get_configs():
-    return (configurations, ['cam0', 'cam1', 'cam2'])
+    vnodes = [e for e in md.entities if e.name.startswith('CAL output')]
+
+    deser = csi2rx.get_remote_entity(0)
+    assert deser
+
+    cams = []
+    for p in deser.pads:
+        if not p.is_sink:
+            continue
+
+        ser = p.get_remote_entity()
+        if not ser:
+            continue
+
+        cam = ser.get_remote_entity(0)
+        assert cam
+
+        cams.append((ser, cam))
+
+    return {
+        'mdev': mdev_name,
+        'vnodes': vnodes,
+        'csi2': csi2rx,
+        'deser': deser,
+        'cams': cams,
+        'cal_ports': [p.index for p in csi2rx.pads if p.is_source],
+    }
+
+def get_configs(config_names):
+    mdata = resolve_media_graph()
+
+    if not config_names:
+        config_names = [f'cam{i}' for i in range(len(mdata['cams']))]
+
+    cfgs = []
+
+    for cname in config_names:
+        num = int(cname[-1])
+        cname = cname[:-1]
+
+        if cname == 'cam':
+            cfgs.append(gen_cam_pixel(mdata, num))
+        elif cname == 'meta':
+            cfgs.append(gen_cam_meta(mdata, num))
+        elif cname == 'tpg':
+            cfgs.append(gen_ub953_tpg(mdata, num))
+
+    merged_config = merge_configs(cfgs)
+
+    merged_config['media'] = mdata['mdev']
+
+    return merged_config
