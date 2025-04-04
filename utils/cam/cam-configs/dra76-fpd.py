@@ -17,7 +17,7 @@ imx390_fmt = (
 
 imx390_meta_fmt = ( 1936, 1, v4l2.BusFormat.META_12, v4l2.MetaFormats.GENERIC_CSI2_12 )
 
-tpg_fmt = ( 1920, 1024, v4l2.BusFormat.RGB888_1X24, v4l2.PixelFormats.BGR888 )
+tpg_fmt = ( 1920, 1024, v4l2.BusFormat.RGB888_1X24, v4l2.PixelFormats.RGB888 )
 
 def gen_cam_pixel(mdata: dict, idx):
     ser_ent = mdata['cams'][idx][0]
