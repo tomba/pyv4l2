@@ -38,6 +38,8 @@ fmt_tpg = (1920, 1080, v4l2.PixelFormats.XRGB8888)
 first_ser_i2c_port = 6
 first_imx_i2c_port = 7
 
+deser_out_port = 4
+
 if False:
     # The deser 0 is unstable due to unstable vpoc
     des_ent = 'max96724 1-0049'
@@ -88,11 +90,11 @@ def gen_imx219_pixel(port):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (5, port) },
+                    { 'src': (port, 0), 'dst': (deser_out_port, port) },
                 ],
                 'pads': [
                     { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (5, port), 'fmt': mbus_fmt_imx219 },
+                    { 'pad': (deser_out_port, port), 'fmt': mbus_fmt_imx219 },
                 ],
             },
 
@@ -131,7 +133,7 @@ def gen_imx219_pixel(port):
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 5), 'dst': (csi_ent, 0) },
+            { 'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0) },
             { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
             { 'src': (isp_ent, 1 + port), 'dst': (f'VIN{vin_port + port} output', 0) },
         ],
@@ -172,11 +174,11 @@ def gen_imx219_meta(port):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 1), 'dst': (5, port + 4) },
+                    { 'src': (port, 1), 'dst': (deser_out_port, port + 4) },
                 ],
                 'pads': [
                     { 'pad': (port, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (5, port + 4), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (deser_out_port, port + 4), 'fmt': mbus_fmt_imx219_meta },
                 ],
             },
 
@@ -217,7 +219,7 @@ def gen_imx219_meta(port):
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 5), 'dst': (csi_ent, 0) },
+            { 'src': (des_ent, 4), 'dst': (csi_ent, 0) },
             { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
             { 'src': (isp_ent, 1 + port + 4), 'dst': (f'VIN{vin_port + port + 4} output', 0) },
         ],
@@ -232,11 +234,11 @@ def gen_des_tpg():
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (8, 0), 'dst': (5, 0) },
+                    { 'src': (8, 0), 'dst': (deser_out_port, 0) },
                 ],
                 'pads': [
                     { 'pad': (8, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (5, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (deser_out_port, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -273,7 +275,7 @@ def gen_des_tpg():
         ],
 
         'links': [
-            { 'src': (des_ent, 5), 'dst': (csi_ent, 0) },
+            { 'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0) },
             { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
             { 'src': (isp_ent, 1), 'dst': (f'VIN{vin_port} output', 0) },
         ],
@@ -301,11 +303,11 @@ def gen_ser_tpg(port):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (5, port) },
+                    { 'src': (port, 0), 'dst': (deser_out_port, port) },
                 ],
                 'pads': [
                     { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (5, port), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (deser_out_port, port), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -343,7 +345,7 @@ def gen_ser_tpg(port):
 
         'links': [
             { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 5), 'dst': (csi_ent, 0) },
+            { 'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0) },
             { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
             { 'src': (isp_ent, 1 + port), 'dst': (f'VIN{vin_port + port} output', 0) },
         ],
