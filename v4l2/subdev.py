@@ -5,6 +5,7 @@ import errno
 import fcntl
 import os
 from enum import IntFlag
+from copy import copy
 
 import v4l2.uapi
 
@@ -65,6 +66,8 @@ class SubDevice:
             self.has_streams = (cap.capabilities & v4l2.uapi.V4L2_SUBDEV_CLIENT_CAP_STREAMS) != 0
         except OSError:
             self.has_streams = False
+
+        self.controls = self.enum_ext_ctrls()
 
     def get_formats(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
         val = v4l2.uapi.v4l2_subdev_mbus_code_enum()
@@ -272,3 +275,53 @@ class SubDevice:
         v4l2_ctrl.value = ctrl_val
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_CTRL, v4l2_ctrl, False)
+
+    def enum_ext_ctrls(self):
+        ctrl = v4l2.uapi.v4l2_queryctrl()
+        ctrl.id = v4l2.uapi.V4L2_CTRL_FLAG_NEXT_CTRL
+        ext_ctrls = {}
+        while True:
+            try:
+                fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYCTRL, ctrl)
+            except OSError:
+                return ext_ctrls
+
+            if ctrl.type != v4l2.uapi.V4L2_CTRL_TYPE_CTRL_CLASS:
+                ext_ctrls[ctrl.id] = copy(ctrl)
+
+            ctrl.id |= v4l2.uapi.V4L2_CTRL_FLAG_NEXT_CTRL
+
+    def get_ext_ctrl(self, ctrl_id: int):
+        ctrl = v4l2.uapi.v4l2_ext_control()
+        ctrl.id = ctrl_id
+        ext_ctrl = v4l2.uapi.v4l2_ext_controls()
+        ext_ctrl.which = v4l2.uapi.V4L2_CTRL_WHICH_CUR_VAL
+        ext_ctrl.count = 1
+        ext_ctrl.controls = ctypes.pointer(ctrl)
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_EXT_CTRLS, ext_ctrl)
+        return (
+            ctrl.value64
+            if (self.controls[ctrl_id].type == v4l2.uapi.V4L2_CTRL_TYPE_INTEGER64)
+            else ctrl.value
+        )
+
+    def set_ext_ctrl(self, ctrl_id, ctrl_val):
+        # TODO: handle situation when control is dynamically grabbed
+        if self.controls[ctrl_id].flags & v4l2.uapi.V4L2_CTRL_FLAG_READ_ONLY:
+            print(f"Control id [{ctrl_id}] isn't writable")
+            return
+        if self.controls[ctrl_id].flags & v4l2.uapi.V4L2_CTRL_FLAG_GRABBED:
+            print(f'Control id [{ctrl_id}] temporarily grabbed')
+            return
+
+        ctrl = v4l2.uapi.v4l2_ext_control()
+        ctrl.id = ctrl_id
+        if self.controls[ctrl_id].type == v4l2.uapi.V4L2_CTRL_TYPE_INTEGER64:
+            ctrl.value64 = ctrl_val
+        else:
+            ctrl.value = ctrl_val
+        ext_ctrl = v4l2.uapi.v4l2_ext_controls()
+        ext_ctrl.which = v4l2.uapi.V4L2_CTRL_WHICH_CUR_VAL
+        ext_ctrl.count = 1
+        ext_ctrl.controls = ctypes.pointer(ctrl)
+        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_EXT_CTRLS, ext_ctrl)
