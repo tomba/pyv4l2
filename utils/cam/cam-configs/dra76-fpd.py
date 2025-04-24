@@ -33,8 +33,10 @@ def gen_cam_pixel(mdata: dict, idx):
 
     if sensor_ent.name.startswith('imx390'):
         fmt = imx390_fmt
+        kms_format = v4l2.PixelFormats.RGB565
     elif sensor_ent.name.startswith('ov1063'):
         fmt = ov10635_fmt
+        kms_format = fmt[2][2]
     else:
         raise RuntimeError('Unknown sensor type')
 
@@ -94,7 +96,7 @@ def gen_cam_pixel(mdata: dict, idx):
             {
                 'entity': vnode,
                 'fmt': pix_fmt,
-                'kms-format': v4l2.PixelFormats.RGB565,
+                'kms-format': kms_format,
             },
         ],
 
