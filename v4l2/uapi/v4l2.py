@@ -5512,16 +5512,16 @@ def _IO(type, nr):
     return (_IOC (_IOC_NONE, type, nr, 0))
 
 
-def _IOR(type, nr, size):
-    return (_IOC (_IOC_READ, type, nr, (_IOC_TYPECHECK (size))))
+def _IOR(type, nr, argtype):
+    return (_IOC (_IOC_READ, type, nr, (_IOC_TYPECHECK (argtype))))
 
 
-def _IOW(type, nr, size):
-    return (_IOC (_IOC_WRITE, type, nr, (_IOC_TYPECHECK (size))))
+def _IOW(type, nr, argtype):
+    return (_IOC (_IOC_WRITE, type, nr, (_IOC_TYPECHECK (argtype))))
 
 
-def _IOWR(type, nr, size):
-    return (_IOC ((_IOC_READ | _IOC_WRITE), type, nr, (_IOC_TYPECHECK (size))))
+def _IOWR(type, nr, argtype):
+    return (_IOC ((_IOC_READ | _IOC_WRITE), type, nr, (_IOC_TYPECHECK (argtype))))
 
 
 V4L2_CTRL_CLASS_USER = 0x00980000
@@ -8053,6 +8053,9 @@ V4L2_CAP_META_CAPTURE = 0x00800000
 V4L2_CAP_READWRITE = 0x01000000
 
 
+V4L2_CAP_EDID = 0x02000000
+
+
 V4L2_CAP_STREAMING = 0x04000000
 
 
@@ -8716,6 +8719,9 @@ V4L2_PIX_FMT_Y8I = (v4l2_fourcc ('Y', '8', 'I', ' '))
 V4L2_PIX_FMT_Y12I = (v4l2_fourcc ('Y', '1', '2', 'I'))
 
 
+V4L2_PIX_FMT_Y16I = (v4l2_fourcc ('Y', '1', '6', 'I'))
+
+
 V4L2_PIX_FMT_Z16 = (v4l2_fourcc ('Z', '1', '6', ' '))
 
 
@@ -8851,6 +8857,9 @@ V4L2_META_FMT_RK_ISP1_PARAMS = (v4l2_fourcc ('R', 'K', '1', 'P'))
 V4L2_META_FMT_RK_ISP1_STAT_3A = (v4l2_fourcc ('R', 'K', '1', 'S'))
 
 
+V4L2_META_FMT_RK_ISP1_EXT_PARAMS = (v4l2_fourcc ('R', 'K', '1', 'E'))
+
+
 V4L2_META_FMT_RPI_BE_CFG = (v4l2_fourcc ('R', 'P', 'B', 'C'))
 
 
@@ -8858,27 +8867,6 @@ V4L2_META_FMT_RPI_FE_CFG = (v4l2_fourcc ('R', 'P', 'F', 'C'))
 
 
 V4L2_META_FMT_RPI_FE_STATS = (v4l2_fourcc ('R', 'P', 'F', 'S'))
-
-
-V4L2_META_FMT_GENERIC_8 = (v4l2_fourcc ('M', 'E', 'T', '8'))
-
-
-V4L2_META_FMT_GENERIC_CSI2_10 = (v4l2_fourcc ('M', 'C', '1', 'A'))
-
-
-V4L2_META_FMT_GENERIC_CSI2_12 = (v4l2_fourcc ('M', 'C', '1', 'C'))
-
-
-V4L2_META_FMT_GENERIC_CSI2_14 = (v4l2_fourcc ('M', 'C', '1', 'E'))
-
-
-V4L2_META_FMT_GENERIC_CSI2_16 = (v4l2_fourcc ('M', 'C', '1', 'G'))
-
-
-V4L2_META_FMT_GENERIC_CSI2_20 = (v4l2_fourcc ('M', 'C', '1', 'K'))
-
-
-V4L2_META_FMT_GENERIC_CSI2_24 = (v4l2_fourcc ('M', 'C', '1', 'O'))
 
 
 V4L2_PIX_FMT_PRIV_MAGIC = 0xfeedcafe
@@ -8921,6 +8909,9 @@ V4L2_FMT_FLAG_CSC_QUANTIZATION = 0x0100
 
 
 V4L2_FMT_FLAG_META_LINE_BASED = 0x0200
+
+
+V4L2_FMTDESC_FLAG_ENUM_ALL = 0x80000000
 
 
 V4L2_TC_TYPE_24FPS = 1
@@ -10202,9 +10193,6 @@ MEDIA_PAD_FL_SOURCE = (1 << 1)
 MEDIA_PAD_FL_MUST_CONNECT = (1 << 2)
 
 
-MEDIA_PAD_FL_INTERNAL = (1 << 3)
-
-
 MEDIA_LNK_FL_ENABLED = (1 << 0)
 
 
@@ -10481,6 +10469,12 @@ MEDIA_BUS_FMT_RGB888_1X32_PADHI = 0x100f
 
 
 MEDIA_BUS_FMT_RGB101010_1X30 = 0x1018
+
+
+MEDIA_BUS_FMT_RGB101010_1X7X5_SPWG = 0x1026
+
+
+MEDIA_BUS_FMT_RGB101010_1X7X5_JEIDA = 0x1027
 
 
 MEDIA_BUS_FMT_RGB666_1X36_CPADLO = 0x1020
@@ -10762,9 +10756,6 @@ MEDIA_BUS_FMT_META_20 = 0x8006
 MEDIA_BUS_FMT_META_24 = 0x8007
 
 
-MEDIA_BUS_FMT_CCS_EMBEDDED = 0x9001
-
-
 V4L2_MBUS_FRAMEFMT_SET_CSC = 0x0001
 
 
@@ -10790,9 +10781,6 @@ V4L2_SUBDEV_CAP_STREAMS = 0x00000002
 
 
 V4L2_SUBDEV_ROUTE_FL_ACTIVE = (1 << 0)
-
-
-V4L2_SUBDEV_ROUTE_FL_IMMUTABLE = (1 << 1)
 
 
 V4L2_SUBDEV_CLIENT_CAP_STREAMS = (1 << 0)
