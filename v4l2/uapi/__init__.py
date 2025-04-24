@@ -39,13 +39,6 @@ def v4l2_rect_to_str(self: v4l2_rect):
 
 v4l2_rect.__repr__ = v4l2_rect_to_str
 
-
-MEDIA_BUS_FMT_META_8 = 0x8001
-MEDIA_BUS_FMT_META_12 = 0x8003
-
-V4L2_META_FMT_GENERIC_8 = v4l2_fourcc('M', 'E', 'T', '8')
-V4L2_META_FMT_GENERIC_CSI2_12 = v4l2_fourcc('M', 'C', '1', 'C')
-
 V4L2_SEL_TGT_CROP = 0x0000
 V4L2_SEL_TGT_CROP_DEFAULT = 0x0001
 V4L2_SEL_TGT_CROP_BOUNDS = 0x0002
