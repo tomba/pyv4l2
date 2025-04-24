@@ -8893,6 +8893,27 @@ V4L2_META_FMT_RPI_FE_CFG = (v4l2_fourcc ('R', 'P', 'F', 'C'))
 V4L2_META_FMT_RPI_FE_STATS = (v4l2_fourcc ('R', 'P', 'F', 'S'))
 
 
+V4L2_META_FMT_GENERIC_8 = (v4l2_fourcc ('M', 'E', 'T', '8'))
+
+
+V4L2_META_FMT_GENERIC_CSI2_10 = (v4l2_fourcc ('M', 'C', '1', 'A'))
+
+
+V4L2_META_FMT_GENERIC_CSI2_12 = (v4l2_fourcc ('M', 'C', '1', 'C'))
+
+
+V4L2_META_FMT_GENERIC_CSI2_14 = (v4l2_fourcc ('M', 'C', '1', 'E'))
+
+
+V4L2_META_FMT_GENERIC_CSI2_16 = (v4l2_fourcc ('M', 'C', '1', 'G'))
+
+
+V4L2_META_FMT_GENERIC_CSI2_20 = (v4l2_fourcc ('M', 'C', '1', 'K'))
+
+
+V4L2_META_FMT_GENERIC_CSI2_24 = (v4l2_fourcc ('M', 'C', '1', 'O'))
+
+
 V4L2_PIX_FMT_PRIV_MAGIC = 0xfeedcafe
 
 
@@ -10217,6 +10238,9 @@ MEDIA_PAD_FL_SOURCE = (1 << 1)
 MEDIA_PAD_FL_MUST_CONNECT = (1 << 2)
 
 
+MEDIA_PAD_FL_INTERNAL = (1 << 3)
+
+
 MEDIA_LNK_FL_ENABLED = (1 << 0)
 
 
@@ -10780,6 +10804,9 @@ MEDIA_BUS_FMT_META_20 = 0x8006
 MEDIA_BUS_FMT_META_24 = 0x8007
 
 
+MEDIA_BUS_FMT_CCS_EMBEDDED = 0x9001
+
+
 V4L2_MBUS_FRAMEFMT_SET_CSC = 0x0001
 
 
@@ -10805,6 +10832,9 @@ V4L2_SUBDEV_CAP_STREAMS = 0x00000002
 
 
 V4L2_SUBDEV_ROUTE_FL_ACTIVE = (1 << 0)
+
+
+V4L2_SUBDEV_ROUTE_FL_IMMUTABLE = (1 << 1)
 
 
 V4L2_SUBDEV_CLIENT_CAP_STREAMS = (1 << 0)
