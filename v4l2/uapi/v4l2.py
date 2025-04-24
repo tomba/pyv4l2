@@ -3332,6 +3332,7 @@ struct_v4l2_bt_timings.__slots__ = [
     'hdmi_vic',
     'reserved',
 ]
+struct_v4l2_bt_timings._pack_ = 1
 struct_v4l2_bt_timings._fields_ = [
     ('width', __u32),
     ('height', __u32),
@@ -3379,6 +3380,7 @@ struct_v4l2_dv_timings.__slots__ = [
 struct_v4l2_dv_timings._anonymous_ = [
     'unnamed_1',
 ]
+struct_v4l2_dv_timings._pack_ = 1
 struct_v4l2_dv_timings._fields_ = [
     ('type', __u32),
     ('unnamed_1', union_anon_13),
@@ -3416,6 +3418,7 @@ struct_v4l2_bt_timings_cap.__slots__ = [
     'capabilities',
     'reserved',
 ]
+struct_v4l2_bt_timings_cap._pack_ = 1
 struct_v4l2_bt_timings_cap._fields_ = [
     ('min_width', __u32),
     ('max_width', __u32),
@@ -3616,6 +3619,7 @@ struct_v4l2_ext_control.__slots__ = [
 struct_v4l2_ext_control._anonymous_ = [
     'unnamed_1',
 ]
+struct_v4l2_ext_control._pack_ = 1
 struct_v4l2_ext_control._fields_ = [
     ('id', __u32),
     ('size', __u32),
@@ -3826,6 +3830,7 @@ struct_v4l2_querymenu.__slots__ = [
 struct_v4l2_querymenu._anonymous_ = [
     'unnamed_1',
 ]
+struct_v4l2_querymenu._pack_ = 1
 struct_v4l2_querymenu._fields_ = [
     ('id', __u32),
     ('index', __u32),
@@ -3965,6 +3970,7 @@ struct_v4l2_rds_data.__slots__ = [
     'msb',
     'block',
 ]
+struct_v4l2_rds_data._pack_ = 1
 struct_v4l2_rds_data._fields_ = [
     ('lsb', __u8),
     ('msb', __u8),
@@ -4239,6 +4245,7 @@ struct_v4l2_mpeg_vbi_itv0_line.__slots__ = [
     'id',
     'data',
 ]
+struct_v4l2_mpeg_vbi_itv0_line._pack_ = 1
 struct_v4l2_mpeg_vbi_itv0_line._fields_ = [
     ('id', __u8),
     ('data', __u8 * int(42)),
@@ -4252,6 +4259,7 @@ struct_v4l2_mpeg_vbi_itv0.__slots__ = [
     'linemask',
     'line',
 ]
+struct_v4l2_mpeg_vbi_itv0._pack_ = 1
 struct_v4l2_mpeg_vbi_itv0._fields_ = [
     ('linemask', __le32 * int(2)),
     ('line', struct_v4l2_mpeg_vbi_itv0_line * int(35)),
@@ -4264,6 +4272,7 @@ class struct_v4l2_mpeg_vbi_ITV0(Structure):
 struct_v4l2_mpeg_vbi_ITV0.__slots__ = [
     'line',
 ]
+struct_v4l2_mpeg_vbi_ITV0._pack_ = 1
 struct_v4l2_mpeg_vbi_ITV0._fields_ = [
     ('line', struct_v4l2_mpeg_vbi_itv0_line * int(36)),
 ]
@@ -4292,6 +4301,7 @@ struct_v4l2_mpeg_vbi_fmt_ivtv.__slots__ = [
 struct_v4l2_mpeg_vbi_fmt_ivtv._anonymous_ = [
     'unnamed_1',
 ]
+struct_v4l2_mpeg_vbi_fmt_ivtv._pack_ = 1
 struct_v4l2_mpeg_vbi_fmt_ivtv._fields_ = [
     ('magic', __u8 * int(4)),
     ('unnamed_1', union_anon_24),
@@ -4306,6 +4316,7 @@ struct_v4l2_plane_pix_format.__slots__ = [
     'bytesperline',
     'reserved',
 ]
+struct_v4l2_plane_pix_format._pack_ = 1
 struct_v4l2_plane_pix_format._fields_ = [
     ('sizeimage', __u32),
     ('bytesperline', __u32),
@@ -4346,6 +4357,7 @@ struct_v4l2_pix_format_mplane.__slots__ = [
 struct_v4l2_pix_format_mplane._anonymous_ = [
     'unnamed_1',
 ]
+struct_v4l2_pix_format_mplane._pack_ = 1
 struct_v4l2_pix_format_mplane._fields_ = [
     ('width', __u32),
     ('height', __u32),
@@ -4370,6 +4382,7 @@ struct_v4l2_sdr_format.__slots__ = [
     'buffersize',
     'reserved',
 ]
+struct_v4l2_sdr_format._pack_ = 1
 struct_v4l2_sdr_format._fields_ = [
     ('pixelformat', __u32),
     ('buffersize', __u32),
@@ -4387,6 +4400,7 @@ struct_v4l2_meta_format.__slots__ = [
     'height',
     'bytesperline',
 ]
+struct_v4l2_meta_format._pack_ = 1
 struct_v4l2_meta_format._fields_ = [
     ('dataformat', __u32),
     ('buffersize', __u32),
@@ -4468,6 +4482,7 @@ class struct_v4l2_event_vsync(Structure):
 struct_v4l2_event_vsync.__slots__ = [
     'field',
 ]
+struct_v4l2_event_vsync._pack_ = 1
 struct_v4l2_event_vsync._fields_ = [
     ('field', __u8),
 ]
@@ -4635,6 +4650,7 @@ struct_v4l2_dbg_match.__slots__ = [
 struct_v4l2_dbg_match._anonymous_ = [
     'unnamed_1',
 ]
+struct_v4l2_dbg_match._pack_ = 1
 struct_v4l2_dbg_match._fields_ = [
     ('type', __u32),
     ('unnamed_1', union_anon_30),
@@ -4650,6 +4666,7 @@ struct_v4l2_dbg_register.__slots__ = [
     'reg',
     'val',
 ]
+struct_v4l2_dbg_register._pack_ = 1
 struct_v4l2_dbg_register._fields_ = [
     ('match', struct_v4l2_dbg_match),
     ('size', __u32),
@@ -4667,6 +4684,7 @@ struct_v4l2_dbg_chip_info.__slots__ = [
     'flags',
     'reserved',
 ]
+struct_v4l2_dbg_chip_info._pack_ = 1
 struct_v4l2_dbg_chip_info._fields_ = [
     ('match', struct_v4l2_dbg_match),
     ('name', c_char * int(32)),
@@ -4910,6 +4928,7 @@ struct_media_v2_entity.__slots__ = [
     'flags',
     'reserved',
 ]
+struct_media_v2_entity._pack_ = 1
 struct_media_v2_entity._fields_ = [
     ('id', __u32),
     ('name', c_char * int(64)),
@@ -4926,6 +4945,7 @@ struct_media_v2_intf_devnode.__slots__ = [
     'major',
     'minor',
 ]
+struct_media_v2_intf_devnode._pack_ = 1
 struct_media_v2_intf_devnode._fields_ = [
     ('major', __u32),
     ('minor', __u32),
@@ -4958,6 +4978,7 @@ struct_media_v2_interface.__slots__ = [
 struct_media_v2_interface._anonymous_ = [
     'unnamed_1',
 ]
+struct_media_v2_interface._pack_ = 1
 struct_media_v2_interface._fields_ = [
     ('id', __u32),
     ('intf_type', __u32),
@@ -4977,6 +4998,7 @@ struct_media_v2_pad.__slots__ = [
     'index',
     'reserved',
 ]
+struct_media_v2_pad._pack_ = 1
 struct_media_v2_pad._fields_ = [
     ('id', __u32),
     ('entity_id', __u32),
@@ -4996,6 +5018,7 @@ struct_media_v2_link.__slots__ = [
     'flags',
     'reserved',
 ]
+struct_media_v2_link._pack_ = 1
 struct_media_v2_link._fields_ = [
     ('id', __u32),
     ('source_id', __u32),
@@ -5023,6 +5046,7 @@ struct_media_v2_topology.__slots__ = [
     'reserved4',
     'ptr_links',
 ]
+struct_media_v2_topology._pack_ = 1
 struct_media_v2_topology._fields_ = [
     ('topology_version', __u64),
     ('num_entities', __u32),
