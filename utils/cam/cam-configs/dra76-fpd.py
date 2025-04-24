@@ -319,6 +319,8 @@ def get_configs(config_names):
             cfgs.append(gen_cam_meta(mdata, num))
         elif cname == 'tpg':
             cfgs.append(gen_ub953_tpg(mdata, num))
+        else:
+            raise RuntimeError(f'Unknown config name: {cname}')
 
     merged_config = merge_configs(cfgs)
 
