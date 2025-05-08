@@ -324,11 +324,9 @@ def find_devices(mdev_name, deser_regex):
 def get_configs(config_names):
     des_name, des_src_pad, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
 
-    num_cameras = len(cameras)
-
     cfgs = []
     ch_index = 0
-    for i in range(num_cameras):
+    for i in cameras:
         cam = f'cam{i}'
         cam_meta = f'cam{i}-meta'
         ser_tpg = f'ser{i}-tpg'
