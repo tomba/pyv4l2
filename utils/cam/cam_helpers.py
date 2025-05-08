@@ -185,8 +185,9 @@ def configure_subdevs(sctx: Subcontext, config):
 
         subdevices[ent.name] = subdev
 
-        if 'controls' in e:
-            for ctrl_id, ctrl_val in e['controls']:
+        # Configure controls that need to be set before format
+        if 'pre-controls' in e:
+            for ctrl_id, ctrl_val in e['pre-controls']:
                 subdev.set_control(ctrl_id, ctrl_val)
 
         # Configure routes
@@ -241,6 +242,12 @@ def configure_subdevs(sctx: Subcontext, config):
             if 'ival' in p:
                 assert(len(p['ival']) == 2)
                 subdev.set_frame_interval(pad, stream, p['ival'])
+
+        # Configure controls
+        if 'controls' in e:
+            for ctrl_id, ctrl_val in e['controls']:
+                subdev.set_control(ctrl_id, ctrl_val)
+
 
     return subdevices
 
