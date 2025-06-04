@@ -188,7 +188,10 @@ def gen_imx219_meta(des_ent, des_src_pad, ch_index, cameras, port):
         ],
     }
 
-def gen_des_tpg(des_ent, des_src_pad, ch_index):
+def gen_des_tpg(des_ent, des_src_pad, deser_tpg_pad, ch_index):
+    assert deser_tpg_pad is not None
+
+    tpg_stream = 16
     return {
         'media': MEDIA_DEVICE_NAME,
 
@@ -197,11 +200,11 @@ def gen_des_tpg(des_ent, des_src_pad, ch_index):
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (8, 0), 'dst': (des_src_pad, 0) },
+                    { 'src': (deser_tpg_pad, 0), 'dst': (des_src_pad, tpg_stream) },
                 ],
                 'pads': [
-                    { 'pad': (8, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (des_src_pad, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (deser_tpg_pad, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (des_src_pad, tpg_stream), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -209,10 +212,10 @@ def gen_des_tpg(des_ent, des_src_pad, ch_index):
             {
                 'entity': CSI2_NAME,
                 'routing': [
-                    { 'src': (0, 0), 'dst': (1 + ch_index, 0) },
+                    { 'src': (0, tpg_stream), 'dst': (1 + ch_index, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (0, tpg_stream), 'fmt': mbus_fmt_tpg },
                     { 'pad': (1 + ch_index, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
@@ -234,6 +237,8 @@ def gen_des_tpg(des_ent, des_src_pad, ch_index):
 def gen_ser_tpg(des_ent, des_src_pad, ch_index, cameras, port):
     ser_ent = cameras[port][0]
 
+    ser_tpg_stream = 2
+    des_tpg_stream = port + 8
     return {
         'media': MEDIA_DEVICE_NAME,
 
@@ -242,22 +247,22 @@ def gen_ser_tpg(des_ent, des_src_pad, ch_index, cameras, port):
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (2, 0), 'dst': (1, 0) },
+                    { 'src': (2, 0), 'dst': (1, ser_tpg_stream) },
                 ],
                 'pads': [
                     { 'pad': (2, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (1, ser_tpg_stream), 'fmt': mbus_fmt_tpg },
                 ],
             },
             # Deserializer
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (des_src_pad, port) },
+                    { 'src': (port, ser_tpg_stream), 'dst': (des_src_pad, des_tpg_stream) },
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (des_src_pad, port), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (port, ser_tpg_stream), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (des_src_pad, des_tpg_stream), 'fmt': mbus_fmt_tpg },
                 ],
             },
 
@@ -265,10 +270,10 @@ def gen_ser_tpg(des_ent, des_src_pad, ch_index, cameras, port):
             {
                 'entity': CSI2_NAME,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + ch_index, 0) },
+                    { 'src': (0, des_tpg_stream), 'dst': (1 + ch_index, 0) },
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
+                    { 'pad': (0, des_tpg_stream), 'fmt': mbus_fmt_tpg },
                     { 'pad': (1 + ch_index, 0), 'fmt': mbus_fmt_tpg },
                 ],
             },
@@ -296,12 +301,18 @@ def find_devices(mdev_name, deser_regex):
     assert deser
 
     deser_src_pad = None
+    deser_tpg_pad = None
     for p in deser.pads:
         if p.is_source and len(p.links) == 1 and \
             p.links[0].sink.entity.name == CSI2_NAME:
             deser_src_pad = p.index
             break
     assert deser_src_pad is not None
+
+    for p in deser.pads:
+        if p.is_internal:
+            deser_tpg_pad = p.index
+            break
 
     cameras = {}
 
@@ -319,10 +330,10 @@ def find_devices(mdev_name, deser_regex):
 
         cameras[p.index] = (ser.name, sensor.name)
 
-    return deser.name, deser_src_pad, cameras
+    return deser.name, deser_src_pad, deser_tpg_pad, cameras
 
 def get_configs(config_names):
-    des_name, des_src_pad, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
+    des_name, des_src_pad, deser_tpg_pad, cameras = find_devices(MEDIA_DEVICE_NAME, DESER_REGEX)
 
     cfgs = []
     ch_index = 0
@@ -351,7 +362,7 @@ def get_configs(config_names):
 
     if 'des-tpg' in config_names:
         config_names.remove('des-tpg')
-        cfg = gen_des_tpg(des_name, des_src_pad, ch_index)
+        cfg = gen_des_tpg(des_name, des_src_pad, deser_tpg_pad, ch_index)
         cfgs.append(cfg)
         ch_index += 1
 
