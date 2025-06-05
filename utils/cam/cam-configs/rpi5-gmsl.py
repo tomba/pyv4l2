@@ -281,7 +281,7 @@ def gen_ser_tpg(des_ent, des_src_pad, ch_index, cameras, port):
 
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port}',
+                'entity': f'rp1-cfe-csi2-ch{ch_index}',
                 'fmt': fmt_tpg,
             },
         ],
