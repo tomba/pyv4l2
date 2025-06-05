@@ -36,8 +36,8 @@ fmt_pix_imx219_meta = (imx219_w, 2, imx219_pix_fmt_meta)
 
 # TPG
 
-mbus_fmt_tpg = (640, 480, v4l2.BusFormat.RGB888_1X24)
-fmt_tpg = (640, 480, v4l2.PixelFormats.BGR888)
+mbus_fmt_tpg = (1920, 1080, v4l2.BusFormat.RGB888_1X24)
+fmt_tpg = (1920, 1080, v4l2.PixelFormats.BGR888)
 
 
 def gen_imx219_pixel(des_ent, des_src_pad, ch_index, cameras, port):
