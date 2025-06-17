@@ -45,6 +45,7 @@ fmt_tpg = (640, 480, v4l2.PixelFormats.BGR888)
 def gen_imx219_pixel(des_ent, des_src_pad, ch_index, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
+    assert sensor_ent is not None
 
     return {
         'media': MEDIA_DEVICE_NAME,
@@ -115,6 +116,7 @@ def gen_imx219_pixel(des_ent, des_src_pad, ch_index, cameras, port):
 def gen_imx219_meta(des_ent, des_src_pad, ch_index, cameras, port):
     sensor_ent = cameras[port][1]
     ser_ent = cameras[port][0]
+    assert sensor_ent is not None
 
     return {
         'media': MEDIA_DEVICE_NAME,
@@ -313,9 +315,12 @@ def find_devices(mdev_name, deser_regex):
         assert len(p.links) == 1
 
         ser = p.links[0].source_pad.entity
-        sensor = ser.pads[0].links[0].source_pad.entity
+        sensor_name = None
+        if len(ser.pads[0].links) == 1:
+            sensor = ser.pads[0].links[0].source_pad.entity
+            sensor_name = sensor.name
 
-        cameras[p.index] = (ser.name, sensor.name)
+        cameras[p.index] = (ser.name, sensor_name)
 
     return deser.name, deser_src_pad, deser_tpg_pad, cameras
 
