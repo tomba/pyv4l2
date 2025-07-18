@@ -295,6 +295,21 @@ def gen_ser_tpg(des_ent, des_src_pad, ch_index, cameras, port):
         ],
     }
 
+def gen_empty_ser(cameras, port):
+    ser_ent = cameras[port][0]
+
+    return {
+        'media': MEDIA_DEVICE_NAME,
+
+        'subdevs': [
+            # Serializer
+            {
+                'entity': ser_ent,
+                'routing': [],
+            },
+        ],
+    }
+
 # Find serializers and sensors connected to the deserializer
 def find_devices(mdev_name, deser_regex):
     md = v4l2.MediaDevice(*mdev_name)
@@ -346,24 +361,32 @@ def get_configs(config_names):
         cam = f'cam{i}'
         cam_meta = f'cam{i}-meta'
         ser_tpg = f'ser{i}-tpg'
+        ser_in_use = False
 
         if cam in config_names:
             config_names.remove(cam)
             cfg = gen_imx219_pixel(des_name, des_src_pad, ch_index, cameras, i)
             cfgs.append(cfg)
             ch_index += 1
+            ser_in_use = True
 
         if cam_meta in config_names:
             config_names.remove(cam_meta)
             cfg = gen_imx219_meta(des_name, des_src_pad, ch_index, cameras, i)
             cfgs.append(cfg)
             ch_index += 1
+            ser_in_use = True
 
         if ser_tpg in config_names:
             cfg = gen_ser_tpg(des_name, des_src_pad, ch_index, cameras, i)
             config_names.remove(ser_tpg)
             cfgs.append(cfg)
             ch_index += 1
+            ser_in_use = True
+
+        if not ser_in_use:
+            cfg = gen_empty_ser(cameras, i)
+            cfgs.append(cfg)
 
     if 'des-tpg' in config_names:
         config_names.remove('des-tpg')
