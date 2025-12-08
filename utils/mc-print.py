@@ -10,6 +10,13 @@ import sys
 import v4l2
 import v4l2.uapi
 
+
+class AppContext:
+    def __init__(self, only_graph: bool, print_supported: bool):
+        self.only_graph = only_graph
+        self.print_supported = print_supported
+
+
 def print_selection(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int, target: v4l2.uapi.v4l2_sel_tgt) -> None:
     name = target.name.lower()
 
@@ -44,7 +51,7 @@ def print_routes(subdev: v4l2.SubDevice) -> None:
                                                v4l2.RouteFlag(r.flags).name))
 
 
-def print_videodev_pad(videodev: v4l2.VideoDevice, print_supported: bool) -> None:
+def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
     def print_videodef_fmts(videodev: v4l2.VideoDevice, buftype: v4l2.BufType, title: str) -> None:
         fmts = videodev.get_formats(buftype)
         fmts = [f"{f.name} ('{v4l2.fourcc_to_str(f.v4l2_fourcc)}')" for f in fmts]
@@ -73,7 +80,7 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, print_supported: bool) -> Non
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        if print_supported:
+        if ctx.print_supported:
             print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE, 'vcap')
 
     if videodev.has_mplane_capture:
@@ -86,7 +93,7 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, print_supported: bool) -> Non
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        if print_supported:
+        if ctx.print_supported:
             print_videodef_fmts(videodev, v4l2.BufType.VIDEO_CAPTURE_MPLANE, 'vcapm')
 
     if videodev.has_meta_capture:
@@ -99,7 +106,7 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, print_supported: bool) -> Non
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        if print_supported:
+        if ctx.print_supported:
             print_videodef_fmts(videodev, v4l2.BufType.META_CAPTURE, 'mcap')
 
     if videodev.has_meta_output:
@@ -112,11 +119,11 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, print_supported: bool) -> Non
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
 
-        if print_supported:
+        if ctx.print_supported:
             print_videodef_fmts(videodev, v4l2.BufType.META_OUTPUT, 'mout')
 
 
-def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int], print_supported: bool) -> None:
+def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int], ctx: AppContext) -> None:
     for s in streams:
         try:
             fmt = subdev.get_format(pad.index, s)
@@ -143,7 +150,7 @@ def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int]
 
         print_selections(subdev, pad, s)
 
-        if print_supported:
+        if ctx.print_supported:
             codes = subdev.get_formats(pad.index, s)
             codes = [c.name for c in codes]
 
@@ -160,7 +167,7 @@ def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int]
                 print(codes)
 
 
-def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v4l2.VideoDevice | None, only_graph: bool, print_supported: bool) -> None:
+def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v4l2.VideoDevice | None, ctx: AppContext) -> None:
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
     else:
@@ -195,14 +202,14 @@ def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v
 
         streams = sorted(streams)
 
-        if not only_graph and videodev:
-            print_videodev_pad(videodev, print_supported)
+        if not ctx.only_graph and videodev:
+            print_videodev_pad(videodev, ctx)
 
-        if not only_graph and subdev:
-            print_streams(subdev, pad, streams, print_supported)
+        if not ctx.only_graph and subdev:
+            print_streams(subdev, pad, streams, ctx)
 
 
-def print_entity(ent: v4l2.MediaEntity, only_graph: bool, print_supported: bool) -> None:
+def print_entity(ent: v4l2.MediaEntity, ctx: AppContext) -> None:
     print(f"Entity {ent.id}: '{ent.name}', Function: {ent.function.name}", end='')
     if ent.interface:
         print(f', Interface: {ent.interface.intf_type.name}', end='')
@@ -223,9 +230,9 @@ def print_entity(ent: v4l2.MediaEntity, only_graph: bool, print_supported: bool)
     else:
         videodev = None
 
-    print_pads(ent, subdev, videodev, only_graph, print_supported)
+    print_pads(ent, subdev, videodev, ctx)
 
-    if not only_graph and subdev:
+    if not ctx.only_graph and subdev:
         print_routes(subdev)
 
     print()
@@ -266,6 +273,8 @@ def main() -> int:
     print(f'Driver: {md.driver}, Model: {md.model}, Bus info: {md.bus_info}')
     print()
 
+    ctx = AppContext(only_graph=args.graph, print_supported=args.supported)
+
     printed = set()
 
     while len(print_queue) > 0:
@@ -288,7 +297,7 @@ def main() -> int:
 
                 print_queue += [ l.sink_pad.entity for l in links ]
 
-        print_entity(ent, only_graph=args.graph, print_supported=args.supported)
+        print_entity(ent, ctx)
 
     return 0
 
