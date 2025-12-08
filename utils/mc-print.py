@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from __future__ import annotations
+
 import argparse
 import errno
 import textwrap
@@ -8,7 +10,7 @@ import sys
 import v4l2
 import v4l2.uapi
 
-def print_selection(subdev, pad, stream, target):
+def print_selection(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int, target: v4l2.uapi.v4l2_sel_tgt) -> None:
     name = target.name.lower()
 
     try:
@@ -19,7 +21,7 @@ def print_selection(subdev, pad, stream, target):
             print(f'      {name}:({e})')
 
 
-def print_selections(subdev, pad, stream):
+def print_selections(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int) -> None:
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.NATIVE_SIZE)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_BOUNDS)
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_DEFAULT)
@@ -30,7 +32,7 @@ def print_selections(subdev, pad, stream):
     print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_PADDED)
 
 
-def print_routes(subdev):
+def print_routes(subdev: v4l2.SubDevice) -> None:
     routes = subdev.get_routes()
     if not routes:
         return
@@ -42,8 +44,8 @@ def print_routes(subdev):
                                                v4l2.RouteFlag(r.flags).name))
 
 
-def print_videodev_pad(videodev, print_supported):
-    def print_videodef_fmts(videodev, buftype, title,):
+def print_videodev_pad(videodev: v4l2.VideoDevice, print_supported: bool) -> None:
+    def print_videodef_fmts(videodev: v4l2.VideoDevice, buftype: v4l2.BufType, title: str) -> None:
         fmts = videodev.get_formats(buftype)
         fmts = [f"{f.name} ('{v4l2.fourcc_to_str(f.v4l2_fourcc)}')" for f in fmts]
 
@@ -114,7 +116,7 @@ def print_videodev_pad(videodev, print_supported):
             print_videodef_fmts(videodev, v4l2.BufType.META_OUTPUT, 'mout')
 
 
-def print_streams(subdev, pad, streams, print_supported):
+def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int], print_supported: bool) -> None:
     for s in streams:
         try:
             fmt = subdev.get_format(pad.index, s)
@@ -158,7 +160,7 @@ def print_streams(subdev, pad, streams, print_supported):
                 print(codes)
 
 
-def print_pads(ent, subdev, videodev, only_graph: bool, print_supported):
+def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v4l2.VideoDevice | None, only_graph: bool, print_supported: bool) -> None:
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
     else:
@@ -200,7 +202,7 @@ def print_pads(ent, subdev, videodev, only_graph: bool, print_supported):
             print_streams(subdev, pad, streams, print_supported)
 
 
-def print_entity(ent, only_graph: bool, print_supported):
+def print_entity(ent: v4l2.MediaEntity, only_graph: bool, print_supported: bool) -> None:
     print(f"Entity {ent.id}: '{ent.name}', Function: {ent.function.name}", end='')
     if ent.interface:
         print(f', Interface: {ent.interface.intf_type.name}', end='')
@@ -229,7 +231,7 @@ def print_entity(ent, only_graph: bool, print_supported):
     print()
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--device', default='/dev/media0', help='Media device')
     parser.add_argument('-g', '--graph', action='store_true', help='Print only the graph, no streams or routing')
@@ -258,7 +260,7 @@ def main():
 
         recurse = True
 
-    def flatten(t):
+    def flatten(t: list[list[v4l2.MediaLink]]) -> list[v4l2.MediaLink]:
         return [item for sublist in t for item in sublist]
 
     print(f'Driver: {md.driver}, Model: {md.model}, Bus info: {md.bus_info}')
