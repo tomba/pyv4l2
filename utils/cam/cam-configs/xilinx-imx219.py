@@ -10,7 +10,7 @@ fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.SRGGB10P]
 configurations = {}
 
 MEDIA = 'platform:xilinx_video_top'
-IMX219 = 'imx219 2-0010'
+IMX219 = 'imx219 22-0010'
 CSI2RX = 'a0012000.mipi_csi2_rx_subsystem'
 DMA = 'xilinx_video_top output 0'
 

@@ -6,8 +6,8 @@ from cam_helpers import merge_configs
 imx219_w = 640
 imx219_h = 480
 
-mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.SRGGB10_1X10]
-fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.SRGGB10P]
+mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.SRGGB8_1X8]
+fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.SRGGB8]
 
 tpg_w = 640
 tpg_h = 480

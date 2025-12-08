@@ -36,11 +36,11 @@ def gen_imx219_pixel(port):
             {
                 'entity': sensor_ent,
                 'pads': [
-#                    { "pad": (1, 0), "fmt": mbus_fmt_imx219 },
+#                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
                 ],
-#                "routing": [
-#                   { "src": (1, 0), "dst": (0, 0) },
+#                'routing': [
+#                   { 'src': (1, 0), 'dst': (0, 0) },
 #                ],
             },
             # Serializer
@@ -108,8 +108,17 @@ def gen_imx219_pixel(port):
 def gen_imx219_meta(port):
     sensor_ent = f'imx219 {port + 5}-0010'
     ser_ent = f'ds90ub953 4-004{4 + port}'
+    des_ent = 'ds90ub960 4-0030'
+    csirx_ent = 'cdns_csi2rx.30101000.csi-bridge'
+    csirx2_ent = '30102000.ticsi2rx'
+    dma_ent = '30102000.ticsi2rx context'
+
+    meta_stream_offset = 4
+    meta_port_offset = 1
 
     return {
+        'media': ('TI-CSI2RX', 'model'),
+
         'subdevs': [
             # Camera
             {
@@ -135,42 +144,52 @@ def gen_imx219_meta(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 4-003d',
+                'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 1), 'dst': (4, port + 4) },
+                    { 'src': (port, 1), 'dst': (4, port + meta_stream_offset) },
                 ],
                 'pads': [
                     { 'pad': (port, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (4, port + 4), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (4, port + meta_stream_offset), 'fmt': mbus_fmt_imx219_meta },
                 ],
             },
             # CSI-2 RX
             {
-                'entity': 'CAMERARX0',
+                'entity': csirx_ent,
                 'routing': [
-                    { 'src': (0, port + 4), 'dst': (1 + port + 4, 0) },
+                    { 'src': (0, port + meta_stream_offset), 'dst': (1, port + meta_stream_offset) },
                 ],
                 'pads': [
-                    { 'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1 + port + 4, 0), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (0, port + meta_stream_offset), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (1, port + meta_stream_offset), 'fmt': mbus_fmt_imx219_meta },
+                ],
+            },
+            # CSI-2 RX 2
+            {
+                'entity': csirx2_ent,
+                'routing': [
+                    { 'src': (0, port + meta_stream_offset), 'dst': (1 + port + meta_port_offset, 0) },
+                ],
+                'pads': [
+                    { 'pad': (0, port + meta_stream_offset), 'fmt': mbus_fmt_imx219_meta },
+                    { 'pad': (1 + port + meta_port_offset, 0), 'fmt': mbus_fmt_imx219_meta },
                 ],
             },
         ],
 
         'devices': [
             {
-                'entity': f'CAL output {port + 4}',
+                'entity': f'{dma_ent} {port + meta_port_offset}',
                 'fmt': fmt_pix_imx219_meta,
-                'embedded': True,
-                'display': False,
             },
         ],
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-003d', port) },
-            { 'src': ('ds90ub960 4-003d', 4), 'dst': ('CAMERARX0', 0) },
-            { 'src': ('CAMERARX0', 1 + port + 4), 'dst': (f'CAL output {port + 4}', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
+            { 'src': (des_ent, 4), 'dst': (csirx_ent, 0) },
+            { 'src': (csirx_ent, 1), 'dst': (csirx2_ent, 0) },
+            { 'src': (csirx2_ent, 1 + port + meta_port_offset), 'dst': (f'{dma_ent} {port + meta_port_offset}', 0) },
         ],
     }
 
