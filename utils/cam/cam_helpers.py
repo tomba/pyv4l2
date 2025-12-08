@@ -214,6 +214,9 @@ def configure_subdevs(sctx: Subcontext, config):
                     subdev.set_routes(routes)
                 except Exception as e:
                     print('Failed to set routes for {}'.format(ent))
+                    print('  Attempted routes:')
+                    for route in routes:
+                        print(f'    sink_pad={route.sink_pad}, sink_stream={route.sink_stream}, source_pad={route.source_pad}, source_stream={route.source_stream}')
                     raise e
 
         # Configure streams
