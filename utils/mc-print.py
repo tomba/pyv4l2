@@ -145,10 +145,10 @@ def print_streams(subdev, pad, streams, print_supported):
             codes = subdev.get_formats(pad.index, s)
             codes = [c.name for c in codes]
 
-            unsuported_codes = subdev.get_unsupported_formats(pad.index, s)
-            unsuported_codes = [f'{f:#x}' for f in unsuported_codes]
+            unsupported_codes = subdev.get_unsupported_formats(pad.index, s)
+            unsupported_codes = [f'{f:#x}' for f in unsupported_codes]
 
-            codes += unsuported_codes
+            codes += unsupported_codes
 
             if codes:
                 codes = 'codes: ' + str.join(' ', codes)
