@@ -258,7 +258,8 @@ def configure_subdevs(sctx: Subcontext, config):
 def save_fb_to_file(stream: Stream, is_drm, fb_or_vbuf):
     cap = stream.cap
 
-    filename = 'frame-{}-{}.data'.format(stream.id, stream.total_num_frames)
+    filename = 'frame-{}-{}-{}x{}-{}.data'.format(
+        stream.id, stream.total_num_frames, stream.w, stream.h, stream.format.name)
     print('save to ' + filename)
 
     if is_drm:
