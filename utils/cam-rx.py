@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
 # SPDX-License-Identifier: BSD-3-Clause
-# Copyright (C) 2023, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+# Copyright (C) 2023-2026, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+
+from __future__ import annotations
 
 import argparse
 import struct
 import sys
 import traceback
 
-from pixutils.conv.qt import buffer_to_pix
+import numpy as np
 from pixutils.formats import PixelFormats, MetaFormat, MetaFormats
+from pixutils.qt import ImageViewerWidget
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
 import PyQt6.QtNetwork
@@ -18,6 +21,7 @@ receivers = []
 
 # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]
 struct_fmt = struct.Struct('<III4I16pI4I')
+
 
 # Loading MJPEG to a QPixmap produces corrupt JPEG data warnings. Ignore these.
 def qt_message_handler(msg_type, msg_log_context, msg_string):
@@ -36,6 +40,7 @@ old_msg_handler = QtCore.qInstallMessageHandler(qt_message_handler)
 
 
 NO_SKIP = False
+
 
 def meta_to_pix(bytesperline, data):
     prev = None
@@ -95,14 +100,18 @@ class Receiver(QtWidgets.QWidget):
 
         self.state = 0
 
-        self.resize(1000, 600)
+        self.resize(1600, 900)
         self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
         self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, True)
 
-        self.gridLayout = QtWidgets.QGridLayout()
-        self.setLayout(self.gridLayout)
+        self.viewer = ImageViewerWidget(options={})
+        layout = QtWidgets.QVBoxLayout()
+        layout.addWidget(self.viewer)
+        self.setLayout(layout)
 
-        self.labels = {}
+        self.ctx_idx_to_stream_num = {}
+        self.next_stream_num = 0
+        self.pixel_stream_count = 0
 
         self.show()
         print('done')
@@ -137,8 +146,34 @@ class Receiver(QtWidgets.QWidget):
 
         self.state = 1
 
+    def _register_pixel_stream(self, ctx_idx: int) -> int | None:
+        """Register new pixel stream, return viewer stream number (0-3) or None if at limit."""
+        # If already registered, return cached mapping
+        if ctx_idx in self.ctx_idx_to_stream_num:
+            return self.ctx_idx_to_stream_num[ctx_idx]
+
+        # Check 4-stream limit
+        if self.pixel_stream_count >= 4:
+            print(
+                f'[{self.name}] WARNING: Cannot display ctx-idx {ctx_idx}, '
+                f'already showing 4 streams. Dropping frames.'
+            )
+            return None
+
+        # Assign next available stream number
+        stream_num = self.next_stream_num
+        self.ctx_idx_to_stream_num[ctx_idx] = stream_num
+        self.next_stream_num += 1
+        self.pixel_stream_count += 1
+
+        # Resize viewer grid (MUST call before set_frame)
+        self.viewer.setNumStreams(self.pixel_stream_count)
+        print(f'[{self.name}] Registered ctx-idx {ctx_idx} → stream {stream_num}')
+
+        return stream_num
+
     def on_buffers(self):
-        idx, w, h, s0,s1,s2,s3, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
+        idx, w, h, s0, s1, s2, s3, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
         bytesperline = s0
         try:
             fmt = PixelFormats.find_by_name(fmtstr.decode('ascii'))
@@ -148,26 +183,23 @@ class Receiver(QtWidgets.QWidget):
             except StopIteration as exc:
                 raise RuntimeError(f'Format not found: {fmtstr}') from exc
 
-        print('[{}] cam{} {}x{}-{}, buflen {}, bpl {}'.format(self.name, idx, w, h, fmt, len(self.data_buffer), bytesperline))
+        print(
+            f'[{self.name}] cam{idx} {w}x{h}-{fmt}, buflen {len(self.data_buffer)}, bpl {bytesperline}'
+        )
 
         if isinstance(fmt, MetaFormat):
+            # MetaFormat: print to console (unchanged)
             meta_to_pix(bytesperline, self.data_buffer)
         else:
-            if idx not in self.labels:
-                label = QtWidgets.QLabel()
-                label.setSizePolicy(QtWidgets.QSizePolicy.Policy.Ignored, QtWidgets.QSizePolicy.Policy.Ignored)
-                self.labels[idx] = label
-                self.gridLayout.addWidget(label, self.gridLayout.count() // 2, self.gridLayout.count() % 2)
+            # PixelFormat: display in viewer
+            stream_num = self._register_pixel_stream(idx)
 
-            label = self.labels[idx]
+            if stream_num is not None:
+                # Convert bytearray to numpy array (zero-copy view)
+                buffer_np = np.frombuffer(self.data_buffer, dtype=np.uint8)
 
-            pix = buffer_to_pix(fmt, w, h, bytesperline, self.data_buffer)
-
-            # pylint: disable=no-member
-            pix = pix.scaled(label.width(), label.height(), Qt.AspectRatioMode.KeepAspectRatio,
-                             Qt.TransformationMode.FastTransformation)
-
-            label.setPixmap(pix)
+                # Update viewer
+                self.viewer.set_frame(stream_num, w, h, fmt, buffer_np, bytesperline)
 
         self.data_buffer = bytearray()
 
@@ -194,6 +226,7 @@ def readkey():
     sys.stdin.readline()
     qApp.quit()
 
+
 def main():
     parser = argparse.ArgumentParser(description='Camera RX server')
     parser.add_argument('-H', '--host', default='0.0.0.0')
@@ -212,6 +245,7 @@ def main():
     print(f'Network receive on {args.host}:{args.port}')
 
     return qApp.exec()
+
 
 if __name__ == '__main__':
     sys.exit(main())
