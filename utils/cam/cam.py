@@ -10,7 +10,6 @@ import time
 import typing
 
 import v4l2
-from v4l2.videodev import VideoCaptureStreamer
 
 from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
 from cam_types import Stream, Context, Subcontext
@@ -248,13 +247,16 @@ def setup_sctx(sctx: Subcontext):
             cap.queue(cap.vbuffers[i])
 
     for stream in streams:
-        if stream.size:
-            print(f'{stream.dev_path}: stream on {stream.size}-{stream.format.name}')
+        streamer = stream.cap
+        strides = '/'.join(map(str, streamer.strides))
+        bufsizes = '/'.join(map(str, streamer.buffersizes))
+
+        if isinstance(stream.size, tuple):
+            dim_str = f'{stream.size[0]}x{stream.size[1]}'
         else:
-            streamer = typing.cast(VideoCaptureStreamer, stream.cap)
-            strides = '/'.join(map(str, streamer.strides))
-            bufsizes = '/'.join(map(str, streamer.buffersizes))
-            print(f'{stream.dev_path}: stream on {stream.w}x{stream.h}-{stream.format.name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
+            dim_str = str(stream.size)
+
+        print(f'{stream.dev_path}: stream on {dim_str}-{stream.format.name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
         stream.cap.stream_on()
 
     for stream in streams:
