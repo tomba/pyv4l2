@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import mmap
 import queue
 import socket
@@ -27,6 +28,36 @@ class NetConsumer(Consumer):
         return False
 
     def setup_streams_done(self, ctx: Context):
+        # Collect all streams
+        all_streams = []
+        for sctx in ctx.subcontexts:
+            all_streams.extend(sctx.streams)
+
+        # Build intro header
+        intro_dict = {
+            'version': 1,
+            'num_streams': len(all_streams),
+            'streams': [
+                {
+                    'id': stream.id,
+                    'width': stream.w,
+                    'height': stream.h,
+                    'format': stream.format.name,
+                }
+                for stream in all_streams
+            ]
+        }
+
+        # Serialize and send intro header
+        intro_json = json.dumps(intro_dict, separators=(',', ':'))
+        intro_bytes = intro_json.encode('utf-8')
+        intro_size = struct.pack('<I', len(intro_bytes))
+
+        print(f'[NetConsumer] Sending intro: {intro_json}')
+
+        self.sock.sendall(intro_size)
+        self.sock.sendall(intro_bytes)
+
         self.net_thread = threading.Thread(target=self.net_main)
         self.net_thread.start()
 

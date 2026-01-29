@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import struct
 import sys
 import traceback
@@ -93,12 +94,17 @@ class Receiver(QtWidgets.QWidget):
         self.socket.disconnected.connect(self.on_disconnected)
         self.socket.errorOccurred.connect(self.on_error)
 
+        self.intro_size_buffer = bytearray()
+        self.intro_buffer = bytearray()
+        self.intro_size_needed = 0
+        self.stream_metadata = {}
+
         self.header_buffer = bytearray()
         self.header_tuple = ()
         self.data_buffer = bytearray()
         self.data_size = 0
 
-        self.state = 0
+        self.state = -2
 
         self.resize(1600, 900)
         self.setAttribute(Qt.WidgetAttribute.WA_ShowWithoutActivating)
@@ -118,7 +124,25 @@ class Receiver(QtWidgets.QWidget):
 
     def on_ready_read(self):
         while self.socket.bytesAvailable():
-            if self.state == 0:
+            if self.state == -2:
+                data = self.socket.read(4 - len(self.intro_size_buffer))
+                self.intro_size_buffer.extend(data)
+
+                if len(self.intro_size_buffer) == 4:
+                    intro_size = struct.unpack('<I', self.intro_size_buffer)[0]
+                    self.intro_size_needed = intro_size
+                    self.intro_size_buffer = bytearray()
+                    self.state = -1
+
+            elif self.state == -1:
+                data = self.socket.read(self.intro_size_needed - len(self.intro_buffer))
+                self.intro_buffer.extend(data)
+
+                if len(self.intro_buffer) == self.intro_size_needed:
+                    self.on_intro()
+                    self.state = 0
+
+            elif self.state == 0:
                 data = self.socket.read(struct_fmt.size - len(self.header_buffer))
                 self.header_buffer.extend(data)
 
@@ -138,6 +162,39 @@ class Receiver(QtWidgets.QWidget):
                         qApp.exit(-1)
                         return
 
+    def on_intro(self):
+        intro_data = json.loads(self.intro_buffer.decode('utf-8'))
+
+        if intro_data['version'] != 1:
+            raise RuntimeError(f'Unsupported intro version: {intro_data["version"]}')
+
+        num_streams = intro_data['num_streams']
+        self.stream_metadata = {s['id']: s for s in intro_data['streams']}
+
+        # Filter pixel streams (exclude MetaFormat streams)
+        pixel_streams = []
+        for s in intro_data['streams']:
+            try:
+                PixelFormats.find_by_name(s['format'])
+                pixel_streams.append(s)
+            except StopIteration:
+                # Not a pixel format, assume it's meta
+                pass
+
+        # Pre-register all pixel streams
+        for idx, stream_info in enumerate(pixel_streams):
+            ctx_idx = stream_info['id']
+            self.ctx_idx_to_stream_num[ctx_idx] = idx
+            self.pixel_stream_count += 1
+
+        # Pre-size viewer grid
+        self.viewer.setNumStreams(len(pixel_streams))
+
+        print(f'[{self.name}] Intro: {num_streams} streams '
+              f'({len(pixel_streams)} pixel, {num_streams - len(pixel_streams)} meta)')
+
+        self.intro_buffer = bytearray()
+
     def on_header(self):
         self.header_tuple = struct_fmt.unpack_from(self.header_buffer)
         *_, p0, p1, p2, p3 = self.header_tuple
@@ -146,29 +203,25 @@ class Receiver(QtWidgets.QWidget):
 
         self.state = 1
 
-    def _register_pixel_stream(self, ctx_idx: int) -> int | None:
-        """Register new pixel stream, return viewer stream number (0-3) or None if at limit."""
-        # If already registered, return cached mapping
-        if ctx_idx in self.ctx_idx_to_stream_num:
-            return self.ctx_idx_to_stream_num[ctx_idx]
+    def _get_pixel_stream_num(self, ctx_idx: int) -> int | None:
+        """Look up pre-registered pixel stream number. Returns None if not found or limit exceeded."""
+        # Look up pre-registered stream
+        stream_num = self.ctx_idx_to_stream_num.get(ctx_idx)
 
-        # Check 4-stream limit
-        if self.pixel_stream_count >= 4:
+        if stream_num is None:
             print(
-                f'[{self.name}] WARNING: Cannot display ctx-idx {ctx_idx}, '
-                f'already showing 4 streams. Dropping frames.'
+                f'[{self.name}] WARNING: ctx-idx {ctx_idx} not found in intro header. '
+                f'Dropping frames.'
             )
             return None
 
-        # Assign next available stream number
-        stream_num = self.next_stream_num
-        self.ctx_idx_to_stream_num[ctx_idx] = stream_num
-        self.next_stream_num += 1
-        self.pixel_stream_count += 1
-
-        # Resize viewer grid (MUST call before set_frame)
-        self.viewer.setNumStreams(self.pixel_stream_count)
-        print(f'[{self.name}] Registered ctx-idx {ctx_idx} → stream {stream_num}')
+        # Validate 4-stream limit (should never trigger if intro is correct)
+        if stream_num >= 4:
+            print(
+                f'[{self.name}] WARNING: stream {stream_num} exceeds 4-stream limit. '
+                f'Dropping frames.'
+            )
+            return None
 
         return stream_num
 
@@ -192,7 +245,7 @@ class Receiver(QtWidgets.QWidget):
             meta_to_pix(bytesperline, self.data_buffer)
         else:
             # PixelFormat: display in viewer
-            stream_num = self._register_pixel_stream(idx)
+            stream_num = self._get_pixel_stream_num(idx)
 
             if stream_num is not None:
                 # Convert bytearray to numpy array (zero-copy view)
