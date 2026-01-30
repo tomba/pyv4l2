@@ -1,11 +1,18 @@
 import v4l2
+import v4l2.uapi
 
-imx219_w = 640
-imx219_h = 480
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-#imx219_pix_fmt = v4l2.PixelFormat.SRGGB10P
-imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
+USE_RAW_10=False
+
+#imx219_w, imx219_h = 3280, 2464
+#imx219_w, imx219_h = 1920, 1080
+imx219_w, imx219_h = 640, 480
+
+if USE_RAW_10:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
+else:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
 mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
@@ -42,6 +49,10 @@ def gen_imx219_pixel(port):
 #                'routing': [
 #                   { 'src': (1, 0), 'dst': (0, 0) },
 #                ],
+                'controls': [
+                    (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+                    (0x009f0903, 0),
+                ],
             },
             # Serializer
             {
