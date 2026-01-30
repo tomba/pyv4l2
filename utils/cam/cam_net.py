@@ -103,12 +103,11 @@ class NetConsumer(Consumer):
             with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
                 self.sock.sendall(b)
         else:
-            # Need PROT_WRITE to be able to read fe-config buffers
             with mmap.mmap(
                 cap.fd,
                 cap.framesize,
                 mmap.MAP_SHARED,
-                mmap.PROT_READ | mmap.PROT_WRITE,
+                mmap.PROT_READ,
                 offset=vbuf.offset,
             ) as b:
                 self.sock.sendall(b)
