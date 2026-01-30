@@ -259,11 +259,10 @@ class VideoCaptureStreamer(CaptureStreamer):
         self.width = width
         self.height = height
 
-        align = 0x20 # XXX HACK for Renesas. Fix align properly!
         self.__format = format
-        self.__strides = [format.stride(width, i, align=align) for i in range(len(format.planes))]
+        self.__strides = [format.stride(width, i) for i in range(len(format.planes))]
         self.__buffersizes = [format.planesize(self.__strides[i], height, i) for i in range(len(format.planes))]
-        self.__framesize = format.framesize(width, height, align=align)
+        self.__framesize = format.framesize(width, height)
 
     @property
     def buffersizes(self):
