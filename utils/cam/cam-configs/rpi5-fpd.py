@@ -1,13 +1,20 @@
 import v4l2
+import v4l2.uapi
+
+USE_RAW_10=False
+
+#imx219_w, imx219_h = 3280, 2464
+imx219_w, imx219_h = 1920, 1080
+#imx219_w, imx219_h = 640, 480
+
+if USE_RAW_10:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
+else:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
 # Pixel
-
-imx219_w = 640
-imx219_h = 480
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-#imx219_pix_fmt = v4l2.PixelFormat.SRGGB10P
-imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
 mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
@@ -38,7 +45,7 @@ first_imx_i2c_port = 11
 
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
-    ser_ent = f'ds90ub953 6-004{4 + port}'
+    ser_ent = f'ds90ub953 4-004{4 + port}'
 
     return {
         'media': ('rp1-cfe', 'model'),
@@ -49,6 +56,10 @@ def gen_imx219_pixel(port):
                 'entity': sensor_ent,
                 'pads': [
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                ],
+                'controls': [
+                    (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+                    (0x009f0903, 0),
                 ],
             },
 
@@ -65,7 +76,7 @@ def gen_imx219_pixel(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 6-0030',
+                'entity': 'ds90ub960 4-0030',
                 'routing': [
                     { 'src': (port, 0), 'dst': (4, port) },
                 ],
@@ -97,15 +108,15 @@ def gen_imx219_pixel(port):
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 4), 'dst': ('csi2', 0) },
+            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port) },
+            { 'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0) },
             { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }
 
 def gen_imx219_meta(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
-    ser_ent = f'ds90ub953 6-004{4 + port}'
+    ser_ent = f'ds90ub953 4-004{4 + port}'
 
     return {
         'media': ('rp1-cfe', 'model'),
@@ -132,7 +143,7 @@ def gen_imx219_meta(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 6-0030',
+                'entity': 'ds90ub960 4-0030',
                 'routing': [
                     { 'src': (port, 1), 'dst': (4, port + 2) },
                 ],
@@ -165,14 +176,14 @@ def gen_imx219_meta(port):
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 4), 'dst': ('csi2', 0) },
+            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port) },
+            { 'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0) },
             { 'src': ('csi2', 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
         ],
     }
 
 def gen_ub953_tpg(port):
-    ser_ent = f'ds90ub953 6-004{4 + port}'
+    ser_ent = f'ds90ub953 4-004{4 + port}'
 
     tpg_w = tpg_fmts[port][0]
     tpg_h = tpg_fmts[port][1]
@@ -197,7 +208,7 @@ def gen_ub953_tpg(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 6-0030',
+                'entity': 'ds90ub960 4-0030',
                 'routing': [
                     { 'src': (port, 0), 'dst': (4, port) },
                 ],
@@ -228,8 +239,8 @@ def gen_ub953_tpg(port):
         ],
 
         'links': [
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 4), 'dst': ('csi2', 0) },
+            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port) },
+            { 'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0) },
             { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }

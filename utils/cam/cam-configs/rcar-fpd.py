@@ -5,13 +5,23 @@ import v4l2.uapi
 
 from cam_helpers import merge_configs
 
-imx219_width = 640
-imx219_height = 480
+USE_RAW_10=False
+
+#imx219_width, imx219_height = 3280, 2464
+#imx219_width, imx219_height = 1920, 1080
+imx219_width, imx219_height = 640, 480
+
+if USE_RAW_10:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
+else:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
 imx219_fmt = (
-    ( imx219_width, imx219_height, v4l2.BusFormat.SRGGB8_1X8 ),
-    ( imx219_width, imx219_height, v4l2.BusFormat.SRGGB8_1X8 ),
-    ( imx219_width, imx219_height, v4l2.PixelFormats.SRGGB8 ),
+    ( imx219_width, imx219_height, imx219_bus_fmt ),
+    ( imx219_width, imx219_height, imx219_bus_fmt ),
+    ( imx219_width, imx219_height, imx219_pix_fmt ),
 )
 
 imx219_meta_fmt = ( imx219_width, 2, v4l2.BusFormat.META_8, v4l2.MetaFormats.GENERIC_8 )

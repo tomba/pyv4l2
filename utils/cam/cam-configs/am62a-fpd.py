@@ -4,8 +4,8 @@ import v4l2.uapi
 USE_RAW_10=False
 
 #imx219_w, imx219_h = 3280, 2464
-#imx219_w, imx219_h = 1920, 1080
-imx219_w, imx219_h = 640, 480
+imx219_w, imx219_h = 1920, 1080
+#imx219_w, imx219_h = 640, 480
 
 if USE_RAW_10:
     imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
