@@ -1,4 +1,5 @@
 import v4l2
+import v4l2.uapi
 
 imx219_w = 640
 imx219_h = 480
@@ -36,6 +37,10 @@ configurations['cam0'] = {
             'entity': sensor_ent,
             'pads': [
                 { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+            ],
+            'controls': [
+                (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+                (0x009f0903, 0),
             ],
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },

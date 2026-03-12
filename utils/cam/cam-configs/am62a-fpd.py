@@ -22,8 +22,8 @@ fmt_pix_imx219_meta = (imx219_w, 2, v4l2.MetaFormats.GENERIC_8)
 
 # TPG
 
-mbus_fmt_tpg = (1920, 1024, v4l2.BusFormat.UYVY8_1X16)
-fmt_tpg = (1920, 1024, v4l2.PixelFormats.UYVY)
+mbus_fmt_tpg = (1920, 1024, v4l2.BusFormat.RGB888_1X24)
+fmt_tpg = (1920, 1024, v4l2.PixelFormats.XRGB8888)
 
 configurations = {}
 
@@ -228,7 +228,7 @@ def gen_ub953_tpg(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 4-003d',
+                'entity': des_ent,
                 'routing': [
                     { 'src': (port, 0), 'dst': (4, port) },
                 ],

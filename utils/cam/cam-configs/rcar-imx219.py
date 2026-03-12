@@ -7,8 +7,8 @@ USE_RAW_10=False
 
 # Pixel
 
-imx219_w, imx219_h = 3280, 2464
-#imx219_w, imx219_h = 1920, 1080
+#imx219_w, imx219_h = 3280, 2464
+imx219_w, imx219_h = 1920, 1080
 #imx219_w, imx219_h = 640, 480
 
 if USE_RAW_10:
@@ -57,16 +57,16 @@ def gen_imx219_pixel(port):
 #                ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
-                    (0x009f0903, 1),
+                    (0x009f0903, 0),
                 ],
             },
 
             # CSI-2 RX
             {
                 'entity': csi_ent,
-#                'routing': [
-#                    { 'src': (0, 0), 'dst': (1, 0) },
-#                ],
+                'routing': [
+                    { 'src': (0, 0), 'dst': (1, 0) },
+                ],
                 'pads': [
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
                     { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
@@ -76,9 +76,9 @@ def gen_imx219_pixel(port):
             # ISP
             {
                 'entity': isp_ent,
-#                'routing': [
-#                    { 'src': (0, 0), 'dst': (1 + vin_port_vid, 0) },
-#                ],
+                'routing': [
+                    { 'src': (0, 0), 'dst': (1 + vin_port_vid, 0) },
+                ],
                 'pads': [
                     { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
                     { 'pad': (1 + vin_port_vid, 0), 'fmt': mbus_fmt_imx219 },
@@ -110,13 +110,13 @@ def gen_imx219_meta(port):
             # Camera
             {
                 'entity': sensor_ent,
-                'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+#                'pads': [
+#                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
 #                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
-                ],
-                'routing': [
-                   { 'src': (2, 0), 'dst': (0, 1) },
-                ],
+#                ],
+                #'routing': [
+                #   { 'src': (2, 0), 'dst': (0, 1) },
+                #],
             },
 
             # CSI-2 RX
