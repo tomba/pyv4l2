@@ -63,6 +63,119 @@ def enable_link(source, sink):
 # Config file functions
 #
 
+def gen_subdev(entity, fmt=None, routing=None, controls=None, pads=None):
+    """Generate a subdev config dict entry.
+
+    Args:
+        routing: A single route ((src_pad, src_stream), (dst_pad, dst_stream))
+                 or a list of routes. Each route is a (src, dst) tuple.
+        pads: A dict {(pad, stream): fmt, ...} or a list of pad dicts
+              for cases needing extra fields (ival, crop, etc.).
+        controls: A dict {ctrl_id: value, ...} or a list of (id, value) tuples.
+
+    If routing and fmt are given but pads is not, auto-generate pad entries
+    by setting fmt on each (pad, stream) pair mentioned in the routing.
+    """
+    d = { 'entity': entity }
+
+    # Normalize routing: single route tuple → list of routes
+    routes = None
+    if routing:
+        if isinstance(routing[0][0], tuple):
+            routes = routing
+        else:
+            routes = [routing]
+        d['routing'] = [{ 'src': r[0], 'dst': r[1] } for r in routes]
+
+    # Normalize pads: dict → list of pad dicts
+    if pads:
+        if isinstance(pads, dict):
+            d['pads'] = [{ 'pad': k, 'fmt': v } for k, v in pads.items()]
+        else:
+            d['pads'] = pads
+    elif routes and fmt:
+        d['pads'] = []
+        for r in routes:
+            d['pads'].append({ 'pad': r[0], 'fmt': fmt })
+            d['pads'].append({ 'pad': r[1], 'fmt': fmt })
+    elif fmt:
+        # Store format for propagation to pick up later
+        d['fmt'] = fmt
+
+    # Normalize controls: dict → list of tuples
+    if controls:
+        if isinstance(controls, dict):
+            d['controls'] = list(controls.items())
+        else:
+            d['controls'] = controls
+
+    return d
+
+def infer_links(md, config):
+    """Derive links from the ordered subdevs + devices lists.
+
+    For each consecutive pair of entities in the subdevs list, and between
+    the last subdev and each device, find the media graph link connecting
+    them and add it to config['links'].
+    """
+    entities = [sd['entity'] for sd in config['subdevs']]
+    entities += [dev['entity'] for dev in config['devices']]
+
+    links = []
+    for i in range(len(entities) - 1):
+        src_name = entities[i]
+        dst_name = entities[i + 1]
+
+        src_ent = md.find_entity(src_name) if isinstance(src_name, str) else src_name
+        dst_ent = md.find_entity(dst_name) if isinstance(dst_name, str) else dst_name
+        assert src_ent, f'Entity not found: {src_name}'
+        assert dst_ent, f'Entity not found: {dst_name}'
+
+        # Find a link from src to dst by checking all source pads of src
+        found = False
+        for pad in src_ent.pads:
+            if not pad.is_source:
+                continue
+            for link in pad.links:
+                if link.sink_pad.entity == dst_ent:
+                    links.append({
+                        'src': (src_name, pad.index),
+                        'dst': (dst_name, link.sink_pad.index),
+                    })
+                    found = True
+                    break
+            if found:
+                break
+
+        if not found:
+            raise RuntimeError(f'No link found between {src_name} and {dst_name}')
+
+    config['links'] = links
+
+def propagate_formats(config):
+    """Fill missing pad formats in subdev entries by propagation.
+
+    Walk subdevs in order. When a subdev has a 'fmt' key or explicit pads
+    with fmt, that becomes the current format. For subdevs with routing but
+    no pads (pass-throughs), generate pads using the current format.
+    """
+    current_fmt = None
+
+    for sd in config['subdevs']:
+        if 'fmt' in sd:
+            current_fmt = sd.pop('fmt')
+
+        if 'pads' in sd:
+            # Extract format from existing pads for propagation
+            for p in sd['pads']:
+                if 'fmt' in p:
+                    current_fmt = p['fmt']
+        elif 'routing' in sd and current_fmt:
+            sd['pads'] = []
+            for r in sd['routing']:
+                sd['pads'].append({ 'pad': r['src'], 'fmt': current_fmt })
+                sd['pads'].append({ 'pad': r['dst'], 'fmt': current_fmt })
+
 def merge_configs(configs):
     d = { 'media': None, 'subdevs': [], 'devices': [], 'links': [] }
 
