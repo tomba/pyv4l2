@@ -22,6 +22,7 @@ INCLUDES = (
 OUT = 'v4l2/uapi/v4l2.py'
 
 CTYPESGEN_OPTS = (
+    '--allow-gnu-c',
     '--no-embed-preamble',
     '--no-macro-try-except',
     '--no-source-comments',
