@@ -22,7 +22,7 @@ meta_fmt_pix_imx219 = (imx219_meta_w, imx219_meta_h, imx219_meta_pix_fmt)
 
 configurations = {}
 
-sensor_ent = 'imx219 4-0010'
+sensor_ent = 'imx219 2-0010'
 
 configurations['cam0'] = {
     'media': ('rp1-cfe', 'model'),

@@ -57,12 +57,12 @@ def gen_cam_pixel(mdata: dict, idx):
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (1, 0), 'fmt': cam_mbus_fmt },
+#                    { 'pad': (1, 0), 'fmt': cam_mbus_fmt },
                     { 'pad': (0, 0), 'fmt': cam_mbus_fmt },
                 ],
-                'routing': [
-                   { 'src': (1, 0), 'dst': (0, 0) },
-                ],
+#                'routing': [
+#                   { 'src': (1, 0), 'dst': (0, 0) },
+#                ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
                 ],

@@ -9,7 +9,7 @@ imx219_w, imx219_h = 1920, 1080
 
 if USE_RAW_10:
     imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10P
 else:
     imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
     imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
@@ -41,11 +41,13 @@ tpg_fmts = [
 
 configurations = {}
 
-first_imx_i2c_port = 11
+first_imx_i2c_port = 3
+ub9xx_i2c_port = 2
 
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
-    ser_ent = f'ds90ub953 4-004{4 + port}'
+    ser_ent = f'ds90ub953 {ub9xx_i2c_port}-004{4 + port}'
+    des_ent = f'ds90ub960 {ub9xx_i2c_port}-0030'
 
     return {
         'media': ('rp1-cfe', 'model'),
@@ -76,7 +78,7 @@ def gen_imx219_pixel(port):
             },
             # Deserializer
             {
-                'entity': 'ds90ub960 4-0030',
+                'entity': des_ent,
                 'routing': [
                     { 'src': (port, 0), 'dst': (4, port) },
                 ],
@@ -108,8 +110,8 @@ def gen_imx219_pixel(port):
 
         'links': [
             { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port) },
-            { 'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0) },
+            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
+            { 'src': (des_ent, 4), 'dst': ('csi2', 0) },
             { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
         ],
     }

@@ -1,20 +1,40 @@
 from __future__ import annotations
 import v4l2
+import v4l2.uapi
+
+USE_RAW_10=False
 
 imx219_w = 640
 imx219_h = 480
 
-mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.SRGGB10_1X10]
-fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.SRGGB10P]
+if USE_RAW_10:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10P
+else:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
+
+mbus_fmt = [imx219_w, imx219_h, imx219_bus_fmt]
+fmt_pix = [imx219_w, imx219_h, imx219_pix_fmt]
+
+demosaic_mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.RBG888_1X24]
+demosaic_fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.RGB888]
+
+tpg_mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.VUY8_1X24]
+tpg_fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.VUY888]
 
 configurations = {}
 
 MEDIA = 'platform:xilinx_video_top'
-IMX219 = 'imx219 22-0010'
+IMX219 = 'imx219 5-0010'
 CSI2RX = 'a0012000.mipi_csi2_rx_subsystem'
 DMA = 'xilinx_video_top output 0'
+DEMOSAIC = 'a0060000.v_demosaic'
 
-configurations['tpg'] = {
+TPG = 'a0050000.v_tpg'
+TPG_DMA = 'xilinx_video_top output 1'
+
+configurations['cam'] = {
     'media': (MEDIA, 'bus_info'),
 
     'subdevs': [
@@ -22,6 +42,9 @@ configurations['tpg'] = {
             'entity': IMX219,
             'pads': [
                 { 'pad': 0, 'fmt': mbus_fmt },
+            ],
+            'controls': [
+                (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
             ],
         },
         {
@@ -46,5 +69,72 @@ configurations['tpg'] = {
     ],
 }
 
-def get_configs(config_names: list[str]):
-    return configurations['tpg']
+configurations['dem'] = {
+    'media': (MEDIA, 'bus_info'),
+
+    'subdevs': [
+        {
+            'entity': IMX219,
+            'pads': [
+                { 'pad': 0, 'fmt': mbus_fmt },
+            ],
+            'controls': [
+                (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+            ],
+        },
+        {
+            'entity': CSI2RX,
+            'pads': [
+                { 'pad': 0, 'fmt': mbus_fmt },
+                { 'pad': 1, 'fmt': mbus_fmt },
+            ],
+        },
+        {
+            'entity': DEMOSAIC,
+            'pads': [
+                { 'pad': 0, 'fmt': mbus_fmt },
+                { 'pad': 1, 'fmt': demosaic_mbus_fmt },
+            ],
+        },
+    ],
+
+    'devices': [
+        {
+            'entity': DMA,
+            'fmt': demosaic_fmt_pix,
+        },
+    ],
+
+    'links': [
+        { 'src': (IMX219, 0), 'dst': (CSI2RX, 0) },
+        { 'src': (CSI2RX, 1), 'dst': (DEMOSAIC, 0) },
+        { 'src': (DEMOSAIC, 1), 'dst': (DMA, 0) },
+    ],
+}
+
+configurations['tpg'] = {
+    'media': (MEDIA, 'bus_info'),
+
+    'subdevs': [
+        {
+            'entity': TPG,
+            'pads': [
+                { 'pad': 0, 'fmt': tpg_mbus_fmt },
+            ],
+        },
+    ],
+
+    'devices': [
+        {
+            'entity': TPG_DMA,
+            'fmt': tpg_fmt_pix,
+        },
+    ],
+
+    'links': [
+        { 'src': (TPG, 0), 'dst': (TPG_DMA, 0) },
+    ],
+}
+
+def get_configs():
+    return (configurations, ['cam'])
