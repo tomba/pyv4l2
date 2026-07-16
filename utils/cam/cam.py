@@ -400,6 +400,11 @@ def main():
     if ctx.config_only:
         sys.exit(0)
 
+    # Capture the setup phase prints (e.g. "stream on") into the TUI log view
+    if ctx.use_tui:
+        from cam_tui import init_log
+        init_log()
+
     setup(ctx)
 
     run(ctx)
