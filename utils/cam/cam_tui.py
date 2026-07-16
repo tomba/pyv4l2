@@ -16,14 +16,17 @@ from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.output import create_output
 from prompt_toolkit.widgets import TextArea
 
-from cam_types import Context
+from cam_types import Context, StreamState
 
 HISTORY_FILE = '~/.cam_history'
 FPS_INTERVAL = 1
+DRAIN_TIMEOUT = 2
 
 COMMANDS = {
     'help': 'show this help',
     'status': 'status [id...]: show detailed stream info',
+    'start': 'start [id...]: start streams',
+    'stop': 'stop [id...]: stop streams',
     'quit': 'exit (also: q, ctrl-c, ctrl-d)',
 }
 
@@ -144,9 +147,14 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
             stream.last_timestamp = ts
             stream.last_framenum = stream.total_num_frames
 
-            lines.append('{} frames:{:8} fps:{:6.2f}'
+            if stream.state == StreamState.RUNNING:
+                state_str = f'fps:{fps:6.2f}'
+            else:
+                state_str = f'[{stream.state.name.lower()}]'
+
+            lines.append('{} frames:{:8} {}'
                          .format(stream_descs[stream.id],
-                                 stream.total_num_frames, fps))
+                                 stream.total_num_frames, state_str))
 
         status = '\n'.join(lines)
         return status
@@ -177,17 +185,29 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
         for name, desc in COMMANDS.items():
             _log(f'{name:12} {desc}\n')
 
-    def cmd_status(args: list[str]):
+    def parse_streams(args: list[str]):
+        """Args to a list of streams; no args means all streams"""
         try:
             ids = [int(a) for a in args]
         except ValueError:
             _log('Bad stream id\n')
+            return None
+
+        if not ids:
+            return streams
+
+        for i in ids:
+            if not any(s.id == i for s in streams):
+                _log(f'No stream {i}\n')
+
+        return [s for s in streams if s.id in ids]
+
+    def cmd_status(args: list[str]):
+        sel_streams = parse_streams(args)
+        if sel_streams is None:
             return
 
-        for stream in streams:
-            if ids and stream.id not in ids:
-                continue
-
+        for stream in sel_streams:
             cap = stream.cap
             info = stream.dev.get_format_info(cap.buf_type)
 
@@ -197,7 +217,8 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
             entity = getattr(stream, 'entity', None)
 
             _log(f'{stream.id}: {stream.dev_path}' +
-                 (f' ({entity})' if isinstance(entity, str) else '') + '\n')
+                 (f' ({entity})' if isinstance(entity, str) else '') +
+                 f' [{stream.state.name.lower()}]\n')
             _log(f'   {name(info.format)} {info.width}x{info.height}'
                  f' sizeimage:{info.sizeimage}'
                  f' strides:{cap.strides} bufsizes:{cap.buffersizes}\n')
@@ -210,6 +231,68 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
                      f' ycbcr_enc:{name(info.ycbcr_enc)}'
                      f' quantization:{name(info.quantization)}'
                      f' xfer_func:{name(info.xfer_func)}\n')
+
+    async def do_stop(stream):
+        loop = asyncio.get_running_loop()
+
+        t0 = loop.time()
+
+        # Wait until the consumer has returned the buffers it can
+        while ctx.consumer and not ctx.consumer.drain_done(ctx, stream):
+            if loop.time() - t0 > DRAIN_TIMEOUT:
+                _log(f'{stream.dev_path}: timeout waiting for the consumer '
+                     'to return buffers, not stopping\n')
+                stream.state = StreamState.RUNNING
+                return
+
+            await asyncio.sleep(0.05)
+
+        loop.remove_reader(stream.cap.fd)
+        stream.cap.stream_off()
+        stream.state = StreamState.STOPPED
+        _log(f'{stream.dev_path}: stream off\n')
+
+    def cmd_stop(args: list[str]):
+        sel_streams = parse_streams(args)
+        if sel_streams is None:
+            return
+
+        for stream in sel_streams:
+            if stream.state != StreamState.RUNNING:
+                _log(f'{stream.id}: not running\n')
+                continue
+
+            # readvid() bypasses the consumer for a draining stream
+            stream.state = StreamState.DRAINING
+
+            asyncio.get_running_loop().create_task(do_stop(stream))
+
+    def cmd_start(args: list[str]):
+        sel_streams = parse_streams(args)
+        if sel_streams is None:
+            return
+
+        loop = asyncio.get_running_loop()
+
+        for stream in sel_streams:
+            if stream.state != StreamState.STOPPED:
+                _log(f'{stream.id}: not stopped\n')
+                continue
+
+            cap = stream.cap
+
+            held = ctx.consumer.held_vbuffers(ctx, stream) if ctx.consumer else []
+
+            for vbuf in cap.vbuffers:
+                if vbuf not in held:
+                    cap.queue(vbuf)
+
+            cap.stream_on()
+
+            loop.add_reader(cap.fd, stream_callbacks[stream.id])
+
+            stream.state = StreamState.RUNNING
+            _log(f'{stream.dev_path}: stream on\n')
 
     def on_command(buf):
         argv = buf.text.split()
@@ -224,6 +307,10 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
             cmd_help(argv[1:])
         elif cmd == 'status':
             cmd_status(argv[1:])
+        elif cmd == 'start':
+            cmd_start(argv[1:])
+        elif cmd == 'stop':
+            cmd_stop(argv[1:])
         else:
             _log(f'Unknown command: {cmd}\n')
 
@@ -276,18 +363,30 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
                 app.exit()
         return cb
 
+    # Stream id -> wrapped event callback, for re-adding the reader when
+    # restarting a stopped stream
+    stream_callbacks = {}
+
     async def amain():
         loop = asyncio.get_running_loop()
 
+        fd_to_stream_id = {stream.cap.fd: stream.id for stream in streams}
+
         fds = []
         for key in sel.get_map().values():
-            loop.add_reader(key.fd, wrap_callback(key.data))
+            cb = wrap_callback(key.data)
+
+            if key.fd in fd_to_stream_id:
+                stream_callbacks[fd_to_stream_id[key.fd]] = cb
+
+            loop.add_reader(key.fd, cb)
             fds.append(key.fd)
 
         try:
             await app.run_async()
         finally:
             for fd in fds:
+                # Stopped streams have already been removed
                 loop.remove_reader(fd)
 
     global _app
