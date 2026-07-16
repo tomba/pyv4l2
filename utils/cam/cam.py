@@ -12,7 +12,7 @@ import typing
 import v4l2
 
 from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
-from cam_types import Stream, Context, Subcontext
+from cam_types import Stream, StreamState, Context, Subcontext
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
@@ -121,6 +121,7 @@ def init_viddevs(ctx: Context):
             # Copy all the fields from 'data' to the stream
             stream = Stream()
             stream.sctx = sctx
+            stream.state = StreamState.RUNNING
             for k, v in data.items():
                 k = k.replace('-', '_')
                 setattr(stream, k, v)
@@ -319,7 +320,9 @@ def readvid(sctx: Subcontext, stream: Stream):
     if ctx.save:
         save_fb_to_file(stream, ctx.buf_type == 'drm', fb if ctx.buf_type == 'drm' else vbuf)
 
-    if ctx.consumer:
+    # A draining stream bypasses the consumer, so that the consumer can
+    # return the buffers it holds
+    if ctx.consumer and stream.state == StreamState.RUNNING:
         ctx.consumer.handle_frame(ctx, stream, vbuf)
     else:
         queue_buf(stream, vbuf)

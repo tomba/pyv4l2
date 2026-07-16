@@ -313,3 +313,26 @@ class DisplayConsumer(Consumer):
 
     def register_selector(self, sel: BaseSelector):
         sel.register(self.card.fd, EVENT_READ, lambda: self.readdrm())
+
+    def drain_done(self, ctx: Context, stream: Stream) -> bool:
+        kms_stream = self.kms_streams.get(stream.id)
+        if not kms_stream:
+            return True
+
+        # The fb on screen stays with KMS; everything else drains via the
+        # pageflip handler
+        return kms_stream.old_fb is None and len(kms_stream.fb_queue) == 0
+
+    def held_vbuffers(self, ctx: Context, stream: Stream) -> list:
+        kms_stream = self.kms_streams.get(stream.id)
+        if not kms_stream:
+            return []
+
+        held_fbs = [kms_stream.fb]
+        if kms_stream.old_fb:
+            held_fbs.append(kms_stream.old_fb)
+        held_fbs.extend(kms_stream.fb_queue)
+
+        held_fds = {fb.fd(0) for fb in held_fbs}
+
+        return [vbuf for vbuf in stream.cap.vbuffers if vbuf.fd in held_fds]

@@ -90,6 +90,9 @@ class NetConsumer(Consumer):
             self.tx(stream, vbuf, is_drm)
             self.net_done_queue.put((stream, vbuf))
 
+    def drain_done(self, ctx: Context, stream: Stream) -> bool:
+        return self.current_buf.get(stream.id) is None
+
     def handle_tick(self, ctx: Context):
         while not self.net_done_queue.empty():
             stream, vbuf = self.net_done_queue.get()
