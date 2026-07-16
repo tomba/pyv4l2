@@ -1,14 +1,23 @@
-import time
 import selectors
+import time
 
 import IPython
 from traitlets.config import Config
 from pygments.token import Token
 
 import v4l2
-import v4l2.uapi
 
-def run_ipython(ctx, sel):
+from cam_types import Context
+
+
+def run_ipython(ctx: Context, sel: selectors.BaseSelector):
+    streams = [stream for sctx in ctx.subcontexts for stream in sctx.streams]
+
+    subdevices = {}
+    for sctx in ctx.subcontexts:
+        if sctx.subdevices:
+            subdevices.update(sctx.subdevices)
+
     def inputhook(context):
         fd = context.fileno()
 
@@ -31,52 +40,45 @@ def run_ipython(ctx, sel):
 
     class MyPrompt(IPython.terminal.prompts.Prompts):
         def in_prompt_tokens(self, cli=None):
-            # TODO: handle all streams
-
-            stream = ctx.streams[0]
-
             ts = time.perf_counter()
 
-            diff = ts - stream.last_timestamp
-            num_frames = stream.total_num_frames - stream.last_framenum
+            lines = []
+            for stream in streams:
+                diff = ts - stream.last_timestamp
+                num_frames = stream.total_num_frames - stream.last_framenum
 
-            fps = num_frames / diff
+                fps = num_frames / diff if diff > 0 else 0
 
-            fps_str = '[frames:{:8} fps:{:5.2f}]\n'.format(ctx.streams[0]['total_num_frames'], fps)
+                stream.last_timestamp = ts
+                stream.last_framenum = stream.total_num_frames
 
-            stream.last_timestamp = ts
-            stream.last_framenum = stream.total_num_frames
+                lines.append('[{}: {} frames:{:8} fps:{:5.2f}]'
+                             .format(stream.id, stream.dev_path,
+                                     stream.total_num_frames, fps))
 
             return [
-                (Token, fps_str),
+                (Token, '\n'.join(lines) + '\n'),
                 (Token.Prompt, '> '),
             ]
 
-    print('Starting IPython')
+    banner = (
+        'cam IPython mode\n'
+        'Scope: ctx, streams, subdevices, v4l2\n'
+    )
 
-    def set_crop(x, y, w, h):
-        import v4l2.uapi # XXX
-        ctx.subdevices['rkisp1_resizer_mainpath'].set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, (x, y, w, h), pad=0)
+    c = Config()
+    c.InteractiveShellApp.exec_lines = [
+        '%gui mygui',
+    ]
+    c.TerminalInteractiveShell.confirm_exit = False
+    c.TerminalInteractiveShell.banner1 = banner
+    c.TerminalInteractiveShell.prompts_class = MyPrompt
 
-    if True:
-        c = Config()
-        c.InteractiveShellApp.exec_lines = [
-            '%gui mygui',
-        ]
-        c.TerminalInteractiveShell.confirm_exit = False
-        c.TerminalInteractiveShell.banner1 = ''
-        c.TerminalInteractiveShell.prompts_class = MyPrompt
+    scope = {
+        'v4l2': v4l2,
+        'ctx': ctx,
+        'streams': streams,
+        'subdevices': subdevices,
+    }
 
-        scope = {
-            'v4l2': v4l2,
-            'streams': ctx.streams,
-            'subdevices': ctx.subdevices,
-            'set_crop': set_crop,
-        }
-
-        IPython.start_ipython(config=c, argv=[], user_ns=scope)
-    else:
-        c = Config()
-        c.InteractiveShellEmbed.confirm_exit = False
-        c.InteractiveShellEmbed.banner1 = ''
-        IPython.embed(config=c)
+    IPython.start_ipython(config=c, argv=[], user_ns=scope)
