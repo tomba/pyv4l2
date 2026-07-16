@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from selectors import BaseSelector
-from typing import Callable
 import types
 
 from kms import DumbFramebuffer
@@ -55,7 +54,6 @@ class Subcontext:
 class Context:
     subcontexts: list[Subcontext]
     verbose: bool
-    use_ipython: bool
     user_script: types.ModuleType | None
     buf_type: str
     use_display: bool
@@ -64,7 +62,6 @@ class Context:
     delay: int
     save: bool
     tx: None | list[str]
-    run_ipython: Callable
     exit: bool
     exit_num_frames: int
 
