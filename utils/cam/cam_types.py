@@ -63,6 +63,7 @@ class Context:
     subcontexts: list[Subcontext]
     verbose: bool
     use_tui: bool
+    start_streams: bool
     user_script: types.ModuleType | None
     buf_type: str
     use_display: bool

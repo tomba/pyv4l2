@@ -23,6 +23,7 @@ def parse_args(ctx: Context):
     parser.add_argument('-t', '--type', type=str, help='buffer type (drm/v4l2)')
     parser.add_argument('-p', '--print', action='store_true', default=False, help='print config dict')
     parser.add_argument('-i', '--interactive', action='store_true', default=False, help='interactive TUI mode')
+    parser.add_argument('-N', '--no-start', action='store_true', default=False, help='do not start the streams (needs -i)')
     parser.add_argument('-S', '--script', help='User script')
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
@@ -44,6 +45,11 @@ def parse_args(ctx: Context):
     if ctx.use_tui:
         from cam_tui import run_tui
         ctx.run_tui = run_tui
+
+    if args.no_start and not args.interactive:
+        parser.error('--no-start requires -i/--interactive')
+
+    ctx.start_streams = not args.no_start
 
     if args.script:
         import importlib.util
@@ -121,7 +127,7 @@ def init_viddevs(ctx: Context):
             # Copy all the fields from 'data' to the stream
             stream = Stream()
             stream.sctx = sctx
-            stream.state = StreamState.RUNNING
+            stream.state = StreamState.RUNNING if ctx.start_streams else StreamState.STOPPED
             for k, v in data.items():
                 k = k.replace('-', '_')
                 setattr(stream, k, v)
@@ -244,9 +250,11 @@ def setup_sctx(sctx: Subcontext):
 
         first_buf = 1 if skip_first else 0
 
-        # Queue the rest to the camera
-        for i in range(first_buf, stream.num_bufs):
-            cap.queue(cap.vbuffers[i])
+        # Queue the rest to the camera. For streams that are not started, the
+        # TUI start command queues the buffers.
+        if stream.state == StreamState.RUNNING:
+            for i in range(first_buf, stream.num_bufs):
+                cap.queue(cap.vbuffers[i])
 
     for stream in streams:
         streamer = stream.cap
@@ -257,6 +265,10 @@ def setup_sctx(sctx: Subcontext):
             dim_str = f'{stream.size[0]}x{stream.size[1]}'
         else:
             dim_str = str(stream.size)
+
+        if stream.state != StreamState.RUNNING:
+            print(f'{stream.dev_path}: configured {dim_str}-{stream.format.name} (not started)')
+            continue
 
         print(f'{stream.dev_path}: stream on {dim_str}-{stream.format.name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
         stream.cap.stream_on()
@@ -353,14 +365,21 @@ def run(ctx: Context):
     if ctx.consumer:
         ctx.consumer.register_selector(sel)
 
+    # Streams that are not started are not registered, as polling a
+    # non-streaming video device would return POLLERR
+    stream_callbacks = {}
     for sctx in ctx.subcontexts:
         for stream in sctx.streams:
-            sel.register(stream.cap.fd,
-                        selectors.EVENT_READ | selectors.EVENT_WRITE,
-                        lambda data=stream: readvid(sctx, data))
+            cb = lambda sctx=sctx, stream=stream: readvid(sctx, stream)
+            stream_callbacks[stream.id] = cb
+
+            if stream.state == StreamState.RUNNING:
+                sel.register(stream.cap.fd,
+                             selectors.EVENT_READ | selectors.EVENT_WRITE,
+                             cb)
 
     if ctx.use_tui:
-        ctx.run_tui(ctx, sel)
+        ctx.run_tui(ctx, sel, stream_callbacks)
         return
 
     while not ctx.exit:

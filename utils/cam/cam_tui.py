@@ -91,7 +91,7 @@ def _restore_stdout():
         _orig_stdout = None
 
 
-def run_tui(ctx: Context, sel: selectors.BaseSelector):
+def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
     streams = [stream for sctx in ctx.subcontexts for stream in sctx.streams]
 
     def make_stream_descs():
@@ -289,7 +289,7 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
 
             cap.stream_on()
 
-            loop.add_reader(cap.fd, stream_callbacks[stream.id])
+            loop.add_reader(cap.fd, wrapped_callbacks[stream.id])
 
             stream.state = StreamState.RUNNING
             _log(f'{stream.dev_path}: stream on\n')
@@ -363,31 +363,36 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
                 app.exit()
         return cb
 
-    # Stream id -> wrapped event callback, for re-adding the reader when
-    # restarting a stopped stream
-    stream_callbacks = {}
+    # Stream id -> wrapped event callback, for (re-)adding the reader when
+    # starting a stream
+    wrapped_callbacks = {stream.id: wrap_callback(stream_callbacks[stream.id])
+                         for stream in streams}
 
     async def amain():
         loop = asyncio.get_running_loop()
 
-        fd_to_stream_id = {stream.cap.fd: stream.id for stream in streams}
+        stream_fds = {stream.cap.fd for stream in streams}
 
-        fds = []
+        # Non-stream selector entries (e.g. the DRM fd) stay registered for
+        # the whole run
         for key in sel.get_map().values():
-            cb = wrap_callback(key.data)
+            if key.fd in stream_fds:
+                continue
+            loop.add_reader(key.fd, wrap_callback(key.data))
 
-            if key.fd in fd_to_stream_id:
-                stream_callbacks[fd_to_stream_id[key.fd]] = cb
-
-            loop.add_reader(key.fd, cb)
-            fds.append(key.fd)
+        for stream in streams:
+            if stream.state == StreamState.RUNNING:
+                loop.add_reader(stream.cap.fd, wrapped_callbacks[stream.id])
 
         try:
             await app.run_async()
         finally:
-            for fd in fds:
-                # Stopped streams have already been removed
-                loop.remove_reader(fd)
+            # remove_reader is a no-op for fds that are not registered
+            # (e.g. stopped streams)
+            for key in sel.get_map().values():
+                loop.remove_reader(key.fd)
+            for stream in streams:
+                loop.remove_reader(stream.cap.fd)
 
     global _app
 
