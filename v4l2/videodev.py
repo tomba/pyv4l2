@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 import ctypes
 import errno
 import fcntl
@@ -10,7 +11,26 @@ import os
 
 import v4l2.uapi
 
-__all__ = [ 'VideoDevice', 'VideoBuffer' ]
+__all__ = [ 'VideoDevice', 'VideoBuffer', 'VideoFormatInfo' ]
+
+def _enum_or_int(enum_cls, value):
+    # Keep the raw value if the driver returns something we don't know
+    try:
+        return enum_cls(value)
+    except ValueError:
+        return value
+
+@dataclass
+class VideoFormatInfo:
+    format: v4l2.PixelFormat | v4l2.MetaFormat | str
+    width: int | None = None
+    height: int | None = None
+    sizeimage: int | None = None
+    field: v4l2.Field | int | None = None
+    colorspace: v4l2.ColorSpace | int | None = None
+    ycbcr_enc: v4l2.YCbCrEncoding | int | None = None
+    quantization: v4l2.Quantization | int | None = None
+    xfer_func: v4l2.XferFunc | int | None = None
 
 class VideoDevice:
     def __init__(self, dev_path: str) -> None:
@@ -159,6 +179,40 @@ class VideoDevice:
         fmt.type = buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, fmt, True)
         return fmt
+
+    def get_format_info(self, buf_type: v4l2.BufType) -> VideoFormatInfo:
+        fmt = self.get_format(buf_type)
+
+        def find_format(fourcc):
+            # Fall back to the fourcc string for formats pyv4l2 doesn't know
+            try:
+                if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
+                    return v4l2.MetaFormats.find_v4l2_fourcc(fourcc)
+                return v4l2.PixelFormats.find_v4l2_fourcc(fourcc)
+            except StopIteration:
+                return v4l2.fourcc_to_str(fourcc)
+
+        if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
+            m = fmt.fmt.meta
+            return VideoFormatInfo(format=find_format(m.dataformat),
+                                   width=m.width, height=m.height,
+                                   sizeimage=m.buffersize)
+
+        if buf_type in [v4l2.BufType.VIDEO_CAPTURE_MPLANE, v4l2.BufType.VIDEO_OUTPUT_MPLANE]:
+            p = fmt.fmt.pix_mp
+            sizeimage = sum(p.plane_fmt[i].sizeimage for i in range(p.num_planes))
+        else:
+            p = fmt.fmt.pix
+            sizeimage = p.sizeimage
+
+        return VideoFormatInfo(format=find_format(p.pixelformat),
+                               width=p.width, height=p.height,
+                               sizeimage=sizeimage,
+                               field=_enum_or_int(v4l2.Field, p.field),
+                               colorspace=_enum_or_int(v4l2.ColorSpace, p.colorspace),
+                               ycbcr_enc=_enum_or_int(v4l2.YCbCrEncoding, p.ycbcr_enc),
+                               quantization=_enum_or_int(v4l2.Quantization, p.quantization),
+                               xfer_func=_enum_or_int(v4l2.XferFunc, p.xfer_func))
 
     def get_capture_streamer(self, mem_type: v4l2.MemType,
                              width: int, height: int, format: v4l2.PixelFormat):
