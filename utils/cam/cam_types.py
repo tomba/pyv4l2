@@ -21,6 +21,7 @@ class Updater(ABC):
 
 class Stream:
     id: int # Unique stream ID
+    sctx: Subcontext
     num_bufs: int
     display: bool
     embedded: bool
