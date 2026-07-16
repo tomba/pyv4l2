@@ -3,7 +3,8 @@ from __future__ import annotations
 from enum import Enum
 import v4l2.uapi
 
-__all__ = [ 'BufType', 'MemType' ]
+__all__ = [ 'BufType', 'MemType', 'ColorSpace', 'YCbCrEncoding', 'HSVEncoding',
+            'Quantization', 'XferFunc', 'Field' ]
 
 def filepath_for_major_minor(major: int, minor: int):
     with open(f'/sys/dev/char/{major}:{minor}/uevent', encoding='ascii') as f:
@@ -37,3 +38,60 @@ class MemType(Enum):
     USERPTR = v4l2.uapi.V4L2_MEMORY_USERPTR
     OVERLAY = v4l2.uapi.V4L2_MEMORY_OVERLAY
     DMABUF = v4l2.uapi.V4L2_MEMORY_DMABUF
+
+class ColorSpace(Enum):
+    DEFAULT = v4l2.uapi.V4L2_COLORSPACE_DEFAULT
+    SMPTE170M = v4l2.uapi.V4L2_COLORSPACE_SMPTE170M
+    SMPTE240M = v4l2.uapi.V4L2_COLORSPACE_SMPTE240M
+    REC709 = v4l2.uapi.V4L2_COLORSPACE_REC709
+    BT878 = v4l2.uapi.V4L2_COLORSPACE_BT878
+    SYSTEM_470_M = v4l2.uapi.V4L2_COLORSPACE_470_SYSTEM_M
+    SYSTEM_470_BG = v4l2.uapi.V4L2_COLORSPACE_470_SYSTEM_BG
+    JPEG = v4l2.uapi.V4L2_COLORSPACE_JPEG
+    SRGB = v4l2.uapi.V4L2_COLORSPACE_SRGB
+    OPRGB = v4l2.uapi.V4L2_COLORSPACE_OPRGB
+    BT2020 = v4l2.uapi.V4L2_COLORSPACE_BT2020
+    RAW = v4l2.uapi.V4L2_COLORSPACE_RAW
+    DCI_P3 = v4l2.uapi.V4L2_COLORSPACE_DCI_P3
+
+class YCbCrEncoding(Enum):
+    DEFAULT = v4l2.uapi.V4L2_YCBCR_ENC_DEFAULT
+    BT601 = v4l2.uapi.V4L2_YCBCR_ENC_601
+    BT709 = v4l2.uapi.V4L2_YCBCR_ENC_709
+    XV601 = v4l2.uapi.V4L2_YCBCR_ENC_XV601
+    XV709 = v4l2.uapi.V4L2_YCBCR_ENC_XV709
+    SYCC = v4l2.uapi.V4L2_YCBCR_ENC_SYCC
+    BT2020 = v4l2.uapi.V4L2_YCBCR_ENC_BT2020
+    BT2020_CONST_LUM = v4l2.uapi.V4L2_YCBCR_ENC_BT2020_CONST_LUM
+    SMPTE240M = v4l2.uapi.V4L2_YCBCR_ENC_SMPTE240M
+
+class HSVEncoding(Enum):
+    HSV_180 = v4l2.uapi.V4L2_HSV_ENC_180
+    HSV_256 = v4l2.uapi.V4L2_HSV_ENC_256
+
+class Quantization(Enum):
+    DEFAULT = v4l2.uapi.V4L2_QUANTIZATION_DEFAULT
+    FULL_RANGE = v4l2.uapi.V4L2_QUANTIZATION_FULL_RANGE
+    LIM_RANGE = v4l2.uapi.V4L2_QUANTIZATION_LIM_RANGE
+
+class XferFunc(Enum):
+    DEFAULT = v4l2.uapi.V4L2_XFER_FUNC_DEFAULT
+    F709 = v4l2.uapi.V4L2_XFER_FUNC_709
+    SRGB = v4l2.uapi.V4L2_XFER_FUNC_SRGB
+    OPRGB = v4l2.uapi.V4L2_XFER_FUNC_OPRGB
+    SMPTE240M = v4l2.uapi.V4L2_XFER_FUNC_SMPTE240M
+    NONE = v4l2.uapi.V4L2_XFER_FUNC_NONE
+    DCI_P3 = v4l2.uapi.V4L2_XFER_FUNC_DCI_P3
+    SMPTE2084 = v4l2.uapi.V4L2_XFER_FUNC_SMPTE2084
+
+class Field(Enum):
+    ANY = v4l2.uapi.V4L2_FIELD_ANY
+    NONE = v4l2.uapi.V4L2_FIELD_NONE
+    TOP = v4l2.uapi.V4L2_FIELD_TOP
+    BOTTOM = v4l2.uapi.V4L2_FIELD_BOTTOM
+    INTERLACED = v4l2.uapi.V4L2_FIELD_INTERLACED
+    SEQ_TB = v4l2.uapi.V4L2_FIELD_SEQ_TB
+    SEQ_BT = v4l2.uapi.V4L2_FIELD_SEQ_BT
+    ALTERNATE = v4l2.uapi.V4L2_FIELD_ALTERNATE
+    INTERLACED_TB = v4l2.uapi.V4L2_FIELD_INTERLACED_TB
+    INTERLACED_BT = v4l2.uapi.V4L2_FIELD_INTERLACED_BT
