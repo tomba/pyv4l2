@@ -120,6 +120,7 @@ def init_viddevs(ctx: Context):
         for data in sctx.config['devices']:
             # Copy all the fields from 'data' to the stream
             stream = Stream()
+            stream.sctx = sctx
             for k, v in data.items():
                 k = k.replace('-', '_')
                 setattr(stream, k, v)
