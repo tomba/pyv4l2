@@ -5,10 +5,10 @@ import os
 import selectors
 import sys
 import time
+from collections import deque
 
 from prompt_toolkit.application import Application
 from prompt_toolkit.completion import WordCompleter
-from prompt_toolkit.document import Document
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout import HSplit, Layout, Window
@@ -18,7 +18,7 @@ from prompt_toolkit.widgets import TextArea
 from cam_types import Context
 
 HISTORY_FILE = '~/.cam_history'
-FPS_INTERVAL = 0.5
+FPS_INTERVAL = 2
 
 COMMANDS = {
     'help': 'show this help',
@@ -31,38 +31,80 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
 
     # Status pane
 
-    fps_cache: dict[int, float] = {}
+    # Time spent in the frame callbacks, to see how much of the event loop
+    # they eat ("load")
+    cb_time = 0.0
+
+    status = ''
+    status_ts = 0.0
+    prev_cb_time = 0.0
 
     def get_status():
-        ts = time.perf_counter()
+        nonlocal status, status_ts, prev_cb_time
 
-        lines = []
+        ts = time.perf_counter()
+        diff = ts - status_ts
+
+        # The whole layout is rendered on every keypress. Update the status
+        # text only every FPS_INTERVAL so that those renders don't change the
+        # pane content (and don't reset the fps tracking).
+        if status and diff < FPS_INTERVAL:
+            return status
+
+        load = (cb_time - prev_cb_time) / diff if status_ts else 0
+        prev_cb_time = cb_time
+        status_ts = ts
+
+        lines = [f'load:{load:6.1%}']
+
         for stream in streams:
-            diff = ts - stream.last_timestamp
-            if diff >= FPS_INTERVAL:
-                num_frames = stream.total_num_frames - stream.last_framenum
-                fps_cache[stream.id] = num_frames / diff
-                stream.last_timestamp = ts
-                stream.last_framenum = stream.total_num_frames
+            sdiff = ts - stream.last_timestamp
+            num_frames = stream.total_num_frames - stream.last_framenum
+
+            fps = num_frames / sdiff if sdiff > 0 else 0
+
+            stream.last_timestamp = ts
+            stream.last_framenum = stream.total_num_frames
 
             lines.append('{}: {} frames:{:8} fps:{:6.2f}'
                          .format(stream.id, stream.dev_path,
-                                 stream.total_num_frames,
-                                 fps_cache.get(stream.id, 0)))
+                                 stream.total_num_frames, fps))
 
-        return '\n'.join(lines)
+        status = '\n'.join(lines)
+        return status
 
     status_win = Window(FormattedTextControl(get_status),
-                        height=len(streams), style='reverse')
+                        height=len(streams) + 1, style='reverse')
 
     # Log area
+    #
+    # A TextArea is far too heavy to render on slow devices, so use a plain
+    # FormattedTextControl over a deque of lines, scrolled to the tail.
 
-    log_area = TextArea(read_only=True, scrollbar=True, wrap_lines=True)
+    log_lines: deque[str] = deque(maxlen=1000)
+    log_partial = ''  # incomplete (not newline-terminated) last line
+
+    def get_log():
+        return '\n'.join(log_lines) + '\n' + log_partial
+
+    def log_vscroll(window):
+        info = window.render_info
+        if info is None:
+            return 0
+        return max(0, len(log_lines) + 1 - info.window_height)
+
+    log_win = Window(FormattedTextControl(get_log), wrap_lines=False,
+                     get_vertical_scroll=log_vscroll)
 
     def log(text: str):
-        doc = Document(log_area.text + text,
-                       cursor_position=len(log_area.text) + len(text))
-        log_area.buffer.set_document(doc, bypass_readonly=True)
+        nonlocal log_partial
+
+        text = log_partial + text
+        lines = text.split('\n')
+        log_partial = lines.pop()
+        log_lines.extend(lines)
+
+        app.invalidate()
 
     # In full-screen mode stray prints would be lost (alternate screen), so
     # redirect stdout to the log area while the TUI runs.
@@ -96,7 +138,8 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
 
     input_area = TextArea(height=1, prompt='> ', multiline=False,
                           history=FileHistory(os.path.expanduser(HISTORY_FILE)),
-                          completer=WordCompleter(list(COMMANDS)))
+                          completer=WordCompleter(list(COMMANDS)),
+                          complete_while_typing=False)
     input_area.accept_handler = on_command
 
     # Application
@@ -111,7 +154,7 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
     root = HSplit([
         status_win,
         Window(height=1, char='─'),
-        log_area,
+        log_win,
         input_area,
     ])
 
@@ -124,10 +167,16 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
 
     def wrap_callback(callback):
         def cb():
+            nonlocal cb_time
+
+            t0 = time.perf_counter()
+
             if ctx.consumer:
                 ctx.consumer.handle_tick(ctx)
 
             callback()
+
+            cb_time += time.perf_counter() - t0
 
             if ctx.exit:
                 app.exit()
