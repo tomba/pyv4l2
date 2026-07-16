@@ -13,6 +13,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.layout import HSplit, Layout, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
+from prompt_toolkit.output import create_output
 from prompt_toolkit.widgets import TextArea
 
 from cam_types import Context
@@ -24,6 +25,66 @@ COMMANDS = {
     'help': 'show this help',
     'quit': 'exit (also: q, ctrl-c, ctrl-d)',
 }
+
+# The log store and the stdout redirection are module level so that the
+# capture can be started with init_log() before the TUI runs, to get the
+# prints from the setup phase into the log view.
+
+LOG_MAX_LINES = 1000
+
+_log_lines: deque[str] = deque(maxlen=LOG_MAX_LINES)
+_log_partial = ''  # incomplete (not newline-terminated) last line
+_orig_stdout = None
+_app: Application | None = None
+
+
+def _log(text: str):
+    global _log_partial
+
+    text = _log_partial + text
+    lines = text.split('\n')
+    _log_partial = lines.pop()
+    _log_lines.extend(lines)
+
+    if _app:
+        _app.invalidate()
+
+
+class _LogWriter:
+    def write(self, s: str):
+        _log(s)
+        return len(s)
+
+    def flush(self):
+        pass
+
+    def isatty(self):
+        return False
+
+
+def _real_stdout():
+    return _orig_stdout if _orig_stdout is not None else sys.stdout
+
+
+def init_log():
+    """Redirect stdout to the TUI log view.
+
+    run_tui() does this automatically, but this can be called before the
+    setup phase to capture its prints into the log view. stderr is left
+    alone, so errors still reach the console."""
+    global _orig_stdout
+
+    if not isinstance(sys.stdout, _LogWriter):
+        _orig_stdout = sys.stdout
+        sys.stdout = _LogWriter()
+
+
+def _restore_stdout():
+    global _orig_stdout
+
+    if _orig_stdout:
+        sys.stdout = _orig_stdout
+        _orig_stdout = None
 
 
 def run_tui(ctx: Context, sel: selectors.BaseSelector):
@@ -97,46 +158,23 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
     # A TextArea is far too heavy to render on slow devices, so use a plain
     # FormattedTextControl over a deque of lines, scrolled to the tail.
 
-    log_lines: deque[str] = deque(maxlen=1000)
-    log_partial = ''  # incomplete (not newline-terminated) last line
-
     def get_log():
-        return '\n'.join(log_lines) + '\n' + log_partial
+        return '\n'.join(_log_lines) + '\n' + _log_partial
 
     def log_vscroll(window):
         info = window.render_info
         if info is None:
             return 0
-        return max(0, len(log_lines) + 1 - info.window_height)
+        return max(0, len(_log_lines) + 1 - info.window_height)
 
     log_win = Window(FormattedTextControl(get_log), wrap_lines=False,
                      get_vertical_scroll=log_vscroll)
-
-    def log(text: str):
-        nonlocal log_partial
-
-        text = log_partial + text
-        lines = text.split('\n')
-        log_partial = lines.pop()
-        log_lines.extend(lines)
-
-        app.invalidate()
-
-    # In full-screen mode stray prints would be lost (alternate screen), so
-    # redirect stdout to the log area while the TUI runs.
-    class LogWriter:
-        def write(self, s: str):
-            log(s)
-            return len(s)
-
-        def flush(self):
-            pass
 
     # Command input
 
     def cmd_help(_args: list[str]):
         for name, desc in COMMANDS.items():
-            log(f'{name:12} {desc}\n')
+            _log(f'{name:12} {desc}\n')
 
     def on_command(buf):
         argv = buf.text.split()
@@ -150,7 +188,7 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
         elif cmd == 'help':
             cmd_help(argv[1:])
         else:
-            log(f'Unknown command: {cmd}\n')
+            _log(f'Unknown command: {cmd}\n')
 
     input_area = TextArea(height=1, prompt='> ', multiline=False,
                           history=FileHistory(os.path.expanduser(HISTORY_FILE)),
@@ -174,10 +212,13 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
         input_area,
     ])
 
+    # stdout may already be redirected to the log view, so give
+    # prompt_toolkit the real stdout to render to
     app: Application = Application(layout=Layout(root, focused_element=input_area),
                                    key_bindings=kb,
                                    full_screen=True,
-                                   refresh_interval=FPS_INTERVAL)
+                                   refresh_interval=FPS_INTERVAL,
+                                   output=create_output(stdout=_real_stdout()))
 
     # Event handling
 
@@ -212,9 +253,12 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
             for fd in fds:
                 loop.remove_reader(fd)
 
-    old_stdout = sys.stdout
-    sys.stdout = LogWriter()
+    global _app
+
+    init_log()
+    _app = app
     try:
         asyncio.run(amain())
     finally:
-        sys.stdout = old_stdout
+        _app = None
+        _restore_stdout()
