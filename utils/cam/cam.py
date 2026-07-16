@@ -22,6 +22,7 @@ def parse_args(ctx: Context):
     parser.add_argument('-x', '--tx', nargs='?', type=str, default=None, const='all', help='send frames to a server')
     parser.add_argument('-t', '--type', type=str, help='buffer type (drm/v4l2)')
     parser.add_argument('-p', '--print', action='store_true', default=False, help='print config dict')
+    parser.add_argument('-i', '--interactive', action='store_true', default=False, help='interactive TUI mode')
     parser.add_argument('-S', '--script', help='User script')
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
@@ -37,6 +38,12 @@ def parse_args(ctx: Context):
     ctx.delay = args.delay
     ctx.save = args.save
     ctx.exit_num_frames = args.numframes
+
+    ctx.use_tui = args.interactive
+
+    if ctx.use_tui:
+        from cam_tui import run_tui
+        ctx.run_tui = run_tui
 
     if args.script:
         import importlib.util
@@ -292,7 +299,8 @@ def readvid(sctx: Subcontext, stream: Stream):
         print('{}: first frame in {:.2f} s'
               .format(stream.dev_path, diff))
 
-    if diff >= 1:
+    # With the TUI, the status pane has its own fps tracking
+    if not ctx.use_tui and diff >= 1:
         print('{}: {} frames in {:.2f} s, {:.2f} fps'
               .format(stream.dev_path, num_frames, diff, num_frames / diff))
 
@@ -335,8 +343,8 @@ def run(ctx: Context):
 
     sel = selectors.DefaultSelector()
 
-    # Register stdin only if it's a tty
-    if sys.stdin.isatty():
+    # Register stdin only if it's a tty and the TUI doesn't own the terminal
+    if sys.stdin.isatty() and not ctx.use_tui:
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
 
     if ctx.consumer:
@@ -347,6 +355,10 @@ def run(ctx: Context):
             sel.register(stream.cap.fd,
                         selectors.EVENT_READ | selectors.EVENT_WRITE,
                         lambda data=stream: readvid(sctx, data))
+
+    if ctx.use_tui:
+        ctx.run_tui(ctx, sel)
+        return
 
     while not ctx.exit:
         events = sel.select()
