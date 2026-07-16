@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from enum import Enum, auto
 from selectors import BaseSelector
 from typing import Callable
 import types
@@ -19,9 +20,15 @@ class Updater(ABC):
     def update(self):
         pass
 
+class StreamState(Enum):
+    RUNNING = auto()
+    DRAINING = auto() # Stopping, waiting for the consumer to return buffers
+    STOPPED = auto()
+
 class Stream:
     id: int # Unique stream ID
     sctx: Subcontext
+    state: StreamState
     num_bufs: int
     display: bool
     embedded: bool
@@ -100,3 +107,13 @@ class Consumer(ABC):
 
     def register_selector(self, sel: BaseSelector):
         pass
+
+    def drain_done(self, ctx: Context, stream: Stream) -> bool:
+        """Has the consumer returned all the buffers it can for a stopping stream"""
+        return True
+
+    def held_vbuffers(self, ctx: Context, stream: Stream) -> list:
+        """Buffers the consumer keeps over a stream stop (e.g. the fb on screen).
+
+        These must not be queued to the camera when restarting the stream."""
+        return []
