@@ -23,6 +23,7 @@ FPS_INTERVAL = 1
 
 COMMANDS = {
     'help': 'show this help',
+    'status': 'status [id...]: show detailed stream info',
     'quit': 'exit (also: q, ctrl-c, ctrl-d)',
 }
 
@@ -176,6 +177,40 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
         for name, desc in COMMANDS.items():
             _log(f'{name:12} {desc}\n')
 
+    def cmd_status(args: list[str]):
+        try:
+            ids = [int(a) for a in args]
+        except ValueError:
+            _log('Bad stream id\n')
+            return
+
+        for stream in streams:
+            if ids and stream.id not in ids:
+                continue
+
+            cap = stream.cap
+            info = stream.dev.get_format_info(cap.buf_type)
+
+            def name(v):
+                return v.name if hasattr(v, 'name') else str(v)
+
+            entity = getattr(stream, 'entity', None)
+
+            _log(f'{stream.id}: {stream.dev_path}' +
+                 (f' ({entity})' if isinstance(entity, str) else '') + '\n')
+            _log(f'   {name(info.format)} {info.width}x{info.height}'
+                 f' sizeimage:{info.sizeimage}'
+                 f' strides:{cap.strides} bufsizes:{cap.buffersizes}\n')
+            _log(f'   bufs:{stream.num_bufs} mem:{cap.mem_type.name}'
+                 f' buftype:{cap.buf_type.name}\n')
+
+            if info.colorspace is not None:
+                _log(f'   field:{name(info.field)}'
+                     f' colorspace:{name(info.colorspace)}'
+                     f' ycbcr_enc:{name(info.ycbcr_enc)}'
+                     f' quantization:{name(info.quantization)}'
+                     f' xfer_func:{name(info.xfer_func)}\n')
+
     def on_command(buf):
         argv = buf.text.split()
         if not argv:
@@ -187,6 +222,8 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
             app.exit()
         elif cmd == 'help':
             cmd_help(argv[1:])
+        elif cmd == 'status':
+            cmd_status(argv[1:])
         else:
             _log(f'Unknown command: {cmd}\n')
 
