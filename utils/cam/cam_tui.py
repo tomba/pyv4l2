@@ -18,7 +18,7 @@ from prompt_toolkit.widgets import TextArea
 from cam_types import Context
 
 HISTORY_FILE = '~/.cam_history'
-FPS_INTERVAL = 2
+FPS_INTERVAL = 1
 
 COMMANDS = {
     'help': 'show this help',
@@ -28,6 +28,22 @@ COMMANDS = {
 
 def run_tui(ctx: Context, sel: selectors.BaseSelector):
     streams = [stream for sctx in ctx.subcontexts for stream in sctx.streams]
+
+    def make_stream_descs():
+        def dim_str(stream):
+            if isinstance(stream.size, tuple):
+                return f'{stream.size[0]}x{stream.size[1]}'
+            return str(stream.size)
+
+        fmts = {s.id: f'{dim_str(s)}-{s.format.name}' for s in streams}
+
+        path_w = max((len(s.dev_path) for s in streams), default=0)
+        fmt_w = max((len(f) for f in fmts.values()), default=0)
+
+        return {s.id: f'{s.id}: {s.dev_path:<{path_w}} {fmts[s.id]:<{fmt_w}}'
+                for s in streams}
+
+    stream_descs = make_stream_descs()
 
     # Status pane
 
@@ -66,8 +82,8 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector):
             stream.last_timestamp = ts
             stream.last_framenum = stream.total_num_frames
 
-            lines.append('{}: {} frames:{:8} fps:{:6.2f}'
-                         .format(stream.id, stream.dev_path,
+            lines.append('{} frames:{:8} fps:{:6.2f}'
+                         .format(stream_descs[stream.id],
                                  stream.total_num_frames, fps))
 
         status = '\n'.join(lines)
