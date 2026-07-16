@@ -22,7 +22,6 @@ def parse_args(ctx: Context):
     parser.add_argument('-x', '--tx', nargs='?', type=str, default=None, const='all', help='send frames to a server')
     parser.add_argument('-t', '--type', type=str, help='buffer type (drm/v4l2)')
     parser.add_argument('-p', '--print', action='store_true', default=False, help='print config dict')
-    parser.add_argument('-i', '--ipython', action='store_true', default=False, help='IPython mode')
     parser.add_argument('-S', '--script', help='User script')
     parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
@@ -38,12 +37,6 @@ def parse_args(ctx: Context):
     ctx.delay = args.delay
     ctx.save = args.save
     ctx.exit_num_frames = args.numframes
-
-    ctx.use_ipython = args.ipython
-
-    if ctx.use_ipython:
-        from cam_ipython import run_ipython
-        ctx.run_ipython = run_ipython
 
     if args.script:
         import importlib.util
@@ -290,23 +283,21 @@ def readvid(sctx: Subcontext, stream: Stream):
     if stream.total_num_frames == ctx.exit_num_frames:
         ctx.exit = True
 
-    # With IPython we have separate fps tracking
-    if not ctx.use_ipython:
-        ts = time.perf_counter()
+    ts = time.perf_counter()
 
-        diff = ts - stream.last_timestamp
-        num_frames = stream.total_num_frames - stream.last_framenum
+    diff = ts - stream.last_timestamp
+    num_frames = stream.total_num_frames - stream.last_framenum
 
-        if stream.total_num_frames == 1:
-            print('{}: first frame in {:.2f} s'
-                  .format(stream.dev_path, diff))
+    if stream.total_num_frames == 1:
+        print('{}: first frame in {:.2f} s'
+              .format(stream.dev_path, diff))
 
-        if diff >= 1:
-            print('{}: {} frames in {:.2f} s, {:.2f} fps'
-                  .format(stream.dev_path, num_frames, diff, num_frames / diff))
+    if diff >= 1:
+        print('{}: {} frames in {:.2f} s, {:.2f} fps'
+              .format(stream.dev_path, num_frames, diff, num_frames / diff))
 
-            stream.last_timestamp = ts
-            stream.last_framenum = stream.total_num_frames
+        stream.last_timestamp = ts
+        stream.last_framenum = stream.total_num_frames
 
     cap = stream.cap
     vbuf = cap.dequeue()
@@ -344,8 +335,8 @@ def run(ctx: Context):
 
     sel = selectors.DefaultSelector()
 
-    # Register stdin only it's a tty and we are not in IPython mode
-    if sys.stdin.isatty() and not ctx.use_ipython:
+    # Register stdin only if it's a tty
+    if sys.stdin.isatty():
         sel.register(sys.stdin, selectors.EVENT_READ, lambda: readkey(ctx))
 
     if ctx.consumer:
@@ -357,18 +348,15 @@ def run(ctx: Context):
                         selectors.EVENT_READ | selectors.EVENT_WRITE,
                         lambda data=stream: readvid(sctx, data))
 
-    if not ctx.use_ipython:
-        while not ctx.exit:
-            events = sel.select()
+    while not ctx.exit:
+        events = sel.select()
 
-            if ctx.consumer:
-                ctx.consumer.handle_tick(ctx)
+        if ctx.consumer:
+            ctx.consumer.handle_tick(ctx)
 
-            for key, _ in events:
-                callback = key.data
-                callback()
-    else:
-        ctx.run_ipython(ctx, sel)
+        for key, _ in events:
+            callback = key.data
+            callback()
 
 
 def main():
