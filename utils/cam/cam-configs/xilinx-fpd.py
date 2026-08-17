@@ -21,10 +21,6 @@ else:
 tpg_fmt = (1920, 1024, v4l2.BusFormat.RGB888_1X24, v4l2.PixelFormats.XRGB8888)
 
 MEDIA_DEV = ('platform:xilinx_video_top', 'bus_info')
-CSI2RX = 'a0012000.mipi_csi2_rx_subsystem'
-DMA0 = 'xilinx_video_top output 0'
-DMA1 = 'xilinx_video_top output 1'
-SWITCH0 = 'pl-bus:axis_switch_0'
 
 def resolve_media_graph():
     md = v4l2.MediaDevice(*MEDIA_DEV)
@@ -35,45 +31,66 @@ def resolve_media_graph():
     csirx = des.get_remote_entity(4)
     assert csirx
 
-    # Find (serializer, sensor) pairs from deser sink pads
-    cams = []
-    for p in des.pads:
-        if not p.is_sink:
-            continue
-        ser = p.get_remote_entity()
-        if not ser:
-            continue
-        sensor = ser.get_remote_entity(0)
-        if not sensor:
-            continue
-        cams.append((ser, sensor))
-
-    # Find switches from csirx first source pad
+    # Find switches from csirx source pads
     pix_switch = csirx.get_remote_entity(1)
     assert pix_switch
 
-    emb_switch = csirx.get_remote_entity(2)
-    assert emb_switch
+    HAS_EMB = True
 
-    # Find DMA context entities from video switch source pads
-    pix_dmas = []
-    for p in pix_switch.pads:
-        if not p.is_source:
-            continue
-        ctx_ent = p.get_remote_entity()
-        if ctx_ent:
-            pix_dmas.append(ctx_ent)
-    #contexts.sort(key=lambda e: e.name)
+    if HAS_EMB:
+        emb_switch = csirx.get_remote_entity(2)
+        assert emb_switch
+    else:
+        emb_switch = None
 
-    # Find DMA context entities from embedded switch source pads
-    emb_dmas = []
-    for p in emb_switch.pads:
-        if not p.is_source:
+    # Find the cameras from the deser sink pads, and traverse the graph
+    # downstream from the switches to find the IPs dedicated to each camera's
+    # pipeline. The switch source pad used for a camera is 1 + camera index,
+    # and everything after the switch is fixed hardware wiring.
+    cams = []
+
+    for p in des.pads:
+        if not p.is_sink:
             continue
-        ctx_ent = p.get_remote_entity()
-        if ctx_ent:
-            emb_dmas.append(ctx_ent)
-    #contexts.sort(key=lambda e: e.name)
+
+        ser = p.get_remote_entity()
+        if not ser:
+            continue
+
+        sensor = ser.get_remote_entity(0)
+        if not sensor:
+            continue
+
+        # Switch pad 0 is the sink, source pads follow
+        switch_pad = 1 + len(cams)
+
+        # pix path: switch -> demosaic -> gamma -> dma
+        demosaic = gamma = pix_dma = None
+
+        if switch_pad < len(pix_switch.pads):
+            demosaic = pix_switch.get_remote_entity(switch_pad)
+        if demosaic:
+            gamma = demosaic.get_remote_entity(1)
+        if gamma:
+            pix_dma = gamma.get_remote_entity(1)
+
+        # emb path: switch -> dma
+        emb_dma = None
+
+        if HAS_EMB:
+            if switch_pad < len(emb_switch.pads):
+                emb_dma = emb_switch.get_remote_entity(switch_pad)
+
+        cams.append({
+            'des_pad': p.index,
+            'ser': ser,
+            'sensor': sensor,
+            'switch_pad': switch_pad,
+            'demosaic': demosaic,
+            'gamma': gamma,
+            'pix_dma': pix_dma,
+            'emb_dma': emb_dma,
+        })
 
     return {
         'md': md,
@@ -81,31 +98,43 @@ def resolve_media_graph():
         'csirx': csirx,
         'pix_switch': pix_switch,
         'emb_switch': emb_switch,
-        'pix_dmas': pix_dmas,
-        'emb_dmas': emb_dmas,
         'cams': cams,
     }
 
 def gen_imx219_pixel(mdata, idx):
-    ser, sensor = mdata['cams'][idx]
+    cam = mdata['cams'][idx]
     des = mdata['des']
     csirx = mdata['csirx']
     switch = mdata['pix_switch']
-    context = mdata['pix_dmas'].pop(0)
+
+    ser = cam['ser']
+    sensor = cam['sensor']
+    demosaic = cam['demosaic']
+    gamma = cam['gamma']
+    context = cam['pix_dma']
+    assert demosaic and gamma and context, f'No pixel pipeline for cam{idx}'
 
     w, h, bus_fmt, pix_fmt = imx219_fmt
     stream_id = idx
+    bus_fmt_demosaic = v4l2.BusFormat.RBG888_1X24
+    pix_fmt = v4l2.PixelFormats.RGB888
 
     return {
         'subdevs': [
             gen_subdev(sensor,
                        pads={(0, 0): (w, h, bus_fmt)},
-                       controls={v4l2.uapi.V4L2_CID_ANALOGUE_GAIN: 200,
+                       controls={v4l2.uapi.V4L2_CID_ANALOGUE_GAIN: 300,
                                  0x009f0903: 0}),
             gen_subdev(ser, routing=((0, 0), (1, 0))),
-            gen_subdev(des, routing=((idx, 0), (4, stream_id))),
+            gen_subdev(des, routing=((cam['des_pad'], 0), (4, stream_id))),
             gen_subdev(csirx, routing=((0, stream_id), (1, stream_id))),
-            gen_subdev(switch, routing=((0, stream_id), (1 + idx, 0))),
+            gen_subdev(switch, routing=((0, stream_id), (cam['switch_pad'], 0))),
+            gen_subdev(demosaic,
+                       pads={0: (w, h, bus_fmt),
+                             1: (w, h, bus_fmt_demosaic)}),
+            gen_subdev(gamma,
+                       pads={0: (w, h, bus_fmt_demosaic),
+                             1: (w, h, bus_fmt_demosaic)}),
         ],
 
         'devices': [
@@ -114,11 +143,15 @@ def gen_imx219_pixel(mdata, idx):
     }
 
 def gen_imx219_meta(mdata, idx):
-    ser, sensor = mdata['cams'][idx]
+    cam = mdata['cams'][idx]
     des = mdata['des']
     csirx = mdata['csirx']
     switch = mdata['emb_switch']
-    context = mdata['emb_dmas'].pop(0)
+
+    ser = cam['ser']
+    sensor = cam['sensor']
+    context = cam['emb_dma']
+    assert context, f'No embedded data pipeline for cam{idx}'
 
     w, h, bus_fmt, pix_fmt = imx219_meta_fmt
     stream_id = idx + 4
@@ -128,9 +161,9 @@ def gen_imx219_meta(mdata, idx):
             gen_subdev(sensor, fmt=(w, h, bus_fmt),
                        routing=((2, 0), (0, 1))),
             gen_subdev(ser, routing=((0, 1), (1, 1))),
-            gen_subdev(des, routing=((idx, 1), (4, stream_id))),
+            gen_subdev(des, routing=((cam['des_pad'], 1), (4, stream_id))),
             gen_subdev(csirx, routing=((0, stream_id), (2, idx))),
-            gen_subdev(switch, routing=((0, idx), (1 + idx, 0))),
+            gen_subdev(switch, routing=((0, idx), (cam['switch_pad'], 0))),
         ],
 
         'devices': [
@@ -143,11 +176,14 @@ def gen_imx219_meta(mdata, idx):
     }
 
 def gen_ub953_tpg(mdata, idx):
-    ser, _sensor = mdata['cams'][idx]
+    cam = mdata['cams'][idx]
     des = mdata['des']
     csirx = mdata['csirx']
     csirx2 = mdata['csirx2']
-    context = mdata['contexts'].pop(0)
+
+    ser = cam['ser']
+    context = cam['pix_dma']
+    assert context, f'No pixel pipeline for cam{idx}'
 
     w, h, bus_fmt, pix_fmt = tpg_fmt
     stream_id = idx
@@ -156,9 +192,9 @@ def gen_ub953_tpg(mdata, idx):
         'subdevs': [
             gen_subdev(ser, fmt=(w, h, bus_fmt),
                        routing=((2, 0), (1, 0))),
-            gen_subdev(des, routing=((idx, 0), (4, stream_id))),
+            gen_subdev(des, routing=((cam['des_pad'], 0), (4, stream_id))),
             gen_subdev(csirx, routing=((0, stream_id), (1, stream_id))),
-            gen_subdev(csirx2, routing=((0, stream_id), (1 + idx, 0))),
+            gen_subdev(csirx2, routing=((0, stream_id), (cam['switch_pad'], 0))),
         ],
 
         'devices': [
