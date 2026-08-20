@@ -1,14 +1,22 @@
 from __future__ import annotations
 
 from enum import Enum
+
 import v4l2.uapi
 
-__all__ = [ 'BufType', 'MemType', 'ColorSpace', 'YCbCrEncoding', 'HSVEncoding',
-            'Quantization', 'XferFunc', 'Field' ]
+__all__ = [
+    'BufType',
+    'ColorSpace',
+    'Field',
+    'HSVEncoding',
+    'MemType',
+    'Quantization',
+    'XferFunc',
+    'YCbCrEncoding' ]
 
 def filepath_for_major_minor(major: int, minor: int):
     with open(f'/sys/dev/char/{major}:{minor}/uevent', encoding='ascii') as f:
-        for l in f.readlines():
+        for l in f:
             if not l.startswith('DEVNAME='):
                 continue
             path = l[len('DEVNAME='):].strip()

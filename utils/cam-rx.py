@@ -12,11 +12,11 @@ import sys
 import traceback
 
 import numpy as np
-from pixutils.formats import PixelFormats, MetaFormat, MetaFormats
+import PyQt6.QtNetwork
+from pixutils.formats import MetaFormat, MetaFormats, PixelFormats
 from pixutils.qt import ImageViewerWidget
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
-import PyQt6.QtNetwork
 
 receivers = []
 

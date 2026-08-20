@@ -9,10 +9,17 @@ import sys
 import time
 import typing
 
+from cam_helpers import (
+    configure_subdevs,
+    disable_all_links,
+    read_config,
+    save_fb_to_file,
+    setup_links,
+)
+from cam_types import Context, Stream, StreamState, Subcontext
+
 import v4l2
 
-from cam_helpers import read_config, save_fb_to_file, disable_all_links, configure_subdevs, setup_links
-from cam_types import Stream, StreamState, Context, Subcontext
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()

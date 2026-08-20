@@ -7,6 +7,7 @@ import sys
 import time
 from collections import deque
 
+from cam_types import Context, StreamState
 from prompt_toolkit.application import Application
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import FileHistory
@@ -15,8 +16,6 @@ from prompt_toolkit.layout import HSplit, Layout, Window
 from prompt_toolkit.layout.controls import FormattedTextControl
 from prompt_toolkit.output import create_output
 from prompt_toolkit.widgets import TextArea
-
-from cam_types import Context, StreamState
 
 HISTORY_FILE = '~/.cam_history'
 FPS_INTERVAL = 1

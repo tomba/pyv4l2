@@ -1,9 +1,9 @@
 import re
 
+from cam_helpers import gen_subdev, infer_links, merge_configs, propagate_formats
+
 import v4l2
 import v4l2.uapi
-
-from cam_helpers import merge_configs, gen_subdev, infer_links, propagate_formats
 
 #imx219_w, imx219_h = 3280, 2464
 imx219_w, imx219_h = 1920, 1080

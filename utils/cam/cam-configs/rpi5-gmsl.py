@@ -1,7 +1,9 @@
 import sys
+
+from cam_helpers import merge_configs
+
 import v4l2
 import v4l2.uapi
-from cam_helpers import merge_configs
 
 USE_RAW_10=True
 MEDIA_DEVICE_NAME = ('rp1-cfe', 'model')

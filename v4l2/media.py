@@ -2,19 +2,25 @@ from __future__ import annotations
 
 import ctypes
 import fcntl
+import fnmatch
+import glob
+import os
 import re
 import weakref
-import os
-import glob
-import fnmatch
+
 import v4l2.uapi
+
+from .enums import MediaEntityFunction, MediaInterfaceType, MediaLinkFlag, MediaPadFlag
 from .helpers import filepath_for_major_minor
-from .enums import MediaEntityFunction, MediaLinkFlag, MediaPadFlag, MediaInterfaceType
 
 __all__ = [
-    'MediaObject', 'MediaEntity', 'MediaInterface', 'MediaPad', 'MediaLink',
     'MediaDevice',
-    'MediaLinkFlag'
+    'MediaEntity',
+    'MediaInterface',
+    'MediaLink',
+    'MediaLinkFlag',
+    'MediaObject',
+    'MediaPad'
 ]
 
 class MediaTopology:

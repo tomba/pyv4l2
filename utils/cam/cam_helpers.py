@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import importlib
 import mmap
 import os
@@ -6,14 +7,15 @@ import sys
 import typing
 from typing import TYPE_CHECKING
 
+from cam_types import Stream
+
 import v4l2
 import v4l2.uapi
 
-from cam_types import Stream
-
 if TYPE_CHECKING:
-    from .cam import Subcontext
     import kms
+
+    from .cam import Subcontext
 
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
@@ -385,6 +387,5 @@ def save_fb_to_file(stream: Stream, is_drm, fb_or_vbuf):
         vbuf = typing.cast(v4l2.VideoBuffer, fb_or_vbuf)
 
         with mmap.mmap(cap.fd, cap.framesize, mmap.MAP_SHARED, mmap.PROT_READ,
-                       offset=vbuf.offset) as b:
-            with open(filename, 'wb') as f:
-                f.write(b)
+                       offset=vbuf.offset) as b, open(filename, 'wb') as f:
+            f.write(b)

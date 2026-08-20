@@ -2,7 +2,7 @@ from enum import Enum, IntFlag
 
 import v4l2.uapi
 
-__all__ = [ 'MediaEntityFunction', 'MediaLinkFlag', 'MediaPadFlag', 'MediaInterfaceType' ]
+__all__ = ['MediaEntityFunction', 'MediaInterfaceType', 'MediaLinkFlag', 'MediaPadFlag']
 
 class MediaEntityFunction(Enum):
     UNKNOWN = v4l2.uapi.MEDIA_ENT_F_UNKNOWN

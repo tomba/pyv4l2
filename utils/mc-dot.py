@@ -6,6 +6,7 @@ import sys
 
 import v4l2
 
+
 def add_entity(dot, entity_id: int, entity_label: str,
                sink_pads, source_pads,
                routes):

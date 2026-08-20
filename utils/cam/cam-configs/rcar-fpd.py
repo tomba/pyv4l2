@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from cam_helpers import merge_configs
+
 import v4l2
 import v4l2.uapi
-
-from cam_helpers import merge_configs
 
 USE_RAW_10=False
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import sys
 import re
+import sys
 
 CTYPESGEN_PATH = '/home/tomba/work/ctypesgen/'
 

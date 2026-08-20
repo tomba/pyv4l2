@@ -2,6 +2,7 @@
 
 import ctypes
 import pprint
+
 import numpy as np
 
 # libcamera utils/rkisp1/gen-csc-table.py

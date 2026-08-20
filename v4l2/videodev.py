@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
 import ctypes
 import errno
 import fcntl
 import fnmatch
 import glob
 import os
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 import v4l2.uapi
 
-__all__ = [ 'VideoDevice', 'VideoBuffer', 'VideoFormatInfo' ]
+__all__ = ['VideoBuffer', 'VideoDevice', 'VideoFormatInfo']
 
 def _enum_or_int(enum_cls, value):
     # Keep the raw value if the driver returns something we don't know
@@ -724,7 +724,7 @@ class MetaOutputStreamer(CaptureStreamer):
 
 
 class VideoBuffer:
-    __slots__ = ['index', 'mem_type', 'fd', 'offset']
+    __slots__ = ['fd', 'index', 'mem_type', 'offset']
 
     def __init__(self, mem_type: v4l2.MemType, index: int) -> None:
         self.index = index

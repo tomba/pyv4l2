@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import argparse
 import errno
-import textwrap
 import sys
+import textwrap
 
 import v4l2
 import v4l2.uapi

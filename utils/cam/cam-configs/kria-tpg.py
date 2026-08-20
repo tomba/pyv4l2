@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import v4l2
 
 tpg_w = 640

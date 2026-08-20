@@ -1,7 +1,8 @@
 from __future__ import annotations
-import v4l2
 
 from cam_helpers import merge_configs
+
+import v4l2
 
 imx219_w = 640
 imx219_h = 480

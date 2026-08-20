@@ -8,7 +8,7 @@ from enum import IntFlag
 
 import v4l2.uapi
 
-__all__ = [ 'RouteFlag', 'Route', 'SubDevice' ]
+__all__ = ['Route', 'RouteFlag', 'SubDevice']
 
 
 class RouteFlag(IntFlag):

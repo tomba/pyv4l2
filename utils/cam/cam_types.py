@@ -1,17 +1,16 @@
 from __future__ import annotations
 
+import types
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from enum import Enum, auto
 from selectors import BaseSelector
-import types
 
 from kms import DumbFramebuffer
 
 import v4l2
-from v4l2 import PixelFormat, MetaFormat
+from v4l2 import MetaFormat, PixelFormat
 from v4l2.videodev import CaptureStreamer, VideoDevice
-
 
 pix_or_meta_fmt = PixelFormat | MetaFormat
 
@@ -100,11 +99,9 @@ class Consumer(ABC):
     @abstractmethod
     def handle_frame(self, ctx: Context, stream: Stream, vbuf):
         """Handle a frame from a stream."""
-        pass
 
     def handle_tick(self, ctx: Context):
         """Called every time there's any event"""
-        pass
 
     def register_selector(self, sel: BaseSelector):
         pass

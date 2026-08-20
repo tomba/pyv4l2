@@ -1,5 +1,6 @@
-import v4l2
 from cam_helpers import merge_configs
+
+import v4l2
 
 ov10635_fmt = (
     ( 1280, 720, v4l2.BusFormat.UYVY8_2X8 ),

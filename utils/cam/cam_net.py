@@ -7,9 +7,10 @@ import socket
 import struct
 import threading
 
+from cam_types import Consumer, Context, Stream
+
 from v4l2 import MetaFormat
 
-from cam_types import Stream, Context, Consumer
 
 class NetConsumer(Consumer):
     # ctx-idx, width, height, strides[4], format[16], num-planes, plane[4]

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 import unittest
+
 import v4l2
+
 
 class TestInstall(unittest.TestCase):
     def test_install(self):

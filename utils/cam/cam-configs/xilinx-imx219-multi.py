@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import v4l2
 import v4l2.uapi
 

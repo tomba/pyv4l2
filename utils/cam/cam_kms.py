@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from collections import deque
-from selectors import BaseSelector, EVENT_READ
 import time
+from collections import deque
+from selectors import EVENT_READ, BaseSelector
 
 import kms
+from cam_types import Consumer, Context, Stream
+
 import v4l2
 
-from cam_types import Stream, Context, Consumer
 
 class KmsStream:
     stream: Stream
