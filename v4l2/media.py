@@ -112,7 +112,7 @@ class MediaInterface(MediaObject):
         self.dev_path = filepath_for_major_minor(*self.majorminor)
         self.intf_type = MediaInterfaceType(self.media_iface.intf_type)
 
-    def _finalize(self):  # pylint: disable=useless-parent-delegation
+    def _finalize(self):
         super()._finalize()
 
     def __repr__(self) -> str:
@@ -336,7 +336,7 @@ class MediaDevice:
         )
 
         for o in self.objects:
-            o._finalize()  # pylint: disable=protected-access
+            o._finalize()
 
     @property
     def entities(self):
