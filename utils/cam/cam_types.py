@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from enum import Enum, auto
 from selectors import BaseSelector
-from typing import Callable
 import types
 
 from kms import DumbFramebuffer
