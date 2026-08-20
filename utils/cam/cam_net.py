@@ -22,7 +22,7 @@ class NetConsumer(Consumer):
         self.net_tx_queue = queue.Queue()
         self.net_done_queue = queue.Queue()
         self.net_thread = None
-        self.current_buf = { }
+        self.current_buf = {}
 
     def setup_stream(self, ctx: Context, stream: Stream) -> bool:
         self.current_buf[stream.id] = None
@@ -46,7 +46,7 @@ class NetConsumer(Consumer):
                     'format': stream.format.name,
                 }
                 for stream in all_streams
-            ]
+            ],
         }
 
         # Serialize and send intro header

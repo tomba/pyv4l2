@@ -11,20 +11,16 @@ configurations = {}
 
 configurations['desky'] = {
     'media': ('UVC Camera*', 'model'),
-
-    'subdevs': [
-    ],
-
+    'subdevs': [],
     'devices': [
         {
             'entity': 'UVC Camera*',
             'fmt': fmt_pix_1,
         },
     ],
-
-    'links': [
-    ],
+    'links': [],
 }
+
 
 def get_configs():
     return (configurations, ['desky'])

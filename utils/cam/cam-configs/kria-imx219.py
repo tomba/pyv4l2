@@ -26,33 +26,30 @@ DMA = 'xilinx_video_top output 0'
 
 configurations['cam'] = {
     'media': (MEDIA, 'bus_info'),
-
     'subdevs': [
         {
             'entity': IMX219,
             'pads': [
-                { 'pad': 0, 'fmt': mbus_fmt },
+                {'pad': 0, 'fmt': mbus_fmt},
             ],
         },
         {
             'entity': CSI2RX,
             'pads': [
-                { 'pad': 0, 'fmt': mbus_fmt },
-                { 'pad': 1, 'fmt': mbus_fmt },
+                {'pad': 0, 'fmt': mbus_fmt},
+                {'pad': 1, 'fmt': mbus_fmt},
             ],
         },
     ],
-
     'devices': [
         {
             'entity': DMA,
             'fmt': fmt_pix,
         },
     ],
-
     'links': [
-        { 'src': (IMX219, 0), 'dst': (CSI2RX, 0) },
-        { 'src': (CSI2RX, 1), 'dst': (DMA, 0) },
+        {'src': (IMX219, 0), 'dst': (CSI2RX, 0)},
+        {'src': (CSI2RX, 1), 'dst': (DMA, 0)},
     ],
 }
 
@@ -61,30 +58,28 @@ TPG_DMA = 'xilinx_video_top output 1'
 
 configurations['tpg'] = {
     'media': (MEDIA, 'bus_info'),
-
     'subdevs': [
         {
             'entity': TPG,
             'pads': [
-                { 'pad': 0, 'fmt': tpg_mbus_fmt },
+                {'pad': 0, 'fmt': tpg_mbus_fmt},
             ],
         },
     ],
-
     'devices': [
         {
             'entity': TPG_DMA,
             'fmt': tpg_fmt_pix,
         },
     ],
-
     'links': [
-        { 'src': (TPG, 0), 'dst': (TPG_DMA, 0) },
+        {'src': (TPG, 0), 'dst': (TPG_DMA, 0)},
     ],
 }
 
+
 def get_configs(config_names: list[str]):
-    #return configurations['cam']
+    # return configurations['cam']
 
     if not config_names:
         config_names = ['cam']

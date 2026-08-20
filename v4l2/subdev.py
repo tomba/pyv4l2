@@ -15,6 +15,7 @@ class RouteFlag(IntFlag):
     ACTIVE = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE
     IMMUTABLE = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_IMMUTABLE
 
+
 class Route:
     def __init__(self) -> None:
         self.sink_pad = 0
@@ -45,18 +46,20 @@ class Route:
         return r
 
     def to_v4l2_subdev_route(self):
-        r = v4l2.uapi.v4l2_subdev_route(sink_pad=self.sink_pad,
-                                   sink_stream=self.sink_stream,
-                                   source_pad=self.source_pad,
-                                   source_stream=self.source_stream,
-                                   flags=self.flags)
+        r = v4l2.uapi.v4l2_subdev_route(
+            sink_pad=self.sink_pad,
+            sink_stream=self.sink_stream,
+            source_pad=self.source_pad,
+            source_stream=self.source_stream,
+            flags=self.flags,
+        )
         return r
 
 
 class SubDevice:
     def __init__(self, dev_path: str) -> None:
         self.fd = os.open(dev_path, os.O_RDWR | os.O_NONBLOCK)
-        assert(self.fd != -1)
+        assert self.fd != -1
 
         try:
             cap = v4l2.uapi.v4l2_subdev_client_capability()
@@ -161,7 +164,9 @@ class SubDevice:
         try:
             fmt = self.get_format(pad, stream, which)
         except OSError:
-            print(f'Failed to get format from {self}:{pad}/{stream}, trying set_format with blank v4l2_subdev_format')
+            print(
+                f'Failed to get format from {self}:{pad}/{stream}, trying set_format with blank v4l2_subdev_format'
+            )
             fmt = v4l2.uapi.v4l2_subdev_format()
 
         fmt.pad = pad
@@ -201,10 +206,12 @@ class SubDevice:
 
         return routes
 
-    def set_routes(self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
+    def set_routes(
+        self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE
+    ) -> list[Route]:
         # Allocate extra space for return routes
         kroutes = (v4l2.uapi.v4l2_subdev_route * 16)()
-        for i,route in enumerate(routes):
+        for i, route in enumerate(routes):
             kroutes[i] = route.to_v4l2_subdev_route()
 
         routing = v4l2.uapi.v4l2_subdev_routing()
@@ -231,7 +238,14 @@ class SubDevice:
 
         return sel.r
 
-    def set_selection(self, target, rect: v4l2.uapi.v4l2_rect, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def set_selection(
+        self,
+        target,
+        rect: v4l2.uapi.v4l2_rect,
+        pad,
+        stream=0,
+        which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE,
+    ):
         sel = v4l2.uapi.v4l2_subdev_selection()
         sel.pad = pad
         sel.stream = stream
@@ -254,7 +268,9 @@ class SubDevice:
 
         return (v4l2_ival.interval.numerator, v4l2_ival.interval.denominator)
 
-    def set_frame_interval(self, pad, stream, interval: tuple[int, int], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def set_frame_interval(
+        self, pad, stream, interval: tuple[int, int], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE
+    ):
         v4l2_ival = v4l2.uapi.v4l2_subdev_frame_interval()
         v4l2_ival.pad = pad
         v4l2_ival.stream = stream

@@ -104,8 +104,7 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
         path_w = max((len(s.dev_path) for s in streams), default=0)
         fmt_w = max((len(f) for f in fmts.values()), default=0)
 
-        return {s.id: f'{s.id}: {s.dev_path:<{path_w}} {fmts[s.id]:<{fmt_w}}'
-                for s in streams}
+        return {s.id: f'{s.id}: {s.dev_path:<{path_w}} {fmts[s.id]:<{fmt_w}}' for s in streams}
 
     stream_descs = make_stream_descs()
 
@@ -151,15 +150,16 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
             else:
                 state_str = f'[{stream.state.name.lower()}]'
 
-            lines.append('{} frames:{:8} {}'
-                         .format(stream_descs[stream.id],
-                                 stream.total_num_frames, state_str))
+            lines.append(
+                '{} frames:{:8} {}'.format(
+                    stream_descs[stream.id], stream.total_num_frames, state_str
+                )
+            )
 
         status = '\n'.join(lines)
         return status
 
-    status_win = Window(FormattedTextControl(get_status),
-                        height=len(streams) + 1, style='reverse')
+    status_win = Window(FormattedTextControl(get_status), height=len(streams) + 1, style='reverse')
 
     # Log area
     #
@@ -175,8 +175,9 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
             return 0
         return max(0, len(_log_lines) + 1 - info.window_height)
 
-    log_win = Window(FormattedTextControl(get_log), wrap_lines=False,
-                     get_vertical_scroll=log_vscroll)
+    log_win = Window(
+        FormattedTextControl(get_log), wrap_lines=False, get_vertical_scroll=log_vscroll
+    )
 
     # Command input
 
@@ -215,21 +216,26 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
 
             entity = getattr(stream, 'entity', None)
 
-            _log(f'{stream.id}: {stream.dev_path}' +
-                 (f' ({entity})' if isinstance(entity, str) else '') +
-                 f' [{stream.state.name.lower()}]\n')
-            _log(f'   {name(info.format)} {info.width}x{info.height}'
-                 f' sizeimage:{info.sizeimage}'
-                 f' strides:{cap.strides} bufsizes:{cap.buffersizes}\n')
-            _log(f'   bufs:{stream.num_bufs} mem:{cap.mem_type.name}'
-                 f' buftype:{cap.buf_type.name}\n')
+            _log(
+                f'{stream.id}: {stream.dev_path}'
+                + (f' ({entity})' if isinstance(entity, str) else '')
+                + f' [{stream.state.name.lower()}]\n'
+            )
+            _log(
+                f'   {name(info.format)} {info.width}x{info.height}'
+                f' sizeimage:{info.sizeimage}'
+                f' strides:{cap.strides} bufsizes:{cap.buffersizes}\n'
+            )
+            _log(f'   bufs:{stream.num_bufs} mem:{cap.mem_type.name} buftype:{cap.buf_type.name}\n')
 
             if info.colorspace is not None:
-                _log(f'   field:{name(info.field)}'
-                     f' colorspace:{name(info.colorspace)}'
-                     f' ycbcr_enc:{name(info.ycbcr_enc)}'
-                     f' quantization:{name(info.quantization)}'
-                     f' xfer_func:{name(info.xfer_func)}\n')
+                _log(
+                    f'   field:{name(info.field)}'
+                    f' colorspace:{name(info.colorspace)}'
+                    f' ycbcr_enc:{name(info.ycbcr_enc)}'
+                    f' quantization:{name(info.quantization)}'
+                    f' xfer_func:{name(info.xfer_func)}\n'
+                )
 
     async def do_stop(stream):
         loop = asyncio.get_running_loop()
@@ -239,8 +245,10 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
         # Wait until the consumer has returned the buffers it can
         while ctx.consumer and not ctx.consumer.drain_done(ctx, stream):
             if loop.time() - t0 > DRAIN_TIMEOUT:
-                _log(f'{stream.dev_path}: timeout waiting for the consumer '
-                     'to return buffers, not stopping\n')
+                _log(
+                    f'{stream.dev_path}: timeout waiting for the consumer '
+                    'to return buffers, not stopping\n'
+                )
                 stream.state = StreamState.RUNNING
                 return
 
@@ -313,10 +321,14 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
         else:
             _log(f'Unknown command: {cmd}\n')
 
-    input_area = TextArea(height=1, prompt='> ', multiline=False,
-                          history=FileHistory(os.path.expanduser(HISTORY_FILE)),
-                          completer=WordCompleter(list(COMMANDS)),
-                          complete_while_typing=False)
+    input_area = TextArea(
+        height=1,
+        prompt='> ',
+        multiline=False,
+        history=FileHistory(os.path.expanduser(HISTORY_FILE)),
+        completer=WordCompleter(list(COMMANDS)),
+        complete_while_typing=False,
+    )
     input_area.accept_handler = on_command
 
     # Application
@@ -328,20 +340,24 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
     def _exit(event):
         event.app.exit()
 
-    root = HSplit([
-        status_win,
-        Window(height=1, char='─'),
-        log_win,
-        input_area,
-    ])
+    root = HSplit(
+        [
+            status_win,
+            Window(height=1, char='─'),
+            log_win,
+            input_area,
+        ]
+    )
 
     # stdout may already be redirected to the log view, so give
     # prompt_toolkit the real stdout to render to
-    app: Application = Application(layout=Layout(root, focused_element=input_area),
-                                   key_bindings=kb,
-                                   full_screen=True,
-                                   refresh_interval=FPS_INTERVAL,
-                                   output=create_output(stdout=_real_stdout()))
+    app: Application = Application(
+        layout=Layout(root, focused_element=input_area),
+        key_bindings=kb,
+        full_screen=True,
+        refresh_interval=FPS_INTERVAL,
+        output=create_output(stdout=_real_stdout()),
+    )
 
     # Event handling
 
@@ -360,12 +376,14 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
 
             if ctx.exit:
                 app.exit()
+
         return cb
 
     # Stream id -> wrapped event callback, for (re-)adding the reader when
     # starting a stream
-    wrapped_callbacks = {stream.id: wrap_callback(stream_callbacks[stream.id])
-                         for stream in streams}
+    wrapped_callbacks = {
+        stream.id: wrap_callback(stream_callbacks[stream.id]) for stream in streams
+    }
 
     async def amain():
         loop = asyncio.get_running_loop()

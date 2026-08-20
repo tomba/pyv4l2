@@ -1,11 +1,11 @@
 import v4l2
 import v4l2.uapi
 
-USE_RAW_10=False
+USE_RAW_10 = False
 
-#imx219_w, imx219_h = 3280, 2464
+# imx219_w, imx219_h = 3280, 2464
 imx219_w, imx219_h = 1920, 1080
-#imx219_w, imx219_h = 640, 480
+# imx219_w, imx219_h = 640, 480
 
 if USE_RAW_10:
     imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
@@ -34,15 +34,16 @@ tpg_fmts = [
     (640, 480, v4l2.BusFormat.UYVY8_1X16, v4l2.PixelFormats.UYVY, (1, 15)),
 ]
 
-#tpg_w = 640//2
-#tpg_h = 480//2
-#mbus_fmt_tpg = (tpg_w, tpg_h, v4l2.BusFormat.UYVY8_1X16)
-#fmt_tpg = (tpg_w, tpg_h, v4l2.PixelFormat.UYVY)
+# tpg_w = 640//2
+# tpg_h = 480//2
+# mbus_fmt_tpg = (tpg_w, tpg_h, v4l2.BusFormat.UYVY8_1X16)
+# fmt_tpg = (tpg_w, tpg_h, v4l2.PixelFormat.UYVY)
 
 configurations = {}
 
 first_imx_i2c_port = 3
 ub9xx_i2c_port = 2
+
 
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
@@ -51,70 +52,66 @@ def gen_imx219_pixel(port):
 
     return {
         'media': ('rp1-cfe', 'model'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
                 ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
-                    (0x009f0903, 0),
+                    (0x009F0903, 0),
                 ],
             },
-
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (0, 0), 'dst': (1, 0) },
+                    {'src': (0, 0), 'dst': (1, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
             # Deserializer
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
+                    {'src': (port, 0), 'dst': (4, port)},
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (port, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (4, port), 'fmt': mbus_fmt_imx219},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': 'csi2',
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    {'src': (0, port), 'dst': (1 + port, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, port), 'fmt': mbus_fmt_imx219},
+                    {'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_pix_imx219,
             },
         ],
-
         'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 4), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            {'src': (sensor_ent, 0), 'dst': (ser_ent, 0)},
+            {'src': (ser_ent, 1), 'dst': (des_ent, port)},
+            {'src': (des_ent, 4), 'dst': ('csi2', 0)},
+            {'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0)},
         ],
     }
+
 
 def gen_imx219_meta(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
@@ -122,67 +119,63 @@ def gen_imx219_meta(port):
 
     return {
         'media': ('rp1-cfe', 'model'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
-
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (0, 1), 'dst': (1, 1) },
+                    {'src': (0, 1), 'dst': (1, 1)},
                 ],
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (1, 1), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219},
+                    {'pad': (1, 1), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
             # Deserializer
             {
                 'entity': 'ds90ub960 4-0030',
                 'routing': [
-                    { 'src': (port, 1), 'dst': (4, port + 2) },
+                    {'src': (port, 1), 'dst': (4, port + 2)},
                 ],
                 'pads': [
-                    { 'pad': (port, 1), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (4, port + 2), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (port, 1), 'fmt': meta_mbus_fmt_imx219},
+                    {'pad': (4, port + 2), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': 'csi2',
                 'routing': [
-                    { 'src': (0, port + 2), 'dst': (1 + port + 2, 0) },
+                    {'src': (0, port + 2), 'dst': (1 + port + 2, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port + 2), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (1 + port + 2, 0), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (0, port + 2), 'fmt': meta_mbus_fmt_imx219},
+                    {'pad': (1 + port + 2, 0), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
         ],
-
         'devices': [
             {
-                'entity': f'rp1-cfe-csi2-ch{port+2}',
+                'entity': f'rp1-cfe-csi2-ch{port + 2}',
                 'fmt': meta_fmt_pix_imx219,
                 'embedded': True,
             },
         ],
-
         'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port) },
-            { 'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0) },
+            {'src': (sensor_ent, 0), 'dst': (ser_ent, 0)},
+            {'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port)},
+            {'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0)},
+            {'src': ('csi2', 1 + port + 2), 'dst': (f'rp1-cfe-csi2-ch{port + 2}', 0)},
         ],
     }
+
 
 def gen_ub953_tpg(port):
     ser_ent = f'ds90ub953 4-004{4 + port}'
@@ -195,55 +188,51 @@ def gen_ub953_tpg(port):
 
     return {
         'media': ('rp1-cfe', 'model'),
-
         'subdevs': [
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (2, 0), 'dst': (1, 0) },
+                    {'src': (2, 0), 'dst': (1, 0)},
                 ],
                 'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_tpg, 'ival': ival },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (2, 0), 'fmt': mbus_fmt_tpg, 'ival': ival},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
             # Deserializer
             {
                 'entity': 'ds90ub960 4-0030',
                 'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
+                    {'src': (port, 0), 'dst': (4, port)},
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_tpg },
+                    {'pad': (port, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (4, port), 'fmt': mbus_fmt_tpg},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': 'csi2',
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    {'src': (0, port), 'dst': (1 + port, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, port), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'rp1-cfe-csi2-ch{port}',
                 'fmt': fmt_tpg,
             },
         ],
-
         'links': [
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port) },
-            { 'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0) },
-            { 'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0) },
+            {'src': (ser_ent, 1), 'dst': ('ds90ub960 4-0030', port)},
+            {'src': ('ds90ub960 4-0030', 4), 'dst': ('csi2', 0)},
+            {'src': ('csi2', 1 + port), 'dst': (f'rp1-cfe-csi2-ch{port}', 0)},
         ],
     }
 
@@ -258,6 +247,7 @@ configurations['cam1-meta'] = gen_imx219_meta(1)
 
 configurations['cam0-tpg'] = gen_ub953_tpg(0)
 configurations['cam1-tpg'] = gen_ub953_tpg(1)
+
 
 def get_configs():
     return (configurations, ['cam0'])

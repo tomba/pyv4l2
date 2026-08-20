@@ -17,7 +17,9 @@ class AppContext:
         self.print_supported = print_supported
 
 
-def print_selection(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int, target: v4l2.uapi.v4l2_sel_tgt) -> None:
+def print_selection(
+    subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int, target: v4l2.uapi.v4l2_sel_tgt
+) -> None:
     name = target.name.lower()
 
     try:
@@ -46,9 +48,15 @@ def print_routes(subdev: v4l2.SubDevice) -> None:
 
     print('  Routing:')
     for r in routes:
-        print('    {}/{} -> {}/{} [{}]'.format(r.sink_pad, r.sink_stream,
-                                               r.source_pad, r.source_stream,
-                                               v4l2.RouteFlag(r.flags).name))
+        print(
+            '    {}/{} -> {}/{} [{}]'.format(
+                r.sink_pad,
+                r.sink_stream,
+                r.source_pad,
+                r.source_stream,
+                v4l2.RouteFlag(r.flags).name,
+            )
+        )
 
 
 def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
@@ -65,9 +73,10 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
             return
 
         fmts = ' '.join(fmts)
-        fmts = (f'{title}: {fmts}')
-        fmts = textwrap.fill(fmts, width=100, initial_indent=' ' * 4,
-                             subsequent_indent=' ' * (4 + len(title) + 2))
+        fmts = f'{title}: {fmts}'
+        fmts = textwrap.fill(
+            fmts, width=100, initial_indent=' ' * 4, subsequent_indent=' ' * (4 + len(title) + 2)
+        )
         print(fmts)
 
     if videodev.has_capture:
@@ -87,7 +96,9 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
         try:
             fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE_MPLANE)
             f = fmt.fmt.pix_mp
-            fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
+            fmt = (
+                f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
+            )
             print(f'    vcapm: {fmt}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
@@ -123,7 +134,9 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
             print_videodef_fmts(videodev, v4l2.BufType.META_OUTPUT, 'mout')
 
 
-def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int], ctx: AppContext) -> None:
+def print_streams(
+    subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int], ctx: AppContext
+) -> None:
     for s in streams:
         try:
             fmt = subdev.get_format(pad.index, s)
@@ -134,7 +147,9 @@ def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int]
             except ValueError:
                 bfmt = f'0x{f.code:x}'
 
-            print(f'    Stream{s} {f.width}✕{f.height}/{bfmt} field:{f.field} colorspace:{f.colorspace} quantization:{f.quantization} xfer:{f.xfer_func} flags:{f.flags}')
+            print(
+                f'    Stream{s} {f.width}✕{f.height}/{bfmt} field:{f.field} colorspace:{f.colorspace} quantization:{f.quantization} xfer:{f.xfer_func} flags:{f.flags}'
+            )
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    Stream{s} <{e}>')
@@ -162,12 +177,18 @@ def print_streams(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, streams: list[int]
             if codes:
                 codes = 'codes: ' + str.join(' ', codes)
 
-                codes = textwrap.fill(codes, width=100, initial_indent=' ' * 6,
-                                     subsequent_indent=' ' * (7 + 6))
+                codes = textwrap.fill(
+                    codes, width=100, initial_indent=' ' * 6, subsequent_indent=' ' * (7 + 6)
+                )
                 print(codes)
 
 
-def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v4l2.VideoDevice | None, ctx: AppContext) -> None:
+def print_pads(
+    ent: v4l2.MediaEntity,
+    subdev: v4l2.SubDevice | None,
+    videodev: v4l2.VideoDevice | None,
+    ctx: AppContext,
+) -> None:
     if subdev:
         routes = [r for r in subdev.get_routes() if r.is_active]
     else:
@@ -177,7 +198,7 @@ def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v
         links = [l for l in pad.links if l.is_enabled]
 
         # Don't show external pads that have no enabled links
-        #if len(links) == 0 and not pad.is_internal:
+        # if len(links) == 0 and not pad.is_internal:
         #    continue
 
         link_dir = '->' if pad.is_source else '<-'
@@ -193,12 +214,17 @@ def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v
 
             for link in links:
                 remote_pad = link.source_pad if link.sink_pad == pad else link.sink_pad
-                print(f"      {link_dir} '{remote_pad.entity.name}':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]")
+                print(
+                    f"      {link_dir} '{remote_pad.entity.name}':{remote_pad.index} [{v4l2.MediaLinkFlag(link.flags).name}]"
+                )
 
         if routes:
-            streams = set([r.source_stream for r in routes if r.source_pad == pad.index] + [r.sink_stream for r in routes if r.sink_pad == pad.index])
+            streams = set(
+                [r.source_stream for r in routes if r.source_pad == pad.index]
+                + [r.sink_stream for r in routes if r.sink_pad == pad.index]
+            )
         else:
-            streams = [ 0 ]
+            streams = [0]
 
         streams = sorted(streams)
 
@@ -241,9 +267,15 @@ def print_entity(ent: v4l2.MediaEntity, ctx: AppContext) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--device', default='/dev/media0', help='Media device')
-    parser.add_argument('-g', '--graph', action='store_true', help='Print only the graph, no streams or routing')
-    parser.add_argument('-s', '--supported', action='store_true', help='Print also supported formats')
-    parser.add_argument('-a', '--all', action='store_true', help='Print all entitites, not just linked ones')
+    parser.add_argument(
+        '-g', '--graph', action='store_true', help='Print only the graph, no streams or routing'
+    )
+    parser.add_argument(
+        '-s', '--supported', action='store_true', help='Print also supported formats'
+    )
+    parser.add_argument(
+        '-a', '--all', action='store_true', help='Print all entitites, not just linked ones'
+    )
     parser.add_argument('pattern', nargs='?', help='Entity pattern to show')
     args = parser.parse_args()
 
@@ -256,14 +288,21 @@ def main() -> int:
 
         pat = args.pattern.lower()
 
-        entities = [ent for ent in md.entities if pat in ent.name.lower() or pat in (ent.interface.dev_path if ent.interface else '')]
+        entities = [
+            ent
+            for ent in md.entities
+            if pat in ent.name.lower() or pat in (ent.interface.dev_path if ent.interface else '')
+        ]
         print_queue = entities
         recurse = False
     else:
         entities = list(md.entities)
 
         # start with source-only subdevs (sensors)
-        print_queue = sorted([ent for ent in entities if not any(p.is_sink and not p.is_internal for p in ent.pads)], key=lambda e: e.name)
+        print_queue = sorted(
+            [ent for ent in entities if not any(p.is_sink and not p.is_internal for p in ent.pads)],
+            key=lambda e: e.name,
+        )
 
         recurse = True
 
@@ -287,19 +326,20 @@ def main() -> int:
 
         if recurse:
             if args.all:
-                links = flatten([ p.links for p in ent.pads ])
+                links = flatten([p.links for p in ent.pads])
 
-                print_queue += [ l.sink_pad.entity for l in links ]
-                print_queue += [ l.source_pad.entity for l in links ]
+                print_queue += [l.sink_pad.entity for l in links]
+                print_queue += [l.source_pad.entity for l in links]
             else:
-                links = flatten([ p.links for p in ent.pads if p.is_source ])
+                links = flatten([p.links for p in ent.pads if p.is_source])
                 links = [l for l in links if l.is_enabled]
 
-                print_queue += [ l.sink_pad.entity for l in links ]
+                print_queue += [l.sink_pad.entity for l in links]
 
         print_entity(ent, ctx)
 
     return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())

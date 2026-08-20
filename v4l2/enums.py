@@ -4,6 +4,7 @@ import v4l2.uapi
 
 __all__ = ['MediaEntityFunction', 'MediaInterfaceType', 'MediaLinkFlag', 'MediaPadFlag']
 
+
 class MediaEntityFunction(Enum):
     UNKNOWN = v4l2.uapi.MEDIA_ENT_F_UNKNOWN
     V4L2_SUBDEV_UNKNOWN = v4l2.uapi.MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
@@ -39,16 +40,19 @@ class MediaEntityFunction(Enum):
     DV_DECODER = v4l2.uapi.MEDIA_ENT_F_DV_DECODER
     DV_ENCODER = v4l2.uapi.MEDIA_ENT_F_DV_ENCODER
 
+
 class MediaLinkFlag(IntFlag):
     ENABLED = v4l2.uapi.MEDIA_LNK_FL_ENABLED
     IMMUTABLE = v4l2.uapi.MEDIA_LNK_FL_IMMUTABLE
     DYNAMIC = v4l2.uapi.MEDIA_LNK_FL_DYNAMIC
+
 
 class MediaPadFlag(IntFlag):
     SINK = v4l2.uapi.MEDIA_PAD_FL_SINK
     SOURCE = v4l2.uapi.MEDIA_PAD_FL_SOURCE
     MUST_CONNECT = v4l2.uapi.MEDIA_PAD_FL_MUST_CONNECT
     INTERNAL = v4l2.uapi.MEDIA_PAD_FL_INTERNAL
+
 
 class MediaInterfaceType(Enum):
     DVB_FE = v4l2.uapi.MEDIA_INTF_T_DVB_FE

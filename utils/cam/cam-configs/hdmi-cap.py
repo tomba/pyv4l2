@@ -11,20 +11,16 @@ configurations = {}
 
 configurations['desky'] = {
     'media': ('USB Capture HDMI 4K+*', 'model'),
-
-    'subdevs': [
-    ],
-
+    'subdevs': [],
     'devices': [
         {
             'entity': 'USB Capture HDMI 4K+: USB Captu',
             'fmt': fmt_pix_1,
         },
     ],
-
-    'links': [
-    ],
+    'links': [],
 }
+
 
 def get_configs():
     return (configurations, ['desky'])

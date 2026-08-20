@@ -31,36 +31,34 @@ configurations['cam0'] = {
         {
             'entity': sensor_ent,
             'pads': [
-                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
             ],
-#            "routing": [
-#               { "src": (1, 0), "dst": (0, 0) },
-#               { "src": (2, 0), "dst": (0, 1) },
-#            ],
+            #            "routing": [
+            #               { "src": (1, 0), "dst": (0, 0) },
+            #               { "src": (2, 0), "dst": (0, 1) },
+            #            ],
         },
         # CSI-2 RX
         {
             'entity': 'unicam',
             'pads': [
-                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
+                {'pad': (1, 0), 'fmt': mbus_fmt_imx219},
             ],
             'routing': [
-                { 'src': (0, 0), 'dst': (1, 0) },
+                {'src': (0, 0), 'dst': (1, 0)},
             ],
         },
     ],
-
     'devices': [
         {
             'entity': 'unicam-image',
             'fmt': fmt_pix_imx219,
         },
     ],
-
     'links': [
-        { 'src': (sensor_ent, 0), 'dst': ('unicam', 0) },
-        { 'src': ('unicam', 1), 'dst': ('unicam-image', 0) },
+        {'src': (sensor_ent, 0), 'dst': ('unicam', 0)},
+        {'src': ('unicam', 1), 'dst': ('unicam-image', 0)},
     ],
 }
 
@@ -70,25 +68,24 @@ configurations['cam0-meta'] = {
         {
             'entity': sensor_ent,
             'pads': [
-                { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
+                {'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219},
             ],
-#            "routing": [
-#               { "src": (1, 0), "dst": (0, 0) },
-#            ],
+            #            "routing": [
+            #               { "src": (1, 0), "dst": (0, 0) },
+            #            ],
         },
         # CSI-2 RX
         {
             'entity': 'unicam',
             'routing': [
-                { 'src': (0, 1), 'dst': (2, 0) },
+                {'src': (0, 1), 'dst': (2, 0)},
             ],
             'pads': [
-                { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
-                { 'pad': (2, 0), 'fmt': meta_mbus_fmt_imx219 },
+                {'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219},
+                {'pad': (2, 0), 'fmt': meta_mbus_fmt_imx219},
             ],
         },
     ],
-
     'devices': [
         {
             'entity': 'unicam-embedded',
@@ -97,12 +94,12 @@ configurations['cam0-meta'] = {
             'display': False,
         },
     ],
-
     'links': [
-        { 'src': (sensor_ent, 0), 'dst': ('unicam', 0) },
-        { 'src': ('unicam', 2), 'dst': ('unicam-embedded', 0) },
+        {'src': (sensor_ent, 0), 'dst': ('unicam', 0)},
+        {'src': ('unicam', 2), 'dst': ('unicam-embedded', 0)},
     ],
 }
+
 
 def get_configs():
     return (configurations, ['cam0'])

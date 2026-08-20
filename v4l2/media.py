@@ -20,8 +20,9 @@ __all__ = [
     'MediaLink',
     'MediaLinkFlag',
     'MediaObject',
-    'MediaPad'
+    'MediaPad',
 ]
+
 
 class MediaTopology:
     def __init__(self, topology, entities, interfaces, pads, links) -> None:
@@ -40,7 +41,9 @@ class MediaObject:
         self.id = id
 
     def _finalize(self):
-        self.links = [l for l in self.md.links if self.id in (l.media_link.source_id, l.media_link.sink_id)]
+        self.links = [
+            l for l in self.md.links if self.id in (l.media_link.source_id, l.media_link.sink_id)
+        ]
 
 
 class MediaEntity(MediaObject):
@@ -50,8 +53,8 @@ class MediaEntity(MediaObject):
         self.name = media_entity.name.decode('ascii')
         self.function = MediaEntityFunction(media_entity.function)
         self.flags = media_entity.flags
-        self.pads: list[MediaPad] = None # type: ignore
-        self.interface: MediaInterface = None # type: ignore
+        self.pads: list[MediaPad] = None  # type: ignore
+        self.interface: MediaInterface = None  # type: ignore
 
     def _finalize(self):
         super()._finalize()
@@ -102,11 +105,14 @@ class MediaInterface(MediaObject):
     def __init__(self, md, media_iface: v4l2.uapi.media_v2_interface) -> None:
         super().__init__(md, media_iface.id)
         self.media_iface = media_iface
-        self.majorminor = (self.media_iface.unnamed_1.devnode.major, self.media_iface.unnamed_1.devnode.minor)
+        self.majorminor = (
+            self.media_iface.unnamed_1.devnode.major,
+            self.media_iface.unnamed_1.devnode.minor,
+        )
         self.dev_path = filepath_for_major_minor(*self.majorminor)
         self.intf_type = MediaInterfaceType(self.media_iface.intf_type)
 
-    def _finalize(self):        # pylint: disable=useless-parent-delegation
+    def _finalize(self):  # pylint: disable=useless-parent-delegation
         super()._finalize()
 
     def __repr__(self) -> str:
@@ -126,7 +132,7 @@ class MediaPad(MediaObject):
         super().__init__(md, media_pad.id)
         self.media_pad = media_pad
         self.index = media_pad.index
-        self.entity: MediaEntity = None # type: ignore
+        self.entity: MediaEntity = None  # type: ignore
 
     def _finalize(self):
         super()._finalize()
@@ -196,8 +202,8 @@ class MediaLink(MediaObject):
         super().__init__(md, media_link.id)
         self.media_link = media_link
         self.flags = media_link.flags
-        self.source: MediaObject = None # type: ignore
-        self.sink: MediaObject = None # type: ignore
+        self.source: MediaObject = None  # type: ignore
+        self.sink: MediaObject = None  # type: ignore
 
     def _finalize(self):
         super()._finalize()
@@ -286,9 +292,9 @@ class MediaDevice:
 
     @staticmethod
     def __decode_kernel_version(v: int):
-        a = (v >> 16) & 0xff
-        b = (v >> 8) & 0xff
-        c = v & 0xff
+        a = (v >> 16) & 0xFF
+        b = (v >> 8) & 0xFF
+        c = v & 0xFF
         return (a, b, c)
 
     def __read_device_info(self):
@@ -302,7 +308,6 @@ class MediaDevice:
         self.media_version = MediaDevice.__decode_kernel_version(mdi.media_version)
         self.hw_revision = mdi.hw_revision
         self.driver_version = MediaDevice.__decode_kernel_version(mdi.driver_version)
-
 
     def __read_topology(self):
         topology = v4l2.uapi.media_v2_topology()
@@ -323,14 +328,15 @@ class MediaDevice:
 
         self.topology = MediaTopology(topology, entities, interfaces, pads, links)
 
-        self.objects = \
-            [MediaEntity(self, e) for e in self.topology.entities] + \
-            [MediaInterface(self, i) for i in self.topology.interfaces] + \
-            [MediaPad(self, p) for p in self.topology.pads] + \
-            [MediaLink(self, l) for l in self.topology.links]
+        self.objects = (
+            [MediaEntity(self, e) for e in self.topology.entities]
+            + [MediaInterface(self, i) for i in self.topology.interfaces]
+            + [MediaPad(self, p) for p in self.topology.pads]
+            + [MediaLink(self, l) for l in self.topology.links]
+        )
 
         for o in self.objects:
-            o._finalize()       # pylint: disable=protected-access
+            o._finalize()  # pylint: disable=protected-access
 
     @property
     def entities(self):

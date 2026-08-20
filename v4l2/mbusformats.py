@@ -4,9 +4,10 @@ from enum import IntEnum
 
 import v4l2.uapi
 
-__all__ = [ 'BusFormat' ]
+__all__ = ['BusFormat']
 
 # str.join('\n', [f'    {e[14:]} = v4l2.uapi.{e}' for e in v4l2.uapi.__dir__() if e.startswith("V4L2_MBUS_FMT_")])
+
 
 class BusFormat(IntEnum):
     FIXED = v4l2.uapi.V4L2_MBUS_FMT_FIXED
@@ -91,9 +92,9 @@ class BusFormat(IntEnum):
     META_10 = 0x8002
     META_12 = 0x8003
 
-    SBGGR16_1X16 = 0x301d
-    SGBRG16_1X16 = 0x301e
-    SGRBG16_1X16 = 0x301f
+    SBGGR16_1X16 = 0x301D
+    SGBRG16_1X16 = 0x301E
+    SGRBG16_1X16 = 0x301F
     SRGGB16_1X16 = 0x3020
 
     # XXX deprecated rpi format
@@ -106,12 +107,12 @@ class BusFormat(IntEnum):
     CCS_EMBEDDED = v4l2.uapi.MEDIA_BUS_FMT_CCS_EMBEDDED
 
     # Xilinx non-upstream (?) formats
-    VYYUYY8_1X24      = 0x2100
-    VYYUYY10_4X20     = 0x2101
-    VUY10_1X30        = 0x2102
-    UYYVYY12_4X24     = 0x2103
-    VUY12_1X36        = 0x2104
-    Y16_1X16          = 0x2105
-    UYYVYY16_4X32     = 0x2106
-    VUY16_1X48        = 0x2107
-    UYVY16_2X32       = 0x2108
+    VYYUYY8_1X24 = 0x2100
+    VYYUYY10_4X20 = 0x2101
+    VUY10_1X30 = 0x2102
+    UYYVYY12_4X24 = 0x2103
+    VUY12_1X36 = 0x2104
+    Y16_1X16 = 0x2105
+    UYYVYY16_4X32 = 0x2106
+    VUY16_1X48 = 0x2107
+    UYVY16_2X32 = 0x2108

@@ -1,7 +1,7 @@
 import v4l2
 import v4l2.uapi
 
-USE_RAW_10=False
+USE_RAW_10 = False
 
 # Pixel
 
@@ -52,92 +52,88 @@ else:
     isp_ent = 'rcar_isp fed20000.isp'
     vin_port = 8
 
+
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port * 2 + first_imx_i2c_port}-0010'
     ser_ent = f'max96717 {port * 2 + first_ser_i2c_port}-0040'
 
     return {
         'media': ('renesas,vin-r8a779g0', 'model'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    #{ 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                    # { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
                 ],
                 'routing': [
-                   { 'src': (1, 0), 'dst': (0, 0) },
+                    {'src': (1, 0), 'dst': (0, 0)},
                 ],
                 'controls': [
                     (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
                 ],
             },
-
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (0, 0), 'dst': (1, 0) },
+                    {'src': (0, 0), 'dst': (1, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
             # Deserializer
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (deser_out_port, port) },
+                    {'src': (port, 0), 'dst': (deser_out_port, port)},
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (deser_out_port, port), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (port, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (deser_out_port, port), 'fmt': mbus_fmt_imx219},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': csi_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1, port) },
+                    {'src': (0, port), 'dst': (1, port)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, port), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, port), 'fmt': mbus_fmt_imx219},
+                    {'pad': (1, port), 'fmt': mbus_fmt_imx219},
                 ],
             },
-
             # ISP
             {
                 'entity': isp_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    {'src': (0, port), 'dst': (1 + port, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, port), 'fmt': mbus_fmt_imx219},
+                    {'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'VIN{vin_port + port} output',
                 'fmt': fmt_pix,
             },
         ],
-
         'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0) },
-            { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
-            { 'src': (isp_ent, 1 + port), 'dst': (f'VIN{vin_port + port} output', 0) },
+            {'src': (sensor_ent, 0), 'dst': (ser_ent, 0)},
+            {'src': (ser_ent, 1), 'dst': (des_ent, port)},
+            {'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0)},
+            {'src': (csi_ent, 1), 'dst': (isp_ent, 0)},
+            {'src': (isp_ent, 1 + port), 'dst': (f'VIN{vin_port + port} output', 0)},
         ],
     }
+
 
 def gen_imx219_meta(port):
     sensor_ent = f'imx219 {port * 2 + first_imx_i2c_port}-0010'
@@ -145,68 +141,63 @@ def gen_imx219_meta(port):
 
     return {
         'media': ('renesas,vin-r8a779g0', 'model'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta},
                 ],
                 'routing': [
-                   { 'src': (2, 0), 'dst': (0, 1) },
+                    {'src': (2, 0), 'dst': (0, 1)},
                 ],
             },
-
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (0, 1), 'dst': (1, 1) },
+                    {'src': (0, 1), 'dst': (1, 1)},
                 ],
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1, 1), 'fmt': mbus_fmt_imx219_meta },
+                    {'pad': (0, 1), 'fmt': mbus_fmt_imx219_meta},
+                    {'pad': (1, 1), 'fmt': mbus_fmt_imx219_meta},
                 ],
             },
             # Deserializer
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 1), 'dst': (deser_out_port, port + 4) },
+                    {'src': (port, 1), 'dst': (deser_out_port, port + 4)},
                 ],
                 'pads': [
-                    { 'pad': (port, 1), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (deser_out_port, port + 4), 'fmt': mbus_fmt_imx219_meta },
+                    {'pad': (port, 1), 'fmt': mbus_fmt_imx219_meta},
+                    {'pad': (deser_out_port, port + 4), 'fmt': mbus_fmt_imx219_meta},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': csi_ent,
                 'routing': [
-                    { 'src': (0, port + 4), 'dst': (1, port + 4) },
+                    {'src': (0, port + 4), 'dst': (1, port + 4)},
                 ],
                 'pads': [
-                    { 'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1, port + 4), 'fmt': mbus_fmt_imx219_meta },
+                    {'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta},
+                    {'pad': (1, port + 4), 'fmt': mbus_fmt_imx219_meta},
                 ],
             },
-
             # ISP
             {
                 'entity': isp_ent,
                 'routing': [
-                    { 'src': (0, port + 4), 'dst': (1 + port + 4, 0) },
+                    {'src': (0, port + 4), 'dst': (1 + port + 4, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta },
-                    { 'pad': (1 + port + 4, 0), 'fmt': mbus_fmt_imx219_meta },
+                    {'pad': (0, port + 4), 'fmt': mbus_fmt_imx219_meta},
+                    {'pad': (1 + port + 4, 0), 'fmt': mbus_fmt_imx219_meta},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'VIN{vin_port + port + 4} output',
@@ -215,141 +206,133 @@ def gen_imx219_meta(port):
                 'display': False,
             },
         ],
-
         'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, 4), 'dst': (csi_ent, 0) },
-            { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
-            { 'src': (isp_ent, 1 + port + 4), 'dst': (f'VIN{vin_port + port + 4} output', 0) },
+            {'src': (sensor_ent, 0), 'dst': (ser_ent, 0)},
+            {'src': (ser_ent, 1), 'dst': (des_ent, port)},
+            {'src': (des_ent, 4), 'dst': (csi_ent, 0)},
+            {'src': (csi_ent, 1), 'dst': (isp_ent, 0)},
+            {'src': (isp_ent, 1 + port + 4), 'dst': (f'VIN{vin_port + port + 4} output', 0)},
         ],
     }
+
 
 def gen_des_tpg():
     return {
         'media': ('renesas,vin-r8a779g0', 'model'),
-
         'subdevs': [
             # Deserializer
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (8, 0), 'dst': (deser_out_port, 0) },
+                    {'src': (8, 0), 'dst': (deser_out_port, 0)},
                 ],
                 'pads': [
-                    { 'pad': (8, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (deser_out_port, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (8, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (deser_out_port, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': csi_ent,
                 #'routing': [
                 #    { 'src': (0, port), 'dst': (1 + port, 0) },
-                #],
+                # ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
-
             # ISP
             {
                 'entity': isp_ent,
                 #'routing': [
                 #    { 'src': (0, port), 'dst': (1 + port, 0) },
-                #],
+                # ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'VIN{vin_port} output',
                 'fmt': fmt_tpg,
             },
         ],
-
         'links': [
-            { 'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0) },
-            { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
-            { 'src': (isp_ent, 1), 'dst': (f'VIN{vin_port} output', 0) },
+            {'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0)},
+            {'src': (csi_ent, 1), 'dst': (isp_ent, 0)},
+            {'src': (isp_ent, 1), 'dst': (f'VIN{vin_port} output', 0)},
         ],
     }
+
 
 def gen_ser_tpg(port):
     ser_ent = f'max96717 {port * 2 + first_ser_i2c_port}-0040'
 
     return {
         'media': ('renesas,vin-r8a779g0', 'model'),
-
         'subdevs': [
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (2, 0), 'dst': (1, 0) },
+                    {'src': (2, 0), 'dst': (1, 0)},
                 ],
                 'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (2, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
             # Deserializer
             {
                 'entity': des_ent,
                 'routing': [
-                    { 'src': (port, 0), 'dst': (deser_out_port, port) },
+                    {'src': (port, 0), 'dst': (deser_out_port, port)},
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (deser_out_port, port), 'fmt': mbus_fmt_tpg },
+                    {'pad': (port, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (deser_out_port, port), 'fmt': mbus_fmt_tpg},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': csi_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1, port) },
+                    {'src': (0, port), 'dst': (1, port)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, port), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, port), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1, port), 'fmt': mbus_fmt_tpg},
                 ],
             },
-
             # ISP
             {
                 'entity': isp_ent,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    {'src': (0, port), 'dst': (1 + port, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, port), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'VIN{vin_port + port} output',
                 'fmt': fmt_tpg,
             },
         ],
-
         'links': [
-            { 'src': (ser_ent, 1), 'dst': (des_ent, port) },
-            { 'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0) },
-            { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
-            { 'src': (isp_ent, 1 + port), 'dst': (f'VIN{vin_port + port} output', 0) },
+            {'src': (ser_ent, 1), 'dst': (des_ent, port)},
+            {'src': (des_ent, deser_out_port), 'dst': (csi_ent, 0)},
+            {'src': (csi_ent, 1), 'dst': (isp_ent, 0)},
+            {'src': (isp_ent, 1 + port), 'dst': (f'VIN{vin_port + port} output', 0)},
         ],
     }
+
 
 def get_configs():
     configurations = {}

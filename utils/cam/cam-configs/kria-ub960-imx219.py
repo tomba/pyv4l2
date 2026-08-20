@@ -6,8 +6,8 @@ import v4l2
 
 imx219_w = 640
 imx219_h = 480
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-#imx219_pix_fmt = v4l2.PixelFormats.SRGGB10P
+# imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+# imx219_pix_fmt = v4l2.PixelFormats.SRGGB10P
 imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
 imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
@@ -29,10 +29,10 @@ tpg_fmts = [
     (640, 480, v4l2.BusFormat.UYVY8_1X16, v4l2.PixelFormats.UYVY, (1, 15)),
 ]
 
-#tpg_w = 640//2
-#tpg_h = 480//2
-#mbus_fmt_tpg = (tpg_w, tpg_h, v4l2.BusFormat.UYVY8_1X16)
-#fmt_tpg = (tpg_w, tpg_h, v4l2.PixelFormat.UYVY)
+# tpg_w = 640//2
+# tpg_h = 480//2
+# mbus_fmt_tpg = (tpg_w, tpg_h, v4l2.BusFormat.UYVY8_1X16)
+# fmt_tpg = (tpg_w, tpg_h, v4l2.PixelFormat.UYVY)
 
 MEDIA = 'platform:xilinx_video_top'
 CSI2RX = 'a0012000.mipi_csi2_rx_subsystem'
@@ -42,74 +42,71 @@ configurations = {}
 
 first_imx_i2c_port = 8
 
+
 def gen_imx219_pixel(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
     ser_ent = f'ds90ub953 6-004{4 + port}'
 
     return {
         'media': (MEDIA, 'bus_info'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
-
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (0, 0), 'dst': (1, 0) },
+                    {'src': (0, 0), 'dst': (1, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
             # Deserializer
             {
                 'entity': 'ds90ub960 6-0030',
                 'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
+                    {'src': (port, 0), 'dst': (4, port)},
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (port, 0), 'fmt': mbus_fmt_imx219},
+                    {'pad': (4, port), 'fmt': mbus_fmt_imx219},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': CSI2RX,
                 #'routing': [
                 #    { 'src': (0, port), 'dst': (1 + port, 0) },
-                #],
+                # ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
-                    #{ 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219 },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_imx219},
+                    # { 'pad': (1 + port, 0), 'fmt': mbus_fmt_imx219 },
+                    {'pad': (1, 0), 'fmt': mbus_fmt_imx219},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': DMA,
                 'fmt': fmt_pix_imx219,
             },
         ],
-
         'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 4), 'dst': (CSI2RX, 0) },
-            #{ 'src': (CSI2RX, 1 + port), 'dst': (DMA, 0) },
-            { 'src': (CSI2RX, 1), 'dst': (DMA, 0) },
+            {'src': (sensor_ent, 0), 'dst': (ser_ent, 0)},
+            {'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port)},
+            {'src': ('ds90ub960 6-0030', 4), 'dst': (CSI2RX, 0)},
+            # { 'src': (CSI2RX, 1 + port), 'dst': (DMA, 0) },
+            {'src': (CSI2RX, 1), 'dst': (DMA, 0)},
         ],
     }
+
 
 def gen_imx219_meta(port):
     sensor_ent = f'imx219 {port + first_imx_i2c_port}-0010'
@@ -117,52 +114,48 @@ def gen_imx219_meta(port):
 
     return {
         'media': (MEDIA, 'bus_info'),
-
         'subdevs': [
             # Camera
             {
                 'entity': sensor_ent,
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
-
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (0, 1), 'dst': (1, 1) },
+                    {'src': (0, 1), 'dst': (1, 1)},
                 ],
                 'pads': [
-                    { 'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (1, 1), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (0, 1), 'fmt': meta_mbus_fmt_imx219},
+                    {'pad': (1, 1), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
             # Deserializer
             {
                 'entity': 'ds90ub960 6-0030',
                 'routing': [
-                    { 'src': (port, 1), 'dst': (4, port + 2) },
+                    {'src': (port, 1), 'dst': (4, port + 2)},
                 ],
                 'pads': [
-                    { 'pad': (port, 1), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (4, port + 2), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (port, 1), 'fmt': meta_mbus_fmt_imx219},
+                    {'pad': (4, port + 2), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': CSI2RX,
                 'routing': [
-                    { 'src': (0, port + 2), 'dst': (1 + port + 2, 0) },
+                    {'src': (0, port + 2), 'dst': (1 + port + 2, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port + 2), 'fmt': meta_mbus_fmt_imx219 },
-                    { 'pad': (1 + port + 2, 0), 'fmt': meta_mbus_fmt_imx219 },
+                    {'pad': (0, port + 2), 'fmt': meta_mbus_fmt_imx219},
+                    {'pad': (1 + port + 2, 0), 'fmt': meta_mbus_fmt_imx219},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': DMA,
@@ -170,14 +163,14 @@ def gen_imx219_meta(port):
                 'embedded': True,
             },
         ],
-
         'links': [
-            { 'src': (sensor_ent, 0), 'dst': (ser_ent, 0) },
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 4), 'dst': (CSI2RX, 0) },
-            { 'src': (CSI2RX, 1 + port + 2), 'dst': (DMA, 0) },
+            {'src': (sensor_ent, 0), 'dst': (ser_ent, 0)},
+            {'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port)},
+            {'src': ('ds90ub960 6-0030', 4), 'dst': (CSI2RX, 0)},
+            {'src': (CSI2RX, 1 + port + 2), 'dst': (DMA, 0)},
         ],
     }
+
 
 def gen_ub953_tpg(port):
     ser_ent = f'ds90ub953 6-004{4 + port}'
@@ -190,55 +183,51 @@ def gen_ub953_tpg(port):
 
     return {
         'media': (MEDIA, 'bus_info'),
-
         'subdevs': [
             # Serializer
             {
                 'entity': ser_ent,
                 'routing': [
-                    { 'src': (2, 0), 'dst': (1, 0) },
+                    {'src': (2, 0), 'dst': (1, 0)},
                 ],
                 'pads': [
-                    { 'pad': (2, 0), 'fmt': mbus_fmt_tpg, 'ival': ival },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (2, 0), 'fmt': mbus_fmt_tpg, 'ival': ival},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
             # Deserializer
             {
                 'entity': 'ds90ub960 6-0030',
                 'routing': [
-                    { 'src': (port, 0), 'dst': (4, port) },
+                    {'src': (port, 0), 'dst': (4, port)},
                 ],
                 'pads': [
-                    { 'pad': (port, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (4, port), 'fmt': mbus_fmt_tpg },
+                    {'pad': (port, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (4, port), 'fmt': mbus_fmt_tpg},
                 ],
             },
-
             # CSI-2 RX
             {
                 'entity': CSI2RX,
                 'routing': [
-                    { 'src': (0, port), 'dst': (1 + port, 0) },
+                    {'src': (0, port), 'dst': (1 + port, 0)},
                 ],
                 'pads': [
-                    { 'pad': (0, port), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, port), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1 + port, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': DMA,
                 'fmt': fmt_tpg,
             },
         ],
-
         'links': [
-            { 'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port) },
-            { 'src': ('ds90ub960 6-0030', 4), 'dst': (CSI2RX, 0) },
-            { 'src': (CSI2RX, 1 + port), 'dst': (DMA, 0) },
+            {'src': (ser_ent, 1), 'dst': ('ds90ub960 6-0030', port)},
+            {'src': ('ds90ub960 6-0030', 4), 'dst': (CSI2RX, 0)},
+            {'src': (CSI2RX, 1 + port), 'dst': (DMA, 0)},
         ],
     }
 
@@ -253,6 +242,7 @@ configurations['cam1-meta'] = gen_imx219_meta(1)
 
 configurations['cam0-tpg'] = gen_ub953_tpg(0)
 configurations['cam1-tpg'] = gen_ub953_tpg(1)
+
 
 def get_configs():
     return (configurations, ['cam0'])

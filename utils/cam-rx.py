@@ -192,8 +192,10 @@ class Receiver(QtWidgets.QWidget):
         # Pre-size viewer grid
         self.viewer.setNumStreams(len(pixel_streams))
 
-        print(f'[{self.name}] Intro: {num_streams} streams '
-              f'({len(pixel_streams)} pixel, {num_streams - len(pixel_streams)} meta)')
+        print(
+            f'[{self.name}] Intro: {num_streams} streams '
+            f'({len(pixel_streams)} pixel, {num_streams - len(pixel_streams)} meta)'
+        )
 
         self.intro_buffer = bytearray()
 

@@ -11,19 +11,16 @@ configurations = {}
 
 configurations['lappy'] = {
     # TODO: add 'media' entry
-    'subdevs': [
-    ],
-
+    'subdevs': [],
     'devices': [
         {
             'entity': 'Integrated Camera: Integrated C',
             'fmt': fmt_pix_1,
         },
     ],
-
-    'links': [
-    ],
+    'links': [],
 }
+
 
 def get_configs():
     return (configurations, ['lappy'])

@@ -5,9 +5,9 @@ from cam_helpers import gen_subdev, infer_links, merge_configs, propagate_format
 import v4l2
 import v4l2.uapi
 
-#imx219_w, imx219_h = 3280, 2464
+# imx219_w, imx219_h = 3280, 2464
 imx219_w, imx219_h = 1920, 1080
-#imx219_w, imx219_h = 640, 480
+# imx219_w, imx219_h = 640, 480
 
 USE_RAW_10 = False
 
@@ -17,6 +17,7 @@ else:
     imx219_fmt = (imx219_w, imx219_h, v4l2.BusFormat.SRGGB8_1X8, v4l2.PixelFormats.SRGGB8)
 
 MEDIA_DEV = ('TI-CSI2RX', 'model')
+
 
 def resolve_media_graph():
     md = v4l2.MediaDevice(*MEDIA_DEV)
@@ -54,6 +55,7 @@ def resolve_media_graph():
         'contexts': contexts,
     }
 
+
 def gen_imx219_pixel(mdata):
     sensor = mdata['sensor']
     csirx = mdata['csirx']
@@ -64,18 +66,19 @@ def gen_imx219_pixel(mdata):
 
     return {
         'subdevs': [
-            gen_subdev(sensor,
-                       pads={(0, 0): (w, h, bus_fmt)},
-                       controls={v4l2.uapi.V4L2_CID_ANALOGUE_GAIN: 200,
-                                 0x009f0903: 0}),
+            gen_subdev(
+                sensor,
+                pads={(0, 0): (w, h, bus_fmt)},
+                controls={v4l2.uapi.V4L2_CID_ANALOGUE_GAIN: 200, 0x009F0903: 0},
+            ),
             gen_subdev(csirx, routing=((0, 0), (1, 0))),
             gen_subdev(csirx2, routing=((0, 0), (1, 0))),
         ],
-
         'devices': [
-            { 'entity': context, 'fmt': (w, h, pix_fmt) },
+            {'entity': context, 'fmt': (w, h, pix_fmt)},
         ],
     }
+
 
 def get_configs(config_names):
     mdata = resolve_media_graph()

@@ -14,18 +14,21 @@ from v4l2.videodev import CaptureStreamer, VideoDevice
 
 pix_or_meta_fmt = PixelFormat | MetaFormat
 
+
 class Updater(ABC):
     @abstractmethod
     def update(self):
         pass
 
+
 class StreamState(Enum):
     RUNNING = auto()
-    DRAINING = auto() # Stopping, waiting for the consumer to return buffers
+    DRAINING = auto()  # Stopping, waiting for the consumer to return buffers
     STOPPED = auto()
 
+
 class Stream:
-    id: int # Unique stream ID
+    id: int  # Unique stream ID
     sctx: Subcontext
     state: StreamState
     num_bufs: int
@@ -41,13 +44,14 @@ class Stream:
     dev: VideoDevice
     device: tuple[str, str]
     cap: CaptureStreamer
-    fbs: list[DumbFramebuffer] # XXX used from cam_net...
+    fbs: list[DumbFramebuffer]  # XXX used from cam_net...
     total_num_frames: int
     last_framenum: int
     last_timestamp: float
 
     # XXX Hack to get the format from the config to the kms consumer
     kms_format: PixelFormat
+
 
 # Media device context
 class Subcontext:
@@ -56,6 +60,7 @@ class Subcontext:
     subdevices: dict[str, v4l2.SubDevice] | None
     streams: list[Stream]
     ctx: Context
+
 
 # Application wide context
 class Context:

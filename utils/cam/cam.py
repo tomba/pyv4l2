@@ -24,21 +24,47 @@ import v4l2
 
 def parse_args(ctx: Context):
     parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--config-only', action='store_true', default=False, help='configure only')
-    parser.add_argument('-s', '--save', action='store_true', default=False, help='save frames to files')
-    parser.add_argument('-d', '--display', action='store_true', default=False, help='show frames on screen')
-    parser.add_argument('-x', '--tx', nargs='?', type=str, default=None, const='all', help='send frames to a server')
+    parser.add_argument(
+        '-c', '--config-only', action='store_true', default=False, help='configure only'
+    )
+    parser.add_argument(
+        '-s', '--save', action='store_true', default=False, help='save frames to files'
+    )
+    parser.add_argument(
+        '-d', '--display', action='store_true', default=False, help='show frames on screen'
+    )
+    parser.add_argument(
+        '-x', '--tx', nargs='?', type=str, default=None, const='all', help='send frames to a server'
+    )
     parser.add_argument('-t', '--type', type=str, help='buffer type (drm/v4l2)')
-    parser.add_argument('-p', '--print', action='store_true', default=False, help='print config dict')
-    parser.add_argument('-i', '--interactive', action='store_true', default=False, help='interactive TUI mode')
-    parser.add_argument('-N', '--no-start', action='store_true', default=False, help='do not start the streams (needs -i)')
+    parser.add_argument(
+        '-p', '--print', action='store_true', default=False, help='print config dict'
+    )
+    parser.add_argument(
+        '-i', '--interactive', action='store_true', default=False, help='interactive TUI mode'
+    )
+    parser.add_argument(
+        '-N',
+        '--no-start',
+        action='store_true',
+        default=False,
+        help='do not start the streams (needs -i)',
+    )
     parser.add_argument('-S', '--script', help='User script')
-    parser.add_argument('-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset')
-    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Verbose output')
+    parser.add_argument(
+        '-D', '--delay', type=int, help='Delay in secs after the initial KMS modeset'
+    )
+    parser.add_argument(
+        '-v', '--verbose', action='store_true', default=False, help='Verbose output'
+    )
     parser.add_argument('-H', '--host', default='192.168.88.20', type=str)
     parser.add_argument('-P', '--port', default=43242, type=int)
-    parser.add_argument('-n', '--numframes', default=0, type=int, help='Number of frames to capture')
-    parser.add_argument('config_names', nargs='*', help='<config name>[:<stream name>[,<stream name>...]]')
+    parser.add_argument(
+        '-n', '--numframes', default=0, type=int, help='Number of frames to capture'
+    )
+    parser.add_argument(
+        'config_names', nargs='*', help='<config name>[:<stream name>[,<stream name>...]]'
+    )
     args = parser.parse_args()
 
     ctx.verbose = args.verbose
@@ -52,6 +78,7 @@ def parse_args(ctx: Context):
 
     if ctx.use_tui:
         from cam_tui import run_tui
+
         ctx.run_tui = run_tui
 
     if args.no_start and not args.interactive:
@@ -61,10 +88,11 @@ def parse_args(ctx: Context):
 
     if args.script:
         import importlib.util
+
         spec = importlib.util.spec_from_file_location('userscript', args.script)
-        assert(spec)
+        assert spec
         user_mod = importlib.util.module_from_spec(spec)
-        assert(spec.loader)
+        assert spec.loader
         spec.loader.exec_module(user_mod)
         ctx.user_script = user_mod
     else:
@@ -72,8 +100,8 @@ def parse_args(ctx: Context):
 
     if args.tx:
         ctx.tx = args.tx.split(',')
-        ctx.net_host=args.host
-        ctx.net_port=args.port
+        ctx.net_host = args.host
+        ctx.net_port = args.port
         print(f'Network transfer on {args.host}:{args.port}')
     else:
         ctx.tx = None
@@ -125,6 +153,7 @@ def init_subdevs(ctx: Context):
 
         sctx.subdevices = configure_subdevs(sctx, sctx.config)
 
+
 def init_viddevs(ctx: Context):
     stream_counter = 0
 
@@ -154,6 +183,7 @@ def init_viddevs(ctx: Context):
     for sctx in ctx.subcontexts:
         init_viddevs_sctx(sctx)
 
+
 def init_viddevs_sctx(sctx: Subcontext):
     ctx = sctx.ctx
 
@@ -177,7 +207,7 @@ def init_viddevs_sctx(sctx: Subcontext):
                 vid_ent = stream.entity
             else:
                 vid_ent = sctx.md.find_entity(stream.entity)
-            assert(vid_ent)
+            assert vid_ent
 
             if not stream.dev_path:
                 stream.dev_path = vid_ent.interface.dev_path
@@ -244,6 +274,7 @@ def setup_sctx(sctx: Subcontext):
             # The DisplayConsumer also acts as a DRM buffer allocator...
 
             import cam_kms
+
             kms_consumer = typing.cast(cam_kms.DisplayConsumer, ctx.consumer)
             kms_consumer.alloc_buffers(ctx, stream)
 
@@ -278,7 +309,9 @@ def setup_sctx(sctx: Subcontext):
             print(f'{stream.dev_path}: configured {dim_str}-{stream.format.name} (not started)')
             continue
 
-        print(f'{stream.dev_path}: stream on {dim_str}-{stream.format.name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}')
+        print(
+            f'{stream.dev_path}: stream on {dim_str}-{stream.format.name} framesize={streamer.framesize} bufsizes={bufsizes} strides={strides}'
+        )
         stream.cap.stream_on()
 
     for stream in streams:
@@ -317,13 +350,15 @@ def readvid(sctx: Subcontext, stream: Stream):
     num_frames = stream.total_num_frames - stream.last_framenum
 
     if stream.total_num_frames == 1:
-        print('{}: first frame in {:.2f} s'
-              .format(stream.dev_path, diff))
+        print('{}: first frame in {:.2f} s'.format(stream.dev_path, diff))
 
     # With the TUI, the status pane has its own fps tracking
     if not ctx.use_tui and diff >= 1:
-        print('{}: {} frames in {:.2f} s, {:.2f} fps'
-              .format(stream.dev_path, num_frames, diff, num_frames / diff))
+        print(
+            '{}: {} frames in {:.2f} s, {:.2f} fps'.format(
+                stream.dev_path, num_frames, diff, num_frames / diff
+            )
+        )
 
         stream.last_timestamp = ts
         stream.last_framenum = stream.total_num_frames
@@ -382,9 +417,7 @@ def run(ctx: Context):
             stream_callbacks[stream.id] = cb
 
             if stream.state == StreamState.RUNNING:
-                sel.register(stream.cap.fd,
-                             selectors.EVENT_READ | selectors.EVENT_WRITE,
-                             cb)
+                sel.register(stream.cap.fd, selectors.EVENT_READ | selectors.EVENT_WRITE, cb)
 
     if ctx.use_tui:
         ctx.run_tui(ctx, sel, stream_callbacks)
@@ -416,10 +449,12 @@ def main():
 
     if ctx.use_display or ctx.buf_type == 'drm':
         from cam_kms import DisplayConsumer
+
         ctx.consumer = DisplayConsumer(ctx)
 
     if ctx.tx:
         from cam_net import NetConsumer
+
         ctx.consumer = NetConsumer(host=ctx.net_host, port=ctx.net_port)
 
     if ctx.print_config:
@@ -433,6 +468,7 @@ def main():
     # Capture the setup phase prints (e.g. "stream on") into the TUI log view
     if ctx.use_tui:
         from cam_tui import init_log
+
         init_log()
 
     setup(ctx)
@@ -443,6 +479,7 @@ def main():
         ctx.consumer.cleanup(ctx)
 
     return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())

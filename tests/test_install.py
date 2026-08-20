@@ -10,5 +10,6 @@ class TestInstall(unittest.TestCase):
         # Just do something with v4l2 to see it has imported ok
         self.assertEqual(v4l2.PixelFormats.XRGB8888.drm_fourcc, 0x34325258)
 
+
 if __name__ == '__main__':
     unittest.main()

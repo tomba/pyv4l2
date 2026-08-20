@@ -20,5 +20,6 @@ configurations['cam0'] = {
     ],
 }
 
+
 def get_configs():
     return (configurations, ['cam0'])

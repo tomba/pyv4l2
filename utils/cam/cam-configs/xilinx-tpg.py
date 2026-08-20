@@ -8,8 +8,8 @@ imx219_h = 480
 mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.RBG888_1X24]
 fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.BGR888]
 
-#mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.VYUY8_1X16]
-#fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.YUYV]
+# mbus_fmt = [imx219_w, imx219_h, v4l2.BusFormat.VYUY8_1X16]
+# fmt_pix = [imx219_w, imx219_h, v4l2.PixelFormats.YUYV]
 
 
 configurations = {}
@@ -28,27 +28,25 @@ DMA = 'xilinx_video_top output 0'
 
 configurations['tpg'] = {
     'media': (MEDIA, 'bus_info'),
-
     'subdevs': [
         {
             'entity': TPG,
             'pads': [
-                { 'pad': 0, 'fmt': mbus_fmt },
+                {'pad': 0, 'fmt': mbus_fmt},
             ],
         },
     ],
-
     'devices': [
         {
             'entity': DMA,
             'fmt': fmt_pix,
         },
     ],
-
     'links': [
-        { 'src': (TPG, 0), 'dst': (DMA, 0) },
+        {'src': (TPG, 0), 'dst': (DMA, 0)},
     ],
 }
+
 
 def get_configs(config_names: list[str]):
     if 'a' in config_names:

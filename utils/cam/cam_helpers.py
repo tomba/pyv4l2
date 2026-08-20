@@ -17,13 +17,14 @@ if TYPE_CHECKING:
 
     from .cam import Subcontext
 
+
 # Disable all possible links
 def disable_all_links(md: v4l2.MediaDevice):
     for ent in md.entities:
         for l in ent.pad_links:
             if l.is_immutable:
                 continue
-            #print(l)
+            # print(l)
             l.disable()
 
 
@@ -34,7 +35,7 @@ def enable_link(source, sink):
 
     source_pad = src_ent.pads[source[1]]
 
-    #links = src_ent.get_links(source[1])
+    # links = src_ent.get_links(source[1])
     links = source_pad.links
 
     link = None
@@ -47,16 +48,16 @@ def enable_link(source, sink):
     if link is None:
         raise RuntimeError('Failed to find link between', source, sink)
 
-    #if link.is_enabled:
+    # if link.is_enabled:
     #    return
 
-    #print('CONF')
+    # print('CONF')
 
     if link.is_immutable:
         return
 
     link.enabled = True
-    #src_ent.setup_link(link)
+    # src_ent.setup_link(link)
 
     link.enable()
 
@@ -64,6 +65,7 @@ def enable_link(source, sink):
 #
 # Config file functions
 #
+
 
 def gen_subdev(entity, fmt=None, routing=None, controls=None, pads=None):
     """Generate a subdev config dict entry.
@@ -78,7 +80,7 @@ def gen_subdev(entity, fmt=None, routing=None, controls=None, pads=None):
     If routing and fmt are given but pads is not, auto-generate pad entries
     by setting fmt on each (pad, stream) pair mentioned in the routing.
     """
-    d = { 'entity': entity }
+    d = {'entity': entity}
 
     # Normalize routing: single route tuple → list of routes
     routes = None
@@ -87,19 +89,19 @@ def gen_subdev(entity, fmt=None, routing=None, controls=None, pads=None):
             routes = routing
         else:
             routes = [routing]
-        d['routing'] = [{ 'src': r[0], 'dst': r[1] } for r in routes]
+        d['routing'] = [{'src': r[0], 'dst': r[1]} for r in routes]
 
     # Normalize pads: dict → list of pad dicts
     if pads:
         if isinstance(pads, dict):
-            d['pads'] = [{ 'pad': k, 'fmt': v } for k, v in pads.items()]
+            d['pads'] = [{'pad': k, 'fmt': v} for k, v in pads.items()]
         else:
             d['pads'] = pads
     elif routes and fmt:
         d['pads'] = []
         for r in routes:
-            d['pads'].append({ 'pad': r[0], 'fmt': fmt })
-            d['pads'].append({ 'pad': r[1], 'fmt': fmt })
+            d['pads'].append({'pad': r[0], 'fmt': fmt})
+            d['pads'].append({'pad': r[1], 'fmt': fmt})
     elif fmt:
         # Store format for propagation to pick up later
         d['fmt'] = fmt
@@ -112,6 +114,7 @@ def gen_subdev(entity, fmt=None, routing=None, controls=None, pads=None):
             d['controls'] = controls
 
     return d
+
 
 def infer_links(md, config):
     """Derive links from the ordered subdevs + devices lists.
@@ -140,10 +143,12 @@ def infer_links(md, config):
                 continue
             for link in pad.links:
                 if link.sink_pad.entity == dst_ent:
-                    links.append({
-                        'src': (src_name, pad.index),
-                        'dst': (dst_name, link.sink_pad.index),
-                    })
+                    links.append(
+                        {
+                            'src': (src_name, pad.index),
+                            'dst': (dst_name, link.sink_pad.index),
+                        }
+                    )
                     found = True
                     break
             if found:
@@ -153,6 +158,7 @@ def infer_links(md, config):
             raise RuntimeError(f'No link found between {src_name} and {dst_name}')
 
     config['links'] = links
+
 
 def propagate_formats(config):
     """Fill missing pad formats in subdev entries by propagation.
@@ -175,11 +181,12 @@ def propagate_formats(config):
         elif 'routing' in sd and current_fmt:
             sd['pads'] = []
             for r in sd['routing']:
-                sd['pads'].append({ 'pad': r['src'], 'fmt': current_fmt })
-                sd['pads'].append({ 'pad': r['dst'], 'fmt': current_fmt })
+                sd['pads'].append({'pad': r['src'], 'fmt': current_fmt})
+                sd['pads'].append({'pad': r['dst'], 'fmt': current_fmt})
+
 
 def merge_configs(configs):
-    d = { 'media': None, 'subdevs': [], 'devices': [], 'links': [] }
+    d = {'media': None, 'subdevs': [], 'devices': [], 'links': []}
 
     for config in configs:
         # XXX maybe restructure configs to have media as a "parent" config
@@ -209,6 +216,7 @@ def merge_configs(configs):
                 d['subdevs'].append(subdev)
 
     return d
+
 
 def read_config(config_name):
     parts = config_name.split(':')
@@ -247,9 +255,11 @@ def read_config(config_name):
 
     return config
 
+
 #
 # V4L2 configuration
 #
+
 
 # Setup links
 def setup_links(sctx: Subcontext, config):
@@ -278,6 +288,7 @@ def setup_links(sctx: Subcontext, config):
         except Exception:
             print('Failed to link {} -> {}'.format((source_ent, source_pad), (sink_ent, sink_pad)))
             raise
+
 
 # Configure entities
 def configure_subdevs(sctx: Subcontext, config):
@@ -331,7 +342,9 @@ def configure_subdevs(sctx: Subcontext, config):
                     print('Failed to set routes for {}'.format(ent))
                     print('  Attempted routes:')
                     for route in routes:
-                        print(f'    sink_pad={route.sink_pad}, sink_stream={route.sink_stream}, source_pad={route.source_pad}, source_stream={route.source_stream}')
+                        print(
+                            f'    sink_pad={route.sink_pad}, sink_stream={route.sink_stream}, source_pad={route.source_pad}, source_stream={route.source_stream}'
+                        )
                     raise
 
         # Configure streams
@@ -351,21 +364,24 @@ def configure_subdevs(sctx: Subcontext, config):
 
             if 'crop.bounds' in p:
                 x, y, w, h = p['crop.bounds']
-                subdev.set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream)
+                subdev.set_selection(
+                    v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream
+                )
 
             if 'crop' in p:
                 x, y, w, h = p['crop']
-                subdev.set_selection(v4l2.uapi.V4L2_SEL_TGT_CROP, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream)
+                subdev.set_selection(
+                    v4l2.uapi.V4L2_SEL_TGT_CROP, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream
+                )
 
             if 'ival' in p:
-                assert(len(p['ival']) == 2)
+                assert len(p['ival']) == 2
                 subdev.set_frame_interval(pad, stream, p['ival'])
 
         # Configure controls
         if 'controls' in e:
             for ctrl_id, ctrl_val in e['controls']:
                 subdev.set_control(ctrl_id, ctrl_val)
-
 
     return subdevices
 
@@ -374,18 +390,25 @@ def save_fb_to_file(stream: Stream, is_drm, fb_or_vbuf):
     cap = stream.cap
 
     filename = 'frame-{}-{}-{}x{}-{}.data'.format(
-        stream.id, stream.total_num_frames, stream.w, stream.h, stream.format.name)
+        stream.id, stream.total_num_frames, stream.w, stream.h, stream.format.name
+    )
     print('save to ' + filename)
 
     if is_drm:
         fb: kms.DumbFramebuffer = fb_or_vbuf
 
-        with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b, \
-             open(filename, 'wb') as f:
+        with (
+            mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b,
+            open(filename, 'wb') as f,
+        ):
             f.write(b)
     else:
         vbuf = typing.cast(v4l2.VideoBuffer, fb_or_vbuf)
 
-        with mmap.mmap(cap.fd, cap.framesize, mmap.MAP_SHARED, mmap.PROT_READ,
-                       offset=vbuf.offset) as b, open(filename, 'wb') as f:
+        with (
+            mmap.mmap(
+                cap.fd, cap.framesize, mmap.MAP_SHARED, mmap.PROT_READ, offset=vbuf.offset
+            ) as b,
+            open(filename, 'wb') as f,
+        ):
             f.write(b)

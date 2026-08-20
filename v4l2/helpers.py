@@ -12,17 +12,20 @@ __all__ = [
     'MemType',
     'Quantization',
     'XferFunc',
-    'YCbCrEncoding' ]
+    'YCbCrEncoding',
+]
+
 
 def filepath_for_major_minor(major: int, minor: int):
     with open(f'/sys/dev/char/{major}:{minor}/uevent', encoding='ascii') as f:
         for l in f:
             if not l.startswith('DEVNAME='):
                 continue
-            path = l[len('DEVNAME='):].strip()
+            path = l[len('DEVNAME=') :].strip()
             return '/dev/' + path
 
     raise RuntimeError(f'No device-node found for ({major},{minor})')
+
 
 class BufType(Enum):
     VIDEO_CAPTURE = v4l2.uapi.V4L2_BUF_TYPE_VIDEO_CAPTURE
@@ -41,11 +44,13 @@ class BufType(Enum):
     META_OUTPUT = v4l2.uapi.V4L2_BUF_TYPE_META_OUTPUT
     PRIVATE = v4l2.uapi.V4L2_BUF_TYPE_PRIVATE
 
+
 class MemType(Enum):
     MMAP = v4l2.uapi.V4L2_MEMORY_MMAP
     USERPTR = v4l2.uapi.V4L2_MEMORY_USERPTR
     OVERLAY = v4l2.uapi.V4L2_MEMORY_OVERLAY
     DMABUF = v4l2.uapi.V4L2_MEMORY_DMABUF
+
 
 class ColorSpace(Enum):
     DEFAULT = v4l2.uapi.V4L2_COLORSPACE_DEFAULT
@@ -62,6 +67,7 @@ class ColorSpace(Enum):
     RAW = v4l2.uapi.V4L2_COLORSPACE_RAW
     DCI_P3 = v4l2.uapi.V4L2_COLORSPACE_DCI_P3
 
+
 class YCbCrEncoding(Enum):
     DEFAULT = v4l2.uapi.V4L2_YCBCR_ENC_DEFAULT
     BT601 = v4l2.uapi.V4L2_YCBCR_ENC_601
@@ -73,14 +79,17 @@ class YCbCrEncoding(Enum):
     BT2020_CONST_LUM = v4l2.uapi.V4L2_YCBCR_ENC_BT2020_CONST_LUM
     SMPTE240M = v4l2.uapi.V4L2_YCBCR_ENC_SMPTE240M
 
+
 class HSVEncoding(Enum):
     HSV_180 = v4l2.uapi.V4L2_HSV_ENC_180
     HSV_256 = v4l2.uapi.V4L2_HSV_ENC_256
+
 
 class Quantization(Enum):
     DEFAULT = v4l2.uapi.V4L2_QUANTIZATION_DEFAULT
     FULL_RANGE = v4l2.uapi.V4L2_QUANTIZATION_FULL_RANGE
     LIM_RANGE = v4l2.uapi.V4L2_QUANTIZATION_LIM_RANGE
+
 
 class XferFunc(Enum):
     DEFAULT = v4l2.uapi.V4L2_XFER_FUNC_DEFAULT
@@ -91,6 +100,7 @@ class XferFunc(Enum):
     NONE = v4l2.uapi.V4L2_XFER_FUNC_NONE
     DCI_P3 = v4l2.uapi.V4L2_XFER_FUNC_DCI_P3
     SMPTE2084 = v4l2.uapi.V4L2_XFER_FUNC_SMPTE2084
+
 
 class Field(Enum):
     ANY = v4l2.uapi.V4L2_FIELD_ANY

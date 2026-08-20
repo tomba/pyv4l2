@@ -28,6 +28,7 @@ class KmsStream:
     fb_queue: deque
     plane: kms.Plane
 
+
 class DisplayConsumer(Consumer):
     def __init__(self, ctx: Context):
         self.ctx = ctx
@@ -88,8 +89,7 @@ class DisplayConsumer(Consumer):
                 raise RuntimeError('No KMS format available or specified')
 
             if stream.format != kms_stream.format:
-                if (isinstance(stream.format, v4l2.PixelFormat) and
-                    len(stream.format.planes) > 1):
+                if isinstance(stream.format, v4l2.PixelFormat) and len(stream.format.planes) > 1:
                     raise RuntimeError('Unable to adjust formats with more than one plane')
 
                 print(f'Aligning V4L2 and KMS formats: {stream.format}, {kms_stream.format}')
@@ -138,7 +138,7 @@ class DisplayConsumer(Consumer):
                 kms_stream.src_x = (kms_stream.buf_w - kms_stream.src_w) // 2
                 kms_stream.src_y = (kms_stream.buf_h - kms_stream.src_h) // 2
 
-                kms_stream.dst_w  =kms_stream.src_w
+                kms_stream.dst_w = kms_stream.src_w
                 kms_stream.dst_h = kms_stream.src_h
 
                 if display_idx % 2 == 0:
@@ -156,7 +156,7 @@ class DisplayConsumer(Consumer):
                 assert res is not None
                 assert crtc is not None
                 plane = res.reserve_generic_plane(crtc, kms_stream.format)
-                assert(plane)
+                assert plane
                 kms_stream.plane = plane
 
     def alloc_buffers(self, ctx: Context, stream: Stream):
@@ -170,12 +170,16 @@ class DisplayConsumer(Consumer):
         fbs = []
         cap = stream.cap
         for i in range(stream.num_bufs):
-            fb = kms.DumbFramebuffer(self.card, kms_stream.buf_w, kms_stream.buf_h, kms_stream.format)
+            fb = kms.DumbFramebuffer(
+                self.card, kms_stream.buf_w, kms_stream.buf_h, kms_stream.format
+            )
             fbs.append(fb)
 
             if isinstance(cap.format, v4l2.PixelFormat):
                 for pi in range(len(cap.format.planes)):
-                    assert cap.strides[pi] == fb.planes[pi].pitch, f'{cap.strides[pi]}, {fb.planes[pi].pitch}'
+                    assert cap.strides[pi] == fb.planes[pi].pitch, (
+                        f'{cap.strides[pi]}, {fb.planes[pi].pitch}'
+                    )
                     assert cap.buffersizes[pi] == fb.planes[pi].size
             else:
                 pass
@@ -194,24 +198,26 @@ class DisplayConsumer(Consumer):
 
         ctx = self.ctx
 
-        assert(ctx.buf_type == 'drm')
+        assert ctx.buf_type == 'drm'
 
         # Set fb0 to screen
         fb = stream.fbs[0]
         plane = kms_stream.plane
 
-        plane.set_props({
-            'FB_ID': fb.id,
-            'CRTC_ID': self.crtc.id,
-            'SRC_X': kms_stream.src_x << 16,
-            'SRC_Y': kms_stream.src_y << 16,
-            'SRC_W': kms_stream.src_w << 16,
-            'SRC_H': kms_stream.src_h << 16,
-            'CRTC_X': kms_stream.dst_x,
-            'CRTC_Y': kms_stream.dst_y,
-            'CRTC_W': kms_stream.dst_w,
-            'CRTC_H': kms_stream.dst_h,
-        })
+        plane.set_props(
+            {
+                'FB_ID': fb.id,
+                'CRTC_ID': self.crtc.id,
+                'SRC_X': kms_stream.src_x << 16,
+                'SRC_Y': kms_stream.src_y << 16,
+                'SRC_W': kms_stream.src_w << 16,
+                'SRC_H': kms_stream.src_h << 16,
+                'CRTC_X': kms_stream.dst_x,
+                'CRTC_Y': kms_stream.dst_y,
+                'CRTC_W': kms_stream.dst_w,
+                'CRTC_H': kms_stream.dst_h,
+            }
+        )
 
         kms_stream.old_fb = None
         kms_stream.fb = fb
@@ -227,13 +233,12 @@ class DisplayConsumer(Consumer):
         # Do the initial modeset
         req = kms.AtomicReq(self.card)
         req.add(self.conn, 'CRTC_ID', self.crtc.id)
-        req.add(self.crtc, {'ACTIVE': 1,
-                'MODE_ID': self.modeb.id})
+        req.add(self.crtc, {'ACTIVE': 1, 'MODE_ID': self.modeb.id})
 
         for kms_stream in self.kms_streams.values():
             req.add(kms_stream.plane, 'FB_ID', kms_stream.fb.id)
 
-        req.commit_sync(allow_modeset = True)
+        req.commit_sync(allow_modeset=True)
 
         if ctx.delay:
             print(f'Waiting for {ctx.delay} seconds')
@@ -301,7 +306,7 @@ class DisplayConsumer(Consumer):
             do_commit = True
 
         if do_commit:
-            req.commit(allow_modeset = False)
+            req.commit(allow_modeset=False)
             self.committed = True
 
     def readdrm(self):

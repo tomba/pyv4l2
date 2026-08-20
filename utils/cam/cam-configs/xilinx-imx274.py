@@ -17,35 +17,33 @@ DMA = 'xilinx_video_top output 0'
 
 configurations['tpg'] = {
     'media': (MEDIA, 'bus_info'),
-
     'subdevs': [
         {
             'entity': IMX274,
             'pads': [
-                { 'pad': 0, 'fmt': mbus_fmt },
+                {'pad': 0, 'fmt': mbus_fmt},
             ],
         },
         {
             'entity': CSI2RX,
             'pads': [
-                { 'pad': 0, 'fmt': mbus_fmt },
-                { 'pad': 1, 'fmt': mbus_fmt },
+                {'pad': 0, 'fmt': mbus_fmt},
+                {'pad': 1, 'fmt': mbus_fmt},
             ],
         },
     ],
-
     'devices': [
         {
             'entity': DMA,
             'fmt': fmt_pix,
         },
     ],
-
     'links': [
-        { 'src': (IMX274, 0), 'dst': (CSI2RX, 0) },
-        { 'src': (CSI2RX, 1), 'dst': (DMA, 0) },
+        {'src': (IMX274, 0), 'dst': (CSI2RX, 0)},
+        {'src': (CSI2RX, 1), 'dst': (DMA, 0)},
     ],
 }
+
 
 def get_configs(config_names: list[str]):
     return configurations['tpg']

@@ -7,6 +7,7 @@ fmt_tpg = (1920, 1080, v4l2.PixelFormats.XRGB8888)
 
 configurations = {}
 
+
 def gen_des_tpg(port):
     if port == 0:
         des_ent = 'max96712 1-0049'
@@ -23,59 +24,58 @@ def gen_des_tpg(port):
 
     return {
         'media': ('renesas,vin-r8a779g0', 'model'),
-
         'subdevs': [
             # Deserializer
             {
                 'entity': des_ent,
-                #"routing": [
+                # "routing": [
                 #    { "src": (port, 0), "dst": (4, port) },
-                #],
+                # ],
                 'pads': [
-                #    { "pad": (port, 0), "fmt": mbus_fmt_tpg },
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
+                    #    { "pad": (port, 0), "fmt": mbus_fmt_tpg },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
             # CSI-2 RX
             {
                 'entity': csi_ent,
-                #"routing": [
+                # "routing": [
                 #    { "src": (0, port), "dst": (1 + port, 0) },
-                #],
+                # ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
             # ISP
             {
                 'entity': isp_ent,
-                #"routing": [
+                # "routing": [
                 #    { "src": (0, port), "dst": (1 + port, 0) },
-                #],
+                # ],
                 'pads': [
-                    { 'pad': (0, 0), 'fmt': mbus_fmt_tpg },
-                    { 'pad': (1, 0), 'fmt': mbus_fmt_tpg },
+                    {'pad': (0, 0), 'fmt': mbus_fmt_tpg},
+                    {'pad': (1, 0), 'fmt': mbus_fmt_tpg},
                 ],
             },
         ],
-
         'devices': [
             {
                 'entity': f'VIN{vin_port} output',
                 'fmt': fmt_tpg,
             },
         ],
-
         'links': [
-            { 'src': (des_ent, 0), 'dst': (csi_ent, 0) },
-            { 'src': (csi_ent, 1), 'dst': (isp_ent, 0) },
-            { 'src': (isp_ent, 1), 'dst': (f'VIN{vin_port} output', 0) },
+            {'src': (des_ent, 0), 'dst': (csi_ent, 0)},
+            {'src': (csi_ent, 1), 'dst': (isp_ent, 0)},
+            {'src': (isp_ent, 1), 'dst': (f'VIN{vin_port} output', 0)},
         ],
     }
 
+
 configurations['des0-tpg'] = gen_des_tpg(0)
 configurations['des1-tpg'] = gen_des_tpg(1)
+
 
 def get_configs():
     return (configurations, ['des0-tpg'])

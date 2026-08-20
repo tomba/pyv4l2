@@ -12,7 +12,6 @@ configurations = {}
 
 configurations['cam0'] = {
     'media': ('vivid', 'model'),
-
     'devices': [
         {
             'entity': 'vivid-000-vid-cap',
@@ -20,6 +19,7 @@ configurations['cam0'] = {
         },
     ],
 }
+
 
 def get_configs():
     return (configurations, ['cam0'])
