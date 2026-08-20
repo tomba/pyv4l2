@@ -102,7 +102,7 @@ class Receiver(QtWidgets.QWidget):
         self.stream_metadata = {}
 
         self.header_buffer = bytearray()
-        self.header_tuple = ()
+        self.header_tuple: tuple = ()
         self.data_buffer = bytearray()
         self.data_size = 0
 
@@ -293,7 +293,8 @@ def main():
     qApp = QtWidgets.QApplication(sys.argv)
     qApp.setQuitOnLastWindowClosed(False)
 
-    keynotif = QtCore.QSocketNotifier(sys.stdin.fileno(), QtCore.QSocketNotifier.Type.Read)
+    # PyQt6 stubs declare the socket parameter as sip.voidptr, but an fd works fine
+    keynotif = QtCore.QSocketNotifier(sys.stdin.fileno(), QtCore.QSocketNotifier.Type.Read)  # type: ignore
     keynotif.activated.connect(readkey)
 
     tcpServer = PyQt6.QtNetwork.QTcpServer(qApp)

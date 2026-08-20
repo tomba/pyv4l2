@@ -9,6 +9,7 @@ from collections import deque
 
 from cam_types import Context, StreamState
 from prompt_toolkit.application import Application
+from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -301,10 +302,10 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
             stream.state = StreamState.RUNNING
             _log(f'{stream.dev_path}: stream on\n')
 
-    def on_command(buf):
+    def on_command(buf: Buffer) -> bool:
         argv = buf.text.split()
         if not argv:
-            return
+            return False
 
         cmd = argv[0]
 
@@ -320,6 +321,8 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
             cmd_stop(argv[1:])
         else:
             _log(f'Unknown command: {cmd}\n')
+
+        return False
 
     input_area = TextArea(
         height=1,

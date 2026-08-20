@@ -285,7 +285,7 @@ def find_devices(mdev_name, deser_regex):
 
     deser_src_pad = None
     for p in deser.pads:
-        if p.is_source and len(p.links) == 1 and p.links[0].sink.entity.name == CSI2_NAME:
+        if p.is_source and len(p.links) == 1 and p.links[0].sink_pad.entity.name == CSI2_NAME:
             deser_src_pad = p.index
             break
     assert deser_src_pad is not None
@@ -301,8 +301,8 @@ def find_devices(mdev_name, deser_regex):
 
         assert len(p.links) == 1
 
-        ser = p.links[0].source.entity
-        sensor = ser.pads[0].links[0].source.entity
+        ser = p.links[0].source_pad.entity
+        sensor = ser.pads[0].links[0].source_pad.entity
 
         cameras[p.index] = (ser.name, sensor.name)
 
