@@ -59,7 +59,7 @@ quote-style = 'single'
 
 [project.optional-dependencies]
 test = ['pytest']
-extras = [
+utils = [
     'numpy',
     'pykms @ git+https://github.com/tomba/pykms.git',
     'PyQt6',
