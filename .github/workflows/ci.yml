@@ -32,3 +32,6 @@ jobs:
 
     - name: Analysing the code with Ruff
       run: ruff check --output-format=github .
+
+    - name: Check the format with Ruff format
+      run: ruff format --check --output-format=github .
