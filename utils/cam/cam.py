@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import pprint
 import selectors
 import sys
@@ -377,7 +378,7 @@ def run(ctx: Context):
     stream_callbacks = {}
     for sctx in ctx.subcontexts:
         for stream in sctx.streams:
-            cb = lambda sctx=sctx, stream=stream: readvid(sctx, stream)
+            cb = functools.partial(readvid, sctx, stream)
             stream_callbacks[stream.id] = cb
 
             if stream.state == StreamState.RUNNING:

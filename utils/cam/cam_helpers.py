@@ -275,9 +275,9 @@ def setup_links(sctx: Subcontext, config):
                 print(f'Link {source_ent.name} -> {sink_ent.name}')
 
             enable_link((source_ent, source_pad), (sink_ent, sink_pad))
-        except Exception as e:
+        except Exception:
             print('Failed to link {} -> {}'.format((source_ent, source_pad), (sink_ent, sink_pad)))
-            raise e
+            raise
 
 # Configure entities
 def configure_subdevs(sctx: Subcontext, config):
@@ -327,12 +327,12 @@ def configure_subdevs(sctx: Subcontext, config):
 
                 try:
                     subdev.set_routes(routes)
-                except Exception as e:
+                except Exception:
                     print('Failed to set routes for {}'.format(ent))
                     print('  Attempted routes:')
                     for route in routes:
                         print(f'    sink_pad={route.sink_pad}, sink_stream={route.sink_stream}, source_pad={route.source_pad}, source_stream={route.source_stream}')
-                    raise e
+                    raise
 
         # Configure streams
         for p in e.get('pads', []):
@@ -345,9 +345,9 @@ def configure_subdevs(sctx: Subcontext, config):
             w, h, fmt = p['fmt']
             try:
                 subdev.set_format(pad, stream, w, h, fmt)
-            except Exception as e:
+            except Exception:
                 print(f'Failed to set format for {ent}:{pad}/{stream}: {w}x{h}-{fmt}')
-                raise e
+                raise
 
             if 'crop.bounds' in p:
                 x, y, w, h = p['crop.bounds']
@@ -380,9 +380,9 @@ def save_fb_to_file(stream: Stream, is_drm, fb_or_vbuf):
     if is_drm:
         fb: kms.DumbFramebuffer = fb_or_vbuf
 
-        with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b:
-            with open(filename, 'wb') as f:
-                f.write(b)
+        with mmap.mmap(fb.fd(0), fb.size(0), mmap.MAP_SHARED, mmap.PROT_READ) as b, \
+             open(filename, 'wb') as f:
+            f.write(b)
     else:
         vbuf = typing.cast(v4l2.VideoBuffer, fb_or_vbuf)
 

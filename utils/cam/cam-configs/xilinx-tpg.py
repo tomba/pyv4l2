@@ -51,8 +51,6 @@ configurations['tpg'] = {
 }
 
 def get_configs(config_names: list[str]):
-    global mbus_fmt, fmt_pix
-
     if 'a' in config_names:
         mbus_fmt[0] = fmt_pix[0] = 1920
         mbus_fmt[1] = fmt_pix[1] = 1024

@@ -116,10 +116,10 @@ def add_connections_for_link(dot, entity, pad, l):
                 remote_streams.add(r.sink_stream)
 
         if len(remote_streams) == 0:
-            remote_streams = set([0])
+            remote_streams = {0}
 
     else:
-        remote_streams = set([0])
+        remote_streams = {0}
 
     for stream in streams:
         if subdev:

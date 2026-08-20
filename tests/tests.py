@@ -14,7 +14,7 @@ class TestCardMethods(unittest.TestCase):
 
         mdev = None
         gc.collect()
-        with self.assertRaises(Exception):
+        with self.assertRaises(OSError):
             fcntl.fcntl(fd, fcntl.F_GETFD)
 
 

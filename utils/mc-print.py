@@ -174,7 +174,7 @@ def print_pads(ent: v4l2.MediaEntity, subdev: v4l2.SubDevice | None, videodev: v
         routes = None
 
     for pad in ent.pads:
-        links = list([l for l in pad.links if l.is_enabled])
+        links = [l for l in pad.links if l.is_enabled]
 
         # Don't show external pads that have no enabled links
         #if len(links) == 0 and not pad.is_internal:

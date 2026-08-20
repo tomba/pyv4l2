@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import struct
 import sys
-import traceback
 
 import numpy as np
 import PyQt6.QtNetwork
@@ -17,6 +17,8 @@ from pixutils.formats import MetaFormat, MetaFormats, PixelFormats
 from pixutils.qt import ImageViewerWidget
 from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtCore import Qt
+
+logger = logging.getLogger(__name__)
 
 receivers = []
 
@@ -156,7 +158,7 @@ class Receiver(QtWidgets.QWidget):
                     try:
                         self.on_buffers()
                     except Exception:
-                        print(traceback.format_exc())
+                        logger.exception('Failed to handle buffers')
                         qApp = QtWidgets.QApplication.instance()
                         assert qApp
                         qApp.exit(-1)
@@ -226,7 +228,7 @@ class Receiver(QtWidgets.QWidget):
         return stream_num
 
     def on_buffers(self):
-        idx, w, h, s0, s1, s2, s3, fmtstr, num_planes, p0, p1, p2, p3 = self.header_tuple
+        idx, w, h, s0, _s1, _s2, _s3, fmtstr, _num_planes, _p0, _p1, _p2, _p3 = self.header_tuple
         bytesperline = s0
         try:
             fmt = PixelFormats.find_by_name(fmtstr.decode('ascii'))
