@@ -8,8 +8,17 @@ import v4l2
 
 
 class TestCardMethods(unittest.TestCase):
+    def _get_mdev(self):
+        try:
+            mdev = v4l2.MediaDevice('/dev/media0')
+        except FileNotFoundError as e:
+            self.skipTest(e)
+
+        return mdev
+
     def test_card(self):
-        mdev = v4l2.MediaDevice('/dev/media0')
+        mdev = self._get_mdev()
+
         fd = mdev.fd
 
         mdev = None
