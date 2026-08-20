@@ -1,17 +1,23 @@
 import v4l2
+import v4l2.uapi
 
-imx219_w = 640
-imx219_h = 480
-imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
-imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
-#imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
-#imx219_pix_fmt = v4l2.PixelFormat.SRGGB8
+USE_RAW_10=False
+
+# Pixel
+
+#imx219_w, imx219_h = 3280, 2464
+imx219_w, imx219_h = 1920, 1080
+#imx219_w, imx219_h = 640, 480
+
+if USE_RAW_10:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB10_1X10
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB10
+else:
+    imx219_bus_fmt = v4l2.BusFormat.SRGGB8_1X8
+    imx219_pix_fmt = v4l2.PixelFormats.SRGGB8
 
 mbus_fmt_imx219 = (imx219_w, imx219_h, imx219_bus_fmt)
 fmt_pix_imx219 = (imx219_w, imx219_h, imx219_pix_fmt)
-
-mbus_fmt_imx219_fe = (imx219_w, imx219_h, v4l2.BusFormat.SRGGB16_1X16)
-fmt_pix_imx219_fe = (imx219_w, imx219_h, v4l2.PixelFormats.SRGGB16)
 
 imx219_meta_w = imx219_w
 imx219_meta_h = 2
@@ -40,6 +46,10 @@ configurations['cam0'] = {
 #            "routing": [
 #               { "src": (1, 0), "dst": (0, 0) },
 #            ],
+            'controls': [
+                (v4l2.uapi.V4L2_CID_ANALOGUE_GAIN, 200),
+                (0x009f0903, 1),
+            ],
         },
         # CSI-2 RX
         {
@@ -52,18 +62,29 @@ configurations['cam0'] = {
                 { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
             ],
         },
+        {
+            'entity': '30102000.ticsi2rx',
+#            "routing": [
+#                { "src": (0, 0), "dst": (1, 0) },
+#            ],
+            'pads': [
+                { 'pad': (0, 0), 'fmt': mbus_fmt_imx219 },
+                { 'pad': (1, 0), 'fmt': mbus_fmt_imx219 },
+            ],
+        },
     ],
 
     'devices': [
         {
-            'entity': 'j721e-csi2rx',
+            'entity': '30102000.ticsi2rx context 0',
             'fmt': fmt_pix_imx219,
         },
     ],
 
     'links': [
         { 'src': (sensor_ent, 0), 'dst': ('cdns_csi2rx.30101000.csi-bridge', 0) },
-        { 'src': ('cdns_csi2rx.30101000.csi-bridge', 1), 'dst': ('j721e-csi2rx', 0) },
+        { 'src': ('cdns_csi2rx.30101000.csi-bridge', 1), 'dst': ('30102000.ticsi2rx', 0) },
+        { 'src': ('30102000.ticsi2rx', 1), 'dst': ('30102000.ticsi2rx context 0', 0) },
     ],
 }
 
