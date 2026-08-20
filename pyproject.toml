@@ -58,6 +58,7 @@ multiline-quotes = 'single'
 quote-style = 'single'
 
 [project.optional-dependencies]
+test = ['pytest']
 extras = [
     'numpy',
     'pykms @ git+https://github.com/tomba/pykms.git',
