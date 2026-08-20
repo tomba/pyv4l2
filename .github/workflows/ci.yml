@@ -22,10 +22,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -e .[extras]
-        pip install ruff
+        pip install pytest ruff
 
-    - name: Test with unittest
-      run: python3 -m unittest -v tests/test_install.py
+    - name: Test with pytest
+      run: python3 -m pytest tests/
 
     - name: Analysing the code with Pyright
       uses: jakebailey/pyright-action@v3
