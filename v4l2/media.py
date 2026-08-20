@@ -75,6 +75,14 @@ class MediaEntity(MediaObject):
     def pad_links(self) -> list[MediaLink]:
         return [l for p in self.pads for l in p.links]
 
+    @property
+    def source_pads(self) -> list[MediaPad]:
+        return [p for p in self.pads if p.is_source]
+
+    @property
+    def sink_pads(self) -> list[MediaPad]:
+        return [p for p in self.pads if p.is_sink]
+
     def get_remote_pad(self, pad_idx: int) -> None | MediaPad:
         pad = self.pads[pad_idx]
         return pad.get_remote_pad()
