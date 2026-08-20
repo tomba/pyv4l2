@@ -1,7 +1,6 @@
 {
 	"exclude": [
-		"v4l2/uapi",
-		"extra"
+		"v4l2/uapi"
 	],
 	"extraPaths": [
 		"../pykms",
