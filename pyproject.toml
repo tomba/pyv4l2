@@ -65,3 +65,4 @@ utils = [
     'PyQt6',
     'ipython',
 ]
+all = ['pyv4l2[utils,test]']
