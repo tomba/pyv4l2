@@ -357,9 +357,9 @@ def get_configs(config_names):
 
     cfgs = []
 
-    for cname in config_names:
-        num = int(cname[-1])
-        cname = cname[:-1]
+    for config_name in config_names:
+        num = int(config_name[-1])
+        cname = config_name[:-1]
 
         if cname == 'cam':
             cfgs.append(gen_cam_pixel(mdata, num))

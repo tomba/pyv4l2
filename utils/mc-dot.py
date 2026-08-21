@@ -16,9 +16,7 @@ def add_entity(dot, entity_id: int, entity_label: str, sink_pads, source_pads, r
         dot.append('            label=""')
 
         for p, streams in sink_pads.items():
-            if len(streams) == 0:
-                streams = [0]
-            stream_str = str.join(' | ', [f'<p{p}s{s}> {s}' for s in streams])
+            stream_str = str.join(' | ', [f'<p{p}s{s}> {s}' for s in streams or [0]])
             dot.append(f'            e{entity_id}p{p} [ label="Pad{p} | {stream_str}" ]')
 
         dot.append('        }')
@@ -28,9 +26,7 @@ def add_entity(dot, entity_id: int, entity_label: str, sink_pads, source_pads, r
         dot.append('            label=""')
 
         for p, streams in source_pads.items():
-            if len(streams) == 0:
-                streams = [0]
-            stream_str = str.join(' | ', [f'<p{p}s{s}> {s}' for s in streams])
+            stream_str = str.join(' | ', [f'<p{p}s{s}> {s}' for s in streams or [0]])
             dot.append(f'            e{entity_id}p{p} [ label="Pad{p} | {stream_str}" ]')
 
         dot.append('        }')

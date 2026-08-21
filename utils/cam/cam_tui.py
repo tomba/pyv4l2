@@ -5,6 +5,7 @@ import os
 import selectors
 import sys
 import time
+import typing
 from collections import deque
 
 from cam_types import Context, StreamState
@@ -36,22 +37,26 @@ COMMANDS = {
 
 LOG_MAX_LINES = 1000
 
-_log_lines: deque[str] = deque(maxlen=LOG_MAX_LINES)
-_log_partial = ''  # incomplete (not newline-terminated) last line
-_orig_stdout = None
-_app: Application | None = None
+
+class _State:
+    def __init__(self):
+        self.log_lines: deque[str] = deque(maxlen=LOG_MAX_LINES)
+        self.log_partial = ''  # incomplete (not newline-terminated) last line
+        self.orig_stdout: typing.TextIO | None = None
+        self.app: Application | None = None
+
+
+_state = _State()
 
 
 def _log(text: str):
-    global _log_partial
-
-    text = _log_partial + text
+    text = _state.log_partial + text
     lines = text.split('\n')
-    _log_partial = lines.pop()
-    _log_lines.extend(lines)
+    _state.log_partial = lines.pop()
+    _state.log_lines.extend(lines)
 
-    if _app:
-        _app.invalidate()
+    if _state.app:
+        _state.app.invalidate()
 
 
 class _LogWriter:
@@ -67,7 +72,7 @@ class _LogWriter:
 
 
 def _real_stdout():
-    return _orig_stdout if _orig_stdout is not None else sys.stdout
+    return _state.orig_stdout if _state.orig_stdout is not None else sys.stdout
 
 
 def init_log():
@@ -76,19 +81,15 @@ def init_log():
     run_tui() does this automatically, but this can be called before the
     setup phase to capture its prints into the log view. stderr is left
     alone, so errors still reach the console."""
-    global _orig_stdout
-
     if not isinstance(sys.stdout, _LogWriter):
-        _orig_stdout = sys.stdout
+        _state.orig_stdout = sys.stdout
         sys.stdout = _LogWriter()
 
 
 def _restore_stdout():
-    global _orig_stdout
-
-    if _orig_stdout:
-        sys.stdout = _orig_stdout
-        _orig_stdout = None
+    if _state.orig_stdout:
+        sys.stdout = _state.orig_stdout
+        _state.orig_stdout = None
 
 
 def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
@@ -168,13 +169,13 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
     # FormattedTextControl over a deque of lines, scrolled to the tail.
 
     def get_log():
-        return '\n'.join(_log_lines) + '\n' + _log_partial
+        return '\n'.join(_state.log_lines) + '\n' + _state.log_partial
 
     def log_vscroll(window):
         info = window.render_info
         if info is None:
             return 0
-        return max(0, len(_log_lines) + 1 - info.window_height)
+        return max(0, len(_state.log_lines) + 1 - info.window_height)
 
     log_win = Window(
         FormattedTextControl(get_log), wrap_lines=False, get_vertical_scroll=log_vscroll
@@ -414,12 +415,10 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
             for stream in streams:
                 loop.remove_reader(stream.cap.fd)
 
-    global _app
-
     init_log()
-    _app = app
+    _state.app = app
     try:
         asyncio.run(amain())
     finally:
-        _app = None
+        _state.app = None
         _restore_stdout()

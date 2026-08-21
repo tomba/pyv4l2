@@ -318,7 +318,7 @@ class DisplayConsumer(Consumer):
         pass
 
     def register_selector(self, sel: BaseSelector):
-        sel.register(self.card.fd, EVENT_READ, lambda: self.readdrm())
+        sel.register(self.card.fd, EVENT_READ, self.readdrm)
 
     def drain_done(self, ctx: Context, stream: Stream) -> bool:
         kms_stream = self.kms_streams.get(stream.id)

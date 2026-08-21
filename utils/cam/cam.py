@@ -166,8 +166,7 @@ def init_viddevs(ctx: Context):
             stream.sctx = sctx
             stream.state = StreamState.RUNNING if ctx.start_streams else StreamState.STOPPED
             for k, v in data.items():
-                k = k.replace('-', '_')
-                setattr(stream, k, v)
+                setattr(stream, k.replace('-', '_'), v)
 
             stream.dev_path = data.get('dev_path', None)
             stream.embedded = data.get('embedded', False)
