@@ -42,15 +42,28 @@ line-length = 100
 extend-exclude = ['v4l2/uapi/']
 
 [tool.ruff.lint]
-extend-select = ['E', 'W', 'F', 'FA', 'Q', 'UP', 'PLE']
-ignore = ['E741', 'E501', 'Q001', 'UP032']  # TODO: fix E501
+extend-select = [
+  'E',   # pycodestyle errors
+  'W',   # pycodestyle warnings
+  'F',   # Pyflakes: undefined/unused names, bad imports, f-string mistakes
+  'FA',  # flake8-future-annotations: require `from __future__ import annotations`
+  'Q',   # flake8-quotes: quote style, configured under lint.flake8-quotes below
+  'UP',  # pyupgrade: rewrite idioms obsolete for our minimum Python
+  'PLE', # Pylint errors: things that are outright broken
+  'PLW', # Pylint warnings: suspicious but legal constructs
+]
+ignore = [
+  'E741',  # ambiguous-variable-name: rejects `l`, `O`, `I` as names
+  'E501',  # line-too-long
+  'UP032', # f-string: rewrite `'{}'.format(x)` as an f-string
+]
 
 [tool.ruff.lint.per-file-ignores]
 '__init__.py' = ['F401', 'F403']
 
 [tool.ruff.lint.flake8-quotes]
 inline-quotes = 'single'
-multiline-quotes = 'single'
+multiline-quotes = 'double' # only 'double' is compatible with the formatter
 
 [tool.ruff.format]
 quote-style = 'single'
