@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum
 
 import v4l2.uapi
@@ -11,6 +12,8 @@ __all__ = [
     'HSVEncoding',
     'MemType',
     'Quantization',
+    'Rect',
+    'SelectionTarget',
     'XferFunc',
     'YCbCrEncoding',
 ]
@@ -100,6 +103,32 @@ class XferFunc(Enum):
     NONE = v4l2.uapi.V4L2_XFER_FUNC_NONE
     DCI_P3 = v4l2.uapi.V4L2_XFER_FUNC_DCI_P3
     SMPTE2084 = v4l2.uapi.V4L2_XFER_FUNC_SMPTE2084
+
+
+class SelectionTarget(Enum):
+    CROP = v4l2.uapi.V4L2_SEL_TGT_CROP
+    CROP_DEFAULT = v4l2.uapi.V4L2_SEL_TGT_CROP_DEFAULT
+    CROP_BOUNDS = v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS
+    NATIVE_SIZE = v4l2.uapi.V4L2_SEL_TGT_NATIVE_SIZE
+    COMPOSE = v4l2.uapi.V4L2_SEL_TGT_COMPOSE
+    COMPOSE_DEFAULT = v4l2.uapi.V4L2_SEL_TGT_COMPOSE_DEFAULT
+    COMPOSE_BOUNDS = v4l2.uapi.V4L2_SEL_TGT_COMPOSE_BOUNDS
+    COMPOSE_PADDED = v4l2.uapi.V4L2_SEL_TGT_COMPOSE_PADDED
+
+
+@dataclass
+class Rect:
+    left: int = 0
+    top: int = 0
+    width: int = 0
+    height: int = 0
+
+    @classmethod
+    def from_v4l2_rect(cls, r: v4l2.uapi.v4l2_rect):
+        return cls(r.left, r.top, r.width, r.height)
+
+    def to_v4l2_rect(self):
+        return v4l2.uapi.v4l2_rect(self.left, self.top, self.width, self.height)
 
 
 class Field(Enum):

@@ -8,7 +8,6 @@ import sys
 import textwrap
 
 import v4l2
-import v4l2.uapi
 
 
 class AppContext:
@@ -18,12 +17,12 @@ class AppContext:
 
 
 def print_selection(
-    subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int, target: v4l2.uapi.v4l2_sel_tgt
+    subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int, target: v4l2.SelectionTarget
 ) -> None:
     name = target.name.lower()
 
     try:
-        r = subdev.get_selection(target.value, pad.index, stream)
+        r = subdev.get_selection(target, pad.index, stream)
         print(f'      {name}:({r.left},{r.top})/{r.width}✕{r.height}')
     except OSError as e:
         if e.errno not in (errno.ENOTTY, errno.EINVAL):
@@ -31,14 +30,14 @@ def print_selection(
 
 
 def print_selections(subdev: v4l2.SubDevice, pad: v4l2.MediaPad, stream: int) -> None:
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.NATIVE_SIZE)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_BOUNDS)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP_DEFAULT)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.CROP)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_BOUNDS)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_DEFAULT)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE)
-    print_selection(subdev, pad, stream, v4l2.uapi.v4l2_sel_tgt.COMPOSE_PADDED)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.NATIVE_SIZE)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.CROP_BOUNDS)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.CROP_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.CROP)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.COMPOSE_BOUNDS)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.COMPOSE_DEFAULT)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.COMPOSE)
+    print_selection(subdev, pad, stream, v4l2.SelectionTarget.COMPOSE_PADDED)
 
 
 def print_routes(subdev: v4l2.SubDevice) -> None:

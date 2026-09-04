@@ -362,14 +362,12 @@ def configure_subdevs(sctx: Subcontext, config):
             if 'crop.bounds' in p:
                 x, y, w, h = p['crop.bounds']
                 subdev.set_selection(
-                    v4l2.uapi.V4L2_SEL_TGT_CROP_BOUNDS, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream
+                    v4l2.SelectionTarget.CROP_BOUNDS, v4l2.Rect(x, y, w, h), pad, stream
                 )
 
             if 'crop' in p:
                 x, y, w, h = p['crop']
-                subdev.set_selection(
-                    v4l2.uapi.V4L2_SEL_TGT_CROP, v4l2.uapi.v4l2_rect(x, y, w, h), pad, stream
-                )
+                subdev.set_selection(v4l2.SelectionTarget.CROP, v4l2.Rect(x, y, w, h), pad, stream)
 
             if 'ival' in p:
                 assert len(p['ival']) == 2

@@ -9,6 +9,7 @@ from enum import IntFlag
 import v4l2.uapi
 
 from .device import V4L2Device
+from .helpers import Rect, SelectionTarget
 
 __all__ = ['Route', 'RouteFlag', 'SubDevice']
 
@@ -230,37 +231,44 @@ class SubDevice(V4L2Device):
 
         return [Route.from_v4l2_subdev_route(kroutes[i]) for i in range(routing.num_routes)]
 
-    def get_selection(self, target, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def get_selection(
+        self,
+        target: SelectionTarget,
+        pad,
+        stream=0,
+        which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE,
+    ) -> Rect:
         sel = v4l2.uapi.v4l2_subdev_selection()
         sel.pad = pad
         sel.stream = stream
         sel.which = which
-        sel.target = target
+        sel.target = target.value
         sel.flags = 0
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_SELECTION, sel, True)
 
-        return sel.r
+        return Rect.from_v4l2_rect(sel.r)
 
     def set_selection(
         self,
-        target,
-        rect: v4l2.uapi.v4l2_rect,
+        target: SelectionTarget,
+        rect: Rect,
         pad,
         stream=0,
         which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE,
-    ):
+    ) -> Rect:
+        """Set a selection rectangle. Returns the rectangle the driver applied."""
         sel = v4l2.uapi.v4l2_subdev_selection()
         sel.pad = pad
         sel.stream = stream
         sel.which = which
-        sel.target = target
+        sel.target = target.value
         sel.flags = 0
-        sel.r = rect
+        sel.r = rect.to_v4l2_rect()
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_SELECTION, sel, True)
 
-        return sel.r
+        return Rect.from_v4l2_rect(sel.r)
 
     def get_frame_interval(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
         v4l2_ival = v4l2.uapi.v4l2_subdev_frame_interval()
