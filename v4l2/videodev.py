@@ -283,7 +283,12 @@ class CaptureStreamer(ABC):
     def export_dmabuf_fds(self):
         for vbuf in self.vbuffers:
             assert vbuf.mem_type == v4l2.MemType.MMAP
-            vbuf.export_dmabuf_fd(self.fd)
+
+            expbuf = v4l2.uapi.v4l2_exportbuffer()
+            expbuf.type = self.buf_type.value
+            expbuf.index = vbuf.index
+            fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_EXPBUF, expbuf, True)
+            vbuf.fd = expbuf.fd
 
     @abstractmethod
     def queue(self, vbuf: VideoBuffer): ...
@@ -783,11 +788,3 @@ class VideoBuffer:
         self.fd = -1
         # mmap offset
         self.offset = 0
-
-    def export_dmabuf_fd(self, vdev_fd: int) -> int:
-        v4l2_expbuf = v4l2.uapi.v4l2_exportbuffer()
-        v4l2_expbuf.type = self.mem_type.value
-        v4l2_expbuf.index = self.index
-        fcntl.ioctl(vdev_fd, v4l2.uapi.VIDIOC_EXPBUF, v4l2_expbuf, True)
-        self.fd = v4l2_expbuf.fd
-        return self.fd
