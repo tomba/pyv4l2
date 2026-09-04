@@ -209,22 +209,23 @@ class SubDevice:
     def set_routes(
         self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE
     ) -> list[Route]:
-        # Allocate extra space for return routes
-        kroutes = (v4l2.uapi.v4l2_subdev_route * 16)()
+        kroutes = (v4l2.uapi.v4l2_subdev_route * len(routes))()
         for i, route in enumerate(routes):
             kroutes[i] = route.to_v4l2_subdev_route()
 
         routing = v4l2.uapi.v4l2_subdev_routing()
         routing.which = which
-        routing.len_routes = len(kroutes)
+        routing.len_routes = len(routes)
         routing.num_routes = len(routes)
         routing.routes = ctypes.addressof(kroutes)
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_ROUTING, routing, True)
 
-        routes = [Route.from_v4l2_subdev_route(kroutes[idx]) for idx in range(routing.num_routes)]
+        # The driver may have added routes that did not fit in the array
+        if routing.num_routes > len(routes):
+            return self.get_routes(which)
 
-        return routes
+        return [Route.from_v4l2_subdev_route(kroutes[i]) for i in range(routing.num_routes)]
 
     def get_selection(self, target, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
         sel = v4l2.uapi.v4l2_subdev_selection()
