@@ -10,7 +10,7 @@ from kms import DumbFramebuffer
 
 import v4l2
 from v4l2 import MetaFormat, PixelFormat
-from v4l2.videodev import CaptureStreamer, VideoDevice
+from v4l2.videodev import Streamer, VideoDevice
 
 pix_or_meta_fmt = PixelFormat | MetaFormat
 
@@ -43,7 +43,7 @@ class Stream:
     dev_path: str
     dev: VideoDevice
     device: tuple[str, str]
-    cap: CaptureStreamer
+    cap: Streamer
     fbs: list[DumbFramebuffer]  # XXX used from cam_net...
     total_num_frames: int
     last_framenum: int
