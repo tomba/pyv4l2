@@ -192,7 +192,7 @@ class VideoDevice(V4L2Device):
         self, mem_type: v4l2.MemType, width: int, height: int, format: v4l2.PixelFormat
     ):
         if not self.has_capture:
-            raise NotImplementedError()
+            raise RuntimeError(f'{self.dev_path} has no video capture capability')
 
         if self.has_mplane_capture:
             buf_type = v4l2.BufType.VIDEO_CAPTURE_MPLANE
@@ -208,11 +208,12 @@ class VideoDevice(V4L2Device):
             return Streamer(self, mem_type, v4l2.BufType.META_CAPTURE, size, format)
 
         if self.has_meta_output:
-            assert isinstance(size, int)
+            if not isinstance(size, int):
+                raise TypeError('Meta output needs an int size')
 
             return Streamer(self, mem_type, v4l2.BufType.META_OUTPUT, size, format)
 
-        raise NotImplementedError()
+        raise RuntimeError(f'{self.dev_path} has no meta capture or output capability')
 
 
 class Streamer:
@@ -255,14 +256,16 @@ class Streamer:
         else:
             self.width, self.height = size
 
-        assert format.v4l2_fourcc
+        if not format.v4l2_fourcc:
+            raise ValueError(f'{format} has no V4L2 fourcc')
 
         if isinstance(format, v4l2.MetaFormat):
             self.__strides = [format.stride(self.width)]
             self.__buffersizes = [format.buffersize(self.width, self.height)]
             self.framesize = self.__buffersizes[0]
         else:
-            assert not isinstance(size, int)
+            if isinstance(size, int):
+                raise TypeError('Pixel formats need a (width, height) size')
             num_planes = len(format.planes)
             self.__strides = [format.stride(self.width, i) for i in range(num_planes)]
             self.__buffersizes = [
@@ -292,6 +295,11 @@ class Streamer:
     def unqueued_buffers(self) -> list[VideoBuffer]:
         return [b for b in self.vbuffers if not b.queued]
 
+    @staticmethod
+    def __check(name: str, got, expected):
+        if got != expected:
+            raise RuntimeError(f'Driver changed {name} to {got}, expected {expected}')
+
     def __set_format(self):
         v4lfmt = v4l2.uapi.v4l2_format()
         v4lfmt.type = self.buf_type.value
@@ -310,9 +318,7 @@ class Streamer:
 
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
 
-            assert meta.buffersize == self.__buffersizes[0], (
-                f'{meta.buffersize} != {self.__buffersizes[0]}'
-            )
+            self.__check('buffersize', meta.buffersize, self.__buffersizes[0])
         elif self.is_mplane:
             mp = v4lfmt.fmt.pix_mp
             mp.pixelformat = fourcc
@@ -327,18 +333,14 @@ class Streamer:
 
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
 
-            assert mp.pixelformat == fourcc, f'{mp.pixelformat} != {fourcc}'
-            assert mp.width == self.width
-            assert mp.height == self.height
+            self.__check('pixelformat', mp.pixelformat, fourcc)
+            self.__check('width', mp.width, self.width)
+            self.__check('height', mp.height, self.height)
 
             for i in range(mp.num_planes):
                 p = mp.plane_fmt[i]
-                assert p.bytesperline == self.__strides[i], (
-                    f'{p.bytesperline} != {self.__strides[i]}'
-                )
-                assert p.sizeimage == self.__buffersizes[i], (
-                    f'{p.sizeimage} != {self.__buffersizes[i]}'
-                )
+                self.__check(f'plane {i} bytesperline', p.bytesperline, self.__strides[i])
+                self.__check(f'plane {i} sizeimage', p.sizeimage, self.__buffersizes[i])
         else:
             pix = v4lfmt.fmt.pix
             pix.pixelformat = fourcc
@@ -349,12 +351,10 @@ class Streamer:
 
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
 
-            assert pix.pixelformat == fourcc, f'{pix.pixelformat} != {fourcc}'
-            assert pix.width == self.width
-            assert pix.height == self.height
-            assert pix.bytesperline == self.__strides[0], (
-                f'{pix.bytesperline} != {self.__strides[0]}'
-            )
+            self.__check('pixelformat', pix.pixelformat, fourcc)
+            self.__check('width', pix.width, self.width)
+            self.__check('height', pix.height, self.height)
+            self.__check('bytesperline', pix.bytesperline, self.__strides[0])
 
     def __request_buffers(self, count: int) -> int:
         """VIDIOC_REQBUFS. Returns the number of buffers the driver allocated."""
@@ -399,7 +399,8 @@ class Streamer:
 
     def reserve_buffers(self, num_bufs: int):
         """Allocate MMAP buffers. The driver may allocate more than asked."""
-        assert self.mem_type == v4l2.MemType.MMAP
+        if self.mem_type != v4l2.MemType.MMAP:
+            raise ValueError('Streamer memory type is not MMAP')
 
         count = self.__request_buffers(num_bufs)
 
@@ -409,7 +410,8 @@ class Streamer:
             self.__query_buffer(vbuf)
 
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
-        assert self.mem_type == v4l2.MemType.DMABUF
+        if self.mem_type != v4l2.MemType.DMABUF:
+            raise ValueError('Streamer memory type is not DMABUF')
 
         count = self.__request_buffers(len(dmabuf_fds))
         if count < len(dmabuf_fds):
@@ -424,8 +426,6 @@ class Streamer:
 
     def export_dmabuf_fds(self):
         for vbuf in self.vbuffers:
-            assert vbuf.mem_type == v4l2.MemType.MMAP
-
             expbuf = v4l2.uapi.v4l2_exportbuffer()
             expbuf.type = self.buf_type.value
             expbuf.index = vbuf.index
@@ -433,8 +433,10 @@ class Streamer:
             vbuf.fd = expbuf.fd
 
     def queue(self, vbuf: VideoBuffer):
-        assert vbuf in self.vbuffers
-        assert not vbuf.queued
+        if vbuf not in self.vbuffers:
+            raise ValueError(f'{vbuf} is not a buffer of this streamer')
+        if vbuf.queued:
+            raise ValueError(f'{vbuf} is already queued')
 
         v4l2buf, mem = self.__new_v4l2_buffer(vbuf)
 
@@ -455,12 +457,13 @@ class Streamer:
 
         # The buffer may be larger than the used size, e.g. if a DRM dumb
         # buffer was allocated and the driver aligned it to a bigger size.
-        assert mem.length >= self.__buffersizes[0], f'{mem.length} < {self.__buffersizes[0]}'
+        if mem.length < self.__buffersizes[0]:
+            raise RuntimeError(f'Buffer length {mem.length} < {self.__buffersizes[0]}')
 
         vbuf = self.vbuffers[v4l2buf.index]
 
         if self.mem_type == v4l2.MemType.DMABUF:
-            assert vbuf.fd == mem.m.fd
+            self.__check('dmabuf fd', mem.m.fd, vbuf.fd)
         else:
             vbuf.offset = mem.m.mem_offset if self.is_mplane else mem.m.offset
 
