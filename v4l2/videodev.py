@@ -13,15 +13,16 @@ import v4l2.uapi
 from .device import V4L2Device
 from .helpers import enum_or_int
 
-__all__ = ['Streamer', 'VideoBuffer', 'VideoDevice', 'VideoFormatInfo']
+__all__ = ['Streamer', 'VideoBuffer', 'VideoDevice', 'VideoFormat']
 
 
 @dataclass
-class VideoFormatInfo:
+class VideoFormat:
     format: v4l2.PixelFormat | v4l2.MetaFormat | str
     width: int | None = None
     height: int | None = None
     sizeimage: int | None = None
+    num_planes: int | None = None
     field: v4l2.Field | int | None = None
     colorspace: v4l2.ColorSpace | int | None = None
     ycbcr_enc: v4l2.YCbCrEncoding | int | None = None
@@ -142,14 +143,10 @@ class VideoDevice(V4L2Device):
 
         return fmts
 
-    def get_format(self, buf_type: v4l2.BufType):
+    def get_format(self, buf_type: v4l2.BufType) -> VideoFormat:
         fmt = v4l2.uapi.v4l2_format()
         fmt.type = buf_type.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_G_FMT, fmt, True)
-        return fmt
-
-    def get_format_info(self, buf_type: v4l2.BufType) -> VideoFormatInfo:
-        fmt = self.get_format(buf_type)
 
         def find_format(fourcc):
             # Fall back to the fourcc string for formats pyv4l2 doesn't know
@@ -162,7 +159,7 @@ class VideoDevice(V4L2Device):
 
         if buf_type in [v4l2.BufType.META_CAPTURE, v4l2.BufType.META_OUTPUT]:
             m = fmt.fmt.meta
-            return VideoFormatInfo(
+            return VideoFormat(
                 format=find_format(m.dataformat),
                 width=m.width,
                 height=m.height,
@@ -172,15 +169,18 @@ class VideoDevice(V4L2Device):
         if buf_type in [v4l2.BufType.VIDEO_CAPTURE_MPLANE, v4l2.BufType.VIDEO_OUTPUT_MPLANE]:
             p = fmt.fmt.pix_mp
             sizeimage = sum(p.plane_fmt[i].sizeimage for i in range(p.num_planes))
+            num_planes = p.num_planes
         else:
             p = fmt.fmt.pix
             sizeimage = p.sizeimage
+            num_planes = 1
 
-        return VideoFormatInfo(
+        return VideoFormat(
             format=find_format(p.pixelformat),
             width=p.width,
             height=p.height,
             sizeimage=sizeimage,
+            num_planes=num_planes,
             field=enum_or_int(v4l2.Field, p.field),
             colorspace=enum_or_int(v4l2.ColorSpace, p.colorspace),
             ycbcr_enc=enum_or_int(v4l2.YCbCrEncoding, p.ycbcr_enc),

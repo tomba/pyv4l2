@@ -58,10 +58,17 @@ def print_routes(subdev: v4l2.SubDevice) -> None:
         )
 
 
+def format_str(fmt: v4l2.PixelFormat | v4l2.MetaFormat | str) -> str:
+    if isinstance(fmt, str):
+        return f"'{fmt}'"
+    if fmt.v4l2_fourcc is None:
+        return fmt.name
+    return f"{fmt.name} ('{v4l2.fourcc_to_str(fmt.v4l2_fourcc)}')"
+
+
 def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
     def print_videodef_fmts(videodev: v4l2.VideoDevice, buftype: v4l2.BufType, title: str) -> None:
-        fmts = videodev.get_formats(buftype)
-        fmts = [f"{f.name} ('{v4l2.fourcc_to_str(f.v4l2_fourcc)}')" for f in fmts]
+        fmts = [format_str(f) for f in videodev.get_formats(buftype)]
 
         unsupported_fmts = videodev.get_unsupported_formats(buftype)
         unsupported_fmts = [f"'{f}'" for f in unsupported_fmts]
@@ -80,10 +87,8 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
 
     if videodev.has_capture:
         try:
-            fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE)
-            f = fmt.fmt.pix
-            fmt = f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)}'
-            print(f'    vcap: {fmt}')
+            f = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE)
+            print(f'    vcap: {f.width}x{f.height}/{format_str(f.format)}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
@@ -93,12 +98,10 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
 
     if videodev.has_mplane_capture:
         try:
-            fmt = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE_MPLANE)
-            f = fmt.fmt.pix_mp
-            fmt = (
-                f'{f.width}x{f.height}/{v4l2.fourcc_to_str(f.pixelformat)} numplanes:{f.num_planes}'
+            f = videodev.get_format(v4l2.BufType.VIDEO_CAPTURE_MPLANE)
+            print(
+                f'    vcapm: {f.width}x{f.height}/{format_str(f.format)} numplanes:{f.num_planes}'
             )
-            print(f'    vcapm: {fmt}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
@@ -108,10 +111,8 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
 
     if videodev.has_meta_capture:
         try:
-            fmt = videodev.get_format(v4l2.BufType.META_CAPTURE)
-            f = fmt.fmt.meta
-            fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
-            print(f'    mcap: {fmt}')
+            f = videodev.get_format(v4l2.BufType.META_CAPTURE)
+            print(f'    mcap: {f.sizeimage}/{format_str(f.format)}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')
@@ -121,10 +122,8 @@ def print_videodev_pad(videodev: v4l2.VideoDevice, ctx: AppContext) -> None:
 
     if videodev.has_meta_output:
         try:
-            fmt = videodev.get_format(v4l2.BufType.META_OUTPUT)
-            f = fmt.fmt.meta
-            fmt = f'{f.buffersize}/{v4l2.fourcc_to_str(f.dataformat)}'
-            print(f'    mout: {fmt}')
+            f = videodev.get_format(v4l2.BufType.META_OUTPUT)
+            print(f'    mout: {f.sizeimage}/{format_str(f.format)}')
         except OSError as e:
             if e.errno != errno.ENOTTY:
                 print(f'    <{e}>')

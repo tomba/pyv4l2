@@ -211,7 +211,7 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
 
         for stream in sel_streams:
             cap = stream.cap
-            info = stream.dev.get_format_info(cap.buf_type)
+            info = stream.dev.get_format(cap.buf_type)
 
             def name(v):
                 return v.name if hasattr(v, 'name') else str(v)
