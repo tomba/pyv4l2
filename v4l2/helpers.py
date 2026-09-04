@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+import weakref
 from enum import Enum
 
 import v4l2.uapi
@@ -25,6 +27,29 @@ def filepath_for_major_minor(major: int, minor: int):
             return '/dev/' + path
 
     raise RuntimeError(f'No device-node found for ({major},{minor})')
+
+
+class Device:
+    """Base for objects owning a device node fd.
+
+    The fd is closed with close(), when leaving a with block, or when the
+    object is garbage collected."""
+
+    def __init__(self, dev_path: str) -> None:
+        self.dev_path = dev_path
+        self.fd = os.open(dev_path, os.O_RDWR | os.O_NONBLOCK)
+        self._finalizer = weakref.finalize(self, os.close, self.fd)
+
+    def close(self):
+        if self._finalizer.alive:
+            self._finalizer()
+            self.fd = -1
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
 
 
 class BufType(Enum):

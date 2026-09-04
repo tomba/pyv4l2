@@ -3,10 +3,11 @@ from __future__ import annotations
 import ctypes
 import errno
 import fcntl
-import os
 from enum import IntFlag
 
 import v4l2.uapi
+
+from .helpers import Device
 
 __all__ = ['Route', 'RouteFlag', 'SubDevice']
 
@@ -56,10 +57,9 @@ class Route:
         return r
 
 
-class SubDevice:
+class SubDevice(Device):
     def __init__(self, dev_path: str) -> None:
-        self.fd = os.open(dev_path, os.O_RDWR | os.O_NONBLOCK)
-        assert self.fd != -1
+        super().__init__(dev_path)
 
         try:
             cap = v4l2.uapi.v4l2_subdev_client_capability()

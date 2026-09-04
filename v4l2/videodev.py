@@ -11,6 +11,8 @@ from dataclasses import dataclass
 
 import v4l2.uapi
 
+from .helpers import Device
+
 __all__ = ['VideoBuffer', 'VideoDevice', 'VideoFormatInfo']
 
 
@@ -35,11 +37,9 @@ class VideoFormatInfo:
     xfer_func: v4l2.XferFunc | int | None = None
 
 
-class VideoDevice:
+class VideoDevice(Device):
     def __init__(self, dev_path: str) -> None:
-        self.dev_path = dev_path
-        self.fd = os.open(dev_path, os.O_RDWR | os.O_NONBLOCK)
-        assert self.fd != -1
+        super().__init__(dev_path)
 
         cap = v4l2.uapi.v4l2_capability()
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYCAP, cap, True)
@@ -65,9 +65,6 @@ class VideoDevice:
 
         self.has_meta_capture = bool(caps & v4l2.uapi.V4L2_CAP_META_CAPTURE)
         self.has_meta_output = bool(caps & v4l2.uapi.V4L2_CAP_META_OUTPUT)
-
-    def __del__(self):
-        os.close(self.fd)
 
     @staticmethod
     def find_video_device(key: str, value: str) -> str:

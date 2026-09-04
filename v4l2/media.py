@@ -14,12 +14,11 @@ import fnmatch
 import glob
 import os
 import re
-import weakref
 
 import v4l2.uapi
 
 from .enums import MediaEntityFunction, MediaInterfaceType, MediaLinkFlag, MediaPadFlag
-from .helpers import filepath_for_major_minor
+from .helpers import Device, filepath_for_major_minor
 
 __all__ = [
     'MediaDevice',
@@ -264,17 +263,15 @@ class MediaLink(MediaObject):
         fcntl.ioctl(self.md.fd, v4l2.uapi.MEDIA_IOC_SETUP_LINK, desc, False)
 
 
-class MediaDevice:
+class MediaDevice(Device):
     def __init__(self, name: str, key: str = 'path') -> None:
         if key != 'path':
             name = MediaDevice.__find_media_device_by_value(key, name)
             key = 'path'
 
-        self.fd = os.open(name, os.O_RDWR | os.O_NONBLOCK)
+        super().__init__(name)
         self.__read_device_info()
         self.__read_topology()
-
-        weakref.finalize(self, os.close, self.fd)
 
     @staticmethod
     def __find_media_device_by_value(key: str, value: str) -> str:
