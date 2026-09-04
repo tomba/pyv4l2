@@ -1,3 +1,11 @@
+"""Media controller device and graph.
+
+The graph structure (entities, interfaces, pads and links) is read once when
+the MediaDevice is opened and kept as a snapshot. Link flags can change at any
+time, so they are read from the kernel on every access. refresh() re-reads the
+graph; objects from the old snapshot are not updated.
+"""
+
 from __future__ import annotations
 
 import ctypes
@@ -357,6 +365,10 @@ class MediaDevice:
 
         for o in self.objects:
             o._finalize()
+
+    def refresh(self):
+        """Re-read the graph. Objects from the old graph are not updated."""
+        self.__read_topology()
 
     def _read_links(self):
         topology = v4l2.uapi.media_v2_topology()
