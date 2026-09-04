@@ -10,7 +10,7 @@ import weakref
 
 import v4l2.uapi
 
-from .enums import MediaEntityFunction, MediaInterfaceType, MediaPadFlag
+from .enums import MediaEntityFunction, MediaInterfaceType, MediaLinkFlag, MediaPadFlag
 from .helpers import filepath_for_major_minor
 
 __all__ = [
@@ -200,7 +200,6 @@ class MediaLink(MediaObject):
     def __init__(self, md, media_link: v4l2.uapi.media_v2_link) -> None:
         super().__init__(md, media_link.id)
         self.media_link = media_link
-        self.flags = media_link.flags
         self.source: MediaObject = None  # type: ignore
         self.sink: MediaObject = None  # type: ignore
 
@@ -214,6 +213,11 @@ class MediaLink(MediaObject):
 
     def __repr__(self) -> str:
         return f'MediaLink({self.id}, {self.source}->{self.sink})'
+
+    @property
+    def flags(self) -> MediaLinkFlag:
+        # Link flags can change, read them from the kernel
+        return self.md._get_link_flags(self.id)
 
     @property
     def is_enabled(self):
@@ -250,8 +254,6 @@ class MediaLink(MediaObject):
         desc.flags = flags
 
         fcntl.ioctl(self.md.fd, v4l2.uapi.MEDIA_IOC_SETUP_LINK, desc, False)
-
-        self.flags = flags
 
 
 class MediaDevice:
@@ -328,6 +330,7 @@ class MediaDevice:
 
         fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_G_TOPOLOGY, topology, True)
 
+        self.topology_version = topology.topology_version
         self.topology = MediaTopology(topology, entities, interfaces, pads, links)
 
         self.entities = [MediaEntity(self, e) for e in entities]
@@ -354,6 +357,26 @@ class MediaDevice:
 
         for o in self.objects:
             o._finalize()
+
+    def _read_links(self):
+        topology = v4l2.uapi.media_v2_topology()
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_G_TOPOLOGY, topology, True)
+
+        if topology.topology_version != self.topology_version:
+            raise RuntimeError('Media topology has changed')
+
+        links = (v4l2.uapi.media_v2_link * topology.num_links)()
+        topology.ptr_links = ctypes.addressof(links)
+        fcntl.ioctl(self.fd, v4l2.uapi.MEDIA_IOC_G_TOPOLOGY, topology, True)
+
+        return links
+
+    def _get_link_flags(self, link_id: int) -> MediaLinkFlag:
+        for l in self._read_links():
+            if l.id == link_id:
+                return MediaLinkFlag(l.flags)
+
+        raise RuntimeError(f'Link {link_id} not found')
 
     def find_id(self, id) -> MediaObject | None:
         return self._objects_by_id.get(id)
