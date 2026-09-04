@@ -291,8 +291,8 @@ def setup_sctx(sctx: Subcontext):
         # Queue the rest to the camera. For streams that are not started, the
         # TUI start command queues the buffers.
         if stream.state == StreamState.RUNNING:
-            for i in range(first_buf, stream.num_bufs):
-                cap.queue(cap.vbuffers[i])
+            for vbuf in cap.vbuffers[first_buf:]:
+                cap.queue(vbuf)
 
     for stream in streams:
         streamer = stream.cap
