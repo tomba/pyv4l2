@@ -17,8 +17,9 @@ import re
 
 import v4l2.uapi
 
+from .device import Device
 from .enums import MediaEntityFunction, MediaInterfaceType, MediaLinkFlag, MediaPadFlag
-from .helpers import Device, filepath_for_major_minor
+from .helpers import filepath_for_major_minor
 
 __all__ = [
     'MediaDevice',

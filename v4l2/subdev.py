@@ -7,7 +7,7 @@ from enum import IntFlag
 
 import v4l2.uapi
 
-from .helpers import Device
+from .device import V4L2Device
 
 __all__ = ['Route', 'RouteFlag', 'SubDevice']
 
@@ -57,7 +57,7 @@ class Route:
         return r
 
 
-class SubDevice(Device):
+class SubDevice(V4L2Device):
     def __init__(self, dev_path: str) -> None:
         super().__init__(dev_path)
 
@@ -282,10 +282,3 @@ class SubDevice(Device):
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_FRAME_INTERVAL, v4l2_ival, True)
 
         return (v4l2_ival.interval.numerator, v4l2_ival.interval.denominator)
-
-    def set_control(self, ctrl_id: int, ctrl_val: int):
-        v4l2_ctrl = v4l2.uapi.v4l2_control()
-        v4l2_ctrl.id = ctrl_id
-        v4l2_ctrl.value = ctrl_val
-
-        fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_CTRL, v4l2_ctrl, False)

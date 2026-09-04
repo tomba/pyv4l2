@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 import v4l2.uapi
 
-from .helpers import Device
+from .device import V4L2Device
 
 __all__ = ['Streamer', 'VideoBuffer', 'VideoDevice', 'VideoFormatInfo']
 
@@ -36,7 +36,7 @@ class VideoFormatInfo:
     xfer_func: v4l2.XferFunc | int | None = None
 
 
-class VideoDevice(Device):
+class VideoDevice(V4L2Device):
     def __init__(self, dev_path: str) -> None:
         super().__init__(dev_path)
 
