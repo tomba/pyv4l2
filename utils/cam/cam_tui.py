@@ -228,7 +228,10 @@ def run_tui(ctx: Context, sel: selectors.BaseSelector, stream_callbacks: dict):
                 f' sizeimage:{info.sizeimage}'
                 f' strides:{cap.strides} bufsizes:{cap.buffersizes}\n'
             )
-            _log(f'   bufs:{stream.num_bufs} mem:{cap.mem_type.name} buftype:{cap.buf_type.name}\n')
+            _log(
+                f'   bufs:{len(cap.vbuffers)} queued:{len(cap.queued_buffers)}'
+                f' mem:{cap.mem_type.name} buftype:{cap.buf_type.name}\n'
+            )
 
             if info.colorspace is not None:
                 _log(
