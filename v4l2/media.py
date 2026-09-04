@@ -10,7 +10,7 @@ import weakref
 
 import v4l2.uapi
 
-from .enums import MediaEntityFunction, MediaInterfaceType, MediaLinkFlag, MediaPadFlag
+from .enums import MediaEntityFunction, MediaInterfaceType, MediaPadFlag
 from .helpers import filepath_for_major_minor
 
 __all__ = [
@@ -18,7 +18,6 @@ __all__ = [
     'MediaEntity',
     'MediaInterface',
     'MediaLink',
-    'MediaLinkFlag',
     'MediaObject',
     'MediaPad',
 ]

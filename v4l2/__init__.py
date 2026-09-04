@@ -10,6 +10,7 @@ from pixutils.formats import (
     str_to_fourcc,
 )
 
+from .enums import *
 from .helpers import *
 from .mbusformats import *
 from .media import *
