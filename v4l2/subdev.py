@@ -4,14 +4,73 @@ import ctypes
 import errno
 import fcntl
 from dataclasses import dataclass
-from enum import IntFlag
+from enum import Enum, IntFlag
 
 import v4l2.uapi
 
 from .device import V4L2Device
-from .helpers import Rect, SelectionTarget
+from .helpers import (
+    ColorSpace,
+    Field,
+    Quantization,
+    Rect,
+    SelectionTarget,
+    XferFunc,
+    YCbCrEncoding,
+    enum_or_int,
+    enum_value,
+)
+from .mbusformats import BusFormat
 
-__all__ = ['Route', 'RouteFlag', 'SubDevice']
+__all__ = ['Route', 'RouteFlag', 'SubDevice', 'SubdevFormat', 'Which']
+
+
+class Which(Enum):
+    TRY = v4l2.uapi.V4L2_SUBDEV_FORMAT_TRY
+    ACTIVE = v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE
+
+
+@dataclass
+class SubdevFormat:
+    width: int
+    height: int
+    code: BusFormat | int
+    field: Field | int = Field.NONE
+    colorspace: ColorSpace | int | None = None
+    ycbcr_enc: YCbCrEncoding | int | None = None
+    quantization: Quantization | int | None = None
+    xfer_func: XferFunc | int | None = None
+    flags: int = 0
+
+    @classmethod
+    def from_v4l2_mbus_framefmt(cls, f: v4l2.uapi.v4l2_mbus_framefmt):
+        return cls(
+            f.width,
+            f.height,
+            enum_or_int(BusFormat, f.code),
+            enum_or_int(Field, f.field),
+            enum_or_int(ColorSpace, f.colorspace),
+            enum_or_int(YCbCrEncoding, f.ycbcr_enc),
+            enum_or_int(Quantization, f.quantization),
+            enum_or_int(XferFunc, f.xfer_func),
+            f.flags,
+        )
+
+    def to_v4l2_mbus_framefmt(self, f: v4l2.uapi.v4l2_mbus_framefmt):
+        """Fill in f. Fields that are None keep the value they have in f."""
+        f.width = self.width
+        f.height = self.height
+        f.code = enum_value(self.code)
+        f.field = enum_value(self.field)
+        if self.colorspace is not None:
+            f.colorspace = enum_value(self.colorspace)
+        if self.ycbcr_enc is not None:
+            f.ycbcr_enc = enum_value(self.ycbcr_enc)
+        if self.quantization is not None:
+            f.quantization = enum_value(self.quantization)
+        if self.xfer_func is not None:
+            f.xfer_func = enum_value(self.xfer_func)
+        f.flags = self.flags
 
 
 class RouteFlag(IntFlag):
@@ -73,11 +132,11 @@ class SubDevice(V4L2Device):
         except OSError:
             self.has_streams = False
 
-    def get_formats(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def get_formats(self, pad, stream=0, which: Which = Which.ACTIVE):
         val = v4l2.uapi.v4l2_subdev_mbus_code_enum()
         val.pad = pad
         val.stream = stream
-        val.which = which
+        val.which = which.value
         val.index = 0
 
         codes = []
@@ -102,11 +161,11 @@ class SubDevice(V4L2Device):
 
         return codes
 
-    def get_unsupported_formats(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def get_unsupported_formats(self, pad, stream=0, which: Which = Which.ACTIVE):
         val = v4l2.uapi.v4l2_subdev_mbus_code_enum()
         val.pad = pad
         val.stream = stream
-        val.which = which
+        val.which = which.value
         val.index = 0
 
         codes = []
@@ -130,12 +189,12 @@ class SubDevice(V4L2Device):
 
         return codes
 
-    def get_framesizes(self, pad, code, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def get_framesizes(self, pad, code, stream=0, which: Which = Which.ACTIVE):
         val = v4l2.uapi.v4l2_subdev_frame_size_enum()
         val.pad = pad
         val.code = code
         val.stream = stream
-        val.which = which
+        val.which = which.value
         val.index = 0
 
         frame_sizes = []
@@ -156,35 +215,39 @@ class SubDevice(V4L2Device):
 
         return frame_sizes
 
-    def get_format(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def get_format(self, pad, stream=0, which: Which = Which.ACTIVE) -> SubdevFormat:
         fmt = v4l2.uapi.v4l2_subdev_format()
         fmt.pad = pad
         fmt.stream = stream
-        fmt.which = which
+        fmt.which = which.value
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_FMT, fmt, True)
-        return fmt
+        return SubdevFormat.from_v4l2_mbus_framefmt(fmt.format)
 
-    def set_format(self, pad, stream, w, h, code, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
-        try:
-            fmt = self.get_format(pad, stream, which)
-        except OSError:
-            print(
-                f'Failed to get format from {self}:{pad}/{stream}, trying set_format with blank v4l2_subdev_format'
-            )
-            fmt = v4l2.uapi.v4l2_subdev_format()
+    def set_format(
+        self, pad, stream, format: SubdevFormat, which: Which = Which.ACTIVE
+    ) -> SubdevFormat:
+        """Set the format. Fields that are None keep their current values.
 
+        Returns the format the driver applied."""
+        fmt = v4l2.uapi.v4l2_subdev_format()
         fmt.pad = pad
         fmt.stream = stream
-        fmt.which = which
-        fmt.format.width = w
-        fmt.format.height = h
-        fmt.format.code = code
-        fmt.format.field = v4l2.uapi.V4L2_FIELD_NONE
+        fmt.which = which.value
+
+        try:
+            fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_FMT, fmt, True)
+        except OSError:
+            # Some drivers fail G_FMT on some pads. Start from a blank format.
+            pass
+
+        format.to_v4l2_mbus_framefmt(fmt.format)
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_S_FMT, fmt, True)
 
-    def get_routes(self, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE) -> list[Route]:
+        return SubdevFormat.from_v4l2_mbus_framefmt(fmt.format)
+
+    def get_routes(self, which: Which = Which.ACTIVE) -> list[Route]:
         routing = v4l2.uapi.v4l2_subdev_routing()
-        routing.which = which
+        routing.which = which.value
 
         try:
             fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_ROUTING, routing, True)
@@ -210,15 +273,13 @@ class SubDevice(V4L2Device):
 
         return routes
 
-    def set_routes(
-        self, routes: list[Route], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE
-    ) -> list[Route]:
+    def set_routes(self, routes: list[Route], which: Which = Which.ACTIVE) -> list[Route]:
         kroutes = (v4l2.uapi.v4l2_subdev_route * len(routes))()
         for i, route in enumerate(routes):
             kroutes[i] = route.to_v4l2_subdev_route()
 
         routing = v4l2.uapi.v4l2_subdev_routing()
-        routing.which = which
+        routing.which = which.value
         routing.len_routes = len(routes)
         routing.num_routes = len(routes)
         routing.routes = ctypes.addressof(kroutes)
@@ -236,12 +297,12 @@ class SubDevice(V4L2Device):
         target: SelectionTarget,
         pad,
         stream=0,
-        which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE,
+        which: Which = Which.ACTIVE,
     ) -> Rect:
         sel = v4l2.uapi.v4l2_subdev_selection()
         sel.pad = pad
         sel.stream = stream
-        sel.which = which
+        sel.which = which.value
         sel.target = target.value
         sel.flags = 0
 
@@ -255,13 +316,13 @@ class SubDevice(V4L2Device):
         rect: Rect,
         pad,
         stream=0,
-        which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE,
+        which: Which = Which.ACTIVE,
     ) -> Rect:
         """Set a selection rectangle. Returns the rectangle the driver applied."""
         sel = v4l2.uapi.v4l2_subdev_selection()
         sel.pad = pad
         sel.stream = stream
-        sel.which = which
+        sel.which = which.value
         sel.target = target.value
         sel.flags = 0
         sel.r = rect.to_v4l2_rect()
@@ -270,23 +331,23 @@ class SubDevice(V4L2Device):
 
         return Rect.from_v4l2_rect(sel.r)
 
-    def get_frame_interval(self, pad, stream=0, which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE):
+    def get_frame_interval(self, pad, stream=0, which: Which = Which.ACTIVE):
         v4l2_ival = v4l2.uapi.v4l2_subdev_frame_interval()
         v4l2_ival.pad = pad
         v4l2_ival.stream = stream
-        v4l2_ival.which = which
+        v4l2_ival.which = which.value
 
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_SUBDEV_G_FRAME_INTERVAL, v4l2_ival, True)
 
         return (v4l2_ival.interval.numerator, v4l2_ival.interval.denominator)
 
     def set_frame_interval(
-        self, pad, stream, interval: tuple[int, int], which=v4l2.uapi.V4L2_SUBDEV_FORMAT_ACTIVE
+        self, pad, stream, interval: tuple[int, int], which: Which = Which.ACTIVE
     ):
         v4l2_ival = v4l2.uapi.v4l2_subdev_frame_interval()
         v4l2_ival.pad = pad
         v4l2_ival.stream = stream
-        v4l2_ival.which = which
+        v4l2_ival.which = which.value
         v4l2_ival.interval.numerator = interval[0]
         v4l2_ival.interval.denominator = interval[1]
 

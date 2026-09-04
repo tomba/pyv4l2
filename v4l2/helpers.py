@@ -16,7 +16,25 @@ __all__ = [
     'SelectionTarget',
     'XferFunc',
     'YCbCrEncoding',
+    'enum_name',
 ]
+
+
+def enum_or_int(enum_cls, value):
+    """Convert a kernel value to the enum, keeping the raw value for unknown ones"""
+    try:
+        return enum_cls(value)
+    except ValueError:
+        return value
+
+
+def enum_value(v) -> int:
+    return v.value if isinstance(v, Enum) else v
+
+
+def enum_name(v) -> str:
+    """Name of an enum value, or the raw value in hex for values pyv4l2 does not know"""
+    return v.name if isinstance(v, Enum) else f'{v:#x}'
 
 
 def filepath_for_major_minor(major: int, minor: int):

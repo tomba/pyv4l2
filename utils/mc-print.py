@@ -138,16 +138,15 @@ def print_streams(
 ) -> None:
     for s in streams:
         try:
-            fmt = subdev.get_format(pad.index, s)
-            f = fmt.format
-
-            try:
-                bfmt = v4l2.BusFormat(f.code).name
-            except ValueError:
-                bfmt = f'0x{f.code:x}'
+            f = subdev.get_format(pad.index, s)
 
             print(
-                f'    Stream{s} {f.width}✕{f.height}/{bfmt} field:{f.field} colorspace:{f.colorspace} quantization:{f.quantization} xfer:{f.xfer_func} flags:{f.flags}'
+                f'    Stream{s} {f.width}✕{f.height}/{v4l2.enum_name(f.code)}'
+                f' field:{v4l2.enum_name(f.field)}'
+                f' colorspace:{v4l2.enum_name(f.colorspace)}'
+                f' quantization:{v4l2.enum_name(f.quantization)}'
+                f' xfer:{v4l2.enum_name(f.xfer_func)}'
+                f' flags:{f.flags}'
             )
         except OSError as e:
             if e.errno != errno.ENOTTY:

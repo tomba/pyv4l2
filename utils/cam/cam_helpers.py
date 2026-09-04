@@ -354,7 +354,7 @@ def configure_subdevs(sctx: Subcontext, config):
 
             w, h, fmt = p['fmt']
             try:
-                subdev.set_format(pad, stream, w, h, fmt)
+                subdev.set_format(pad, stream, v4l2.SubdevFormat(w, h, fmt))
             except Exception:
                 print(f'Failed to set format for {ent}:{pad}/{stream}: {w}x{h}-{fmt}')
                 raise

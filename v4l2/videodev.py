@@ -11,16 +11,9 @@ from dataclasses import dataclass
 import v4l2.uapi
 
 from .device import V4L2Device
+from .helpers import enum_or_int
 
 __all__ = ['Streamer', 'VideoBuffer', 'VideoDevice', 'VideoFormatInfo']
-
-
-def _enum_or_int(enum_cls, value):
-    # Keep the raw value if the driver returns something we don't know
-    try:
-        return enum_cls(value)
-    except ValueError:
-        return value
 
 
 @dataclass
@@ -188,11 +181,11 @@ class VideoDevice(V4L2Device):
             width=p.width,
             height=p.height,
             sizeimage=sizeimage,
-            field=_enum_or_int(v4l2.Field, p.field),
-            colorspace=_enum_or_int(v4l2.ColorSpace, p.colorspace),
-            ycbcr_enc=_enum_or_int(v4l2.YCbCrEncoding, p.ycbcr_enc),
-            quantization=_enum_or_int(v4l2.Quantization, p.quantization),
-            xfer_func=_enum_or_int(v4l2.XferFunc, p.xfer_func),
+            field=enum_or_int(v4l2.Field, p.field),
+            colorspace=enum_or_int(v4l2.ColorSpace, p.colorspace),
+            ycbcr_enc=enum_or_int(v4l2.YCbCrEncoding, p.ycbcr_enc),
+            quantization=enum_or_int(v4l2.Quantization, p.quantization),
+            xfer_func=enum_or_int(v4l2.XferFunc, p.xfer_func),
         )
 
     def get_capture_streamer(

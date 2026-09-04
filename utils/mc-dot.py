@@ -129,15 +129,16 @@ def add_connections_for_link(dot, entity, pad, l):
     for stream in streams:
         if subdev:
             try:
-                fmt = subdev.get_format(pad.index, stream)
-                f = fmt.format
+                f = subdev.get_format(pad.index, stream)
 
-                try:
-                    bfmt = v4l2.BusFormat(f.code).name
-                except ValueError:
-                    bfmt = f'0x{f.code:x}'
-
-                fmt = f'Stream{stream}\n{f.width}x{f.height}/{bfmt}\nfield:{f.field}\ncolorspace:{f.colorspace}\nquantization:{f.quantization}\nxfer:{f.xfer_func}\nflags:{f.flags}'
+                fmt = (
+                    f'Stream{stream}\n{f.width}x{f.height}/{v4l2.enum_name(f.code)}'
+                    f'\nfield:{v4l2.enum_name(f.field)}'
+                    f'\ncolorspace:{v4l2.enum_name(f.colorspace)}'
+                    f'\nquantization:{v4l2.enum_name(f.quantization)}'
+                    f'\nxfer:{v4l2.enum_name(f.xfer_func)}'
+                    f'\nflags:{f.flags}'
+                )
             except OSError as e:
                 if e.errno != errno.ENOTTY:
                     fmt = f'Stream{stream}\n{e}'
