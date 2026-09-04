@@ -235,13 +235,19 @@ class CaptureStreamer(ABC):
         self.buf_type = buf_type
         self.vbuffers: list[VideoBuffer] = []
 
-    def set_queue_size(self, queue_size):
+    def set_queue_size(self, queue_size) -> int:
+        """Request buffers. Returns the number of buffers the driver allocated."""
         v4lreqbuf = v4l2.uapi.v4l2_requestbuffers()
         v4lreqbuf.type = self.buf_type.value
         v4lreqbuf.memory = self.mem_type.value
         v4lreqbuf.count = queue_size
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_REQBUFS, v4lreqbuf, True)
-        assert v4lreqbuf.count == queue_size
+        return v4lreqbuf.count
+
+    def _set_dmabuf_queue_size(self, dmabuf_fds: list[int]):
+        count = self.set_queue_size(len(dmabuf_fds))
+        if count < len(dmabuf_fds):
+            raise RuntimeError(f'Driver allocated {count} of {len(dmabuf_fds)} buffers')
 
     def stream_on(self):
         buf_type = ctypes.c_uint32(self.buf_type.value)
@@ -337,18 +343,18 @@ class VideoCaptureStreamer(CaptureStreamer):
     def reserve_buffers(self, num_bufs):
         assert self.format.v4l2_fourcc
 
-        self.set_queue_size(num_bufs)
+        count = self.set_queue_size(num_bufs)
 
         self.vbuffers = []
 
-        for i in range(num_bufs):
+        for i in range(count):
             vbuf = VideoBuffer(v4l2.MemType.MMAP, i)
             self.vbuffers.append(vbuf)
 
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
         assert self.format.v4l2_fourcc
 
-        self.set_queue_size(len(dmabuf_fds))
+        self._set_dmabuf_queue_size(dmabuf_fds)
 
         self.vbuffers = []
 
@@ -595,16 +601,16 @@ class MetaCaptureStreamer(CaptureStreamer):
         )
 
     def reserve_buffers(self, num_bufs):
-        self.set_queue_size(num_bufs)
+        count = self.set_queue_size(num_bufs)
 
         self.vbuffers = []
 
-        for i in range(num_bufs):
+        for i in range(count):
             vbuf = VideoBuffer(v4l2.MemType.MMAP, i)
             self.vbuffers.append(vbuf)
 
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
-        self.set_queue_size(len(dmabuf_fds))
+        self._set_dmabuf_queue_size(dmabuf_fds)
 
         self.vbuffers = []
 
@@ -694,11 +700,11 @@ class MetaOutputStreamer(CaptureStreamer):
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_S_FMT, v4lfmt, True)
 
     def reserve_buffers(self, num_bufs):
-        self.set_queue_size(num_bufs)
+        count = self.set_queue_size(num_bufs)
 
         self.vbuffers = []
 
-        for i in range(num_bufs):
+        for i in range(count):
             vbuf = VideoBuffer(v4l2.MemType.MMAP, i)
             self.vbuffers.append(vbuf)
 
@@ -713,7 +719,7 @@ class MetaOutputStreamer(CaptureStreamer):
             vbuf.offset = v4l2buf.m.offset
 
     def reserve_buffers_dmabuf(self, dmabuf_fds: list[int]):
-        self.set_queue_size(len(dmabuf_fds))
+        self._set_dmabuf_queue_size(dmabuf_fds)
 
         self.vbuffers = []
 
