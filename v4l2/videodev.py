@@ -326,7 +326,7 @@ class VideoCaptureStreamer(CaptureStreamer):
 
     @property
     def buffersizes(self):
-        return self.__buffersizes
+        return list(self.__buffersizes)
 
     @property
     def framesize(self):
@@ -334,7 +334,7 @@ class VideoCaptureStreamer(CaptureStreamer):
 
     @property
     def strides(self):
-        return self.__strides
+        return list(self.__strides)
 
     @property
     def format(self) -> v4l2.PixelFormat:
