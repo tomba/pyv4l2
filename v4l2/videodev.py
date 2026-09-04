@@ -44,50 +44,27 @@ class VideoDevice:
         cap = v4l2.uapi.v4l2_capability()
         fcntl.ioctl(self.fd, v4l2.uapi.VIDIOC_QUERYCAP, cap, True)
 
-        if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE_MPLANE:
-            self.has_capture = True
-            self.has_mplane_capture = True
-        elif cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE:
-            self.has_capture = True
-            self.has_mplane_capture = False
-        else:
-            self.has_capture = False
-            self.has_mplane_capture = False
+        caps = cap.device_caps
 
-        if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_OUTPUT_MPLANE:
-            self.has_output = True
-            self.has_mplane_output = True
-        elif cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_OUTPUT:
-            self.has_output = True
-            self.has_mplane_output = False
-        else:
-            self.has_output = False
-            self.has_mplane_output = False
+        self.has_mplane_m2m = bool(caps & v4l2.uapi.V4L2_CAP_VIDEO_M2M_MPLANE)
+        self.has_m2m = self.has_mplane_m2m or bool(caps & v4l2.uapi.V4L2_CAP_VIDEO_M2M)
 
-        if cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_M2M_MPLANE:
-            self.has_m2m = True
-            self.has_capture = True
-            self.has_output = True
-            self.has_mplane_m2m = True
-            self.has_mplane_capture = True
-            self.has_mplane_output = True
-        elif cap.device_caps & v4l2.uapi.V4L2_CAP_VIDEO_M2M:
-            self.has_m2m = True
-            self.has_capture = True
-            self.has_output = True
-            self.has_mplane_m2m = False
-            self.has_mplane_capture = False
-            self.has_mplane_output = False
+        self.has_mplane_capture = self.has_mplane_m2m or bool(
+            caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE_MPLANE
+        )
+        self.has_capture = (
+            self.has_mplane_capture or self.has_m2m or bool(caps & v4l2.uapi.V4L2_CAP_VIDEO_CAPTURE)
+        )
 
-        if cap.device_caps & v4l2.uapi.V4L2_CAP_META_CAPTURE:
-            self.has_meta_capture = True
-        else:
-            self.has_meta_capture = False
+        self.has_mplane_output = self.has_mplane_m2m or bool(
+            caps & v4l2.uapi.V4L2_CAP_VIDEO_OUTPUT_MPLANE
+        )
+        self.has_output = (
+            self.has_mplane_output or self.has_m2m or bool(caps & v4l2.uapi.V4L2_CAP_VIDEO_OUTPUT)
+        )
 
-        if cap.device_caps & v4l2.uapi.V4L2_CAP_META_OUTPUT:
-            self.has_meta_output = True
-        else:
-            self.has_meta_output = False
+        self.has_meta_capture = bool(caps & v4l2.uapi.V4L2_CAP_META_CAPTURE)
+        self.has_meta_output = bool(caps & v4l2.uapi.V4L2_CAP_META_OUTPUT)
 
     def __del__(self):
         os.close(self.fd)
