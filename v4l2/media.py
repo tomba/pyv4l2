@@ -40,9 +40,7 @@ class MediaObject:
         self.id = id
 
     def _finalize(self):
-        self.links = [
-            l for l in self.md.links if self.id in (l.media_link.source_id, l.media_link.sink_id)
-        ]
+        self.links = self.md._links_by_object_id.get(self.id, [])
 
 
 class MediaEntity(MediaObject):
@@ -57,7 +55,7 @@ class MediaEntity(MediaObject):
 
     def _finalize(self):
         super()._finalize()
-        self.pads = [p for p in self.md.pads if p.media_pad.entity_id == self.id]
+        self.pads = self.md._pads_by_entity_id.get(self.id, [])
 
         ifaces = []
 
@@ -135,7 +133,9 @@ class MediaPad(MediaObject):
 
     def _finalize(self):
         super()._finalize()
-        self.entity = next(e for e in self.md.entities if e.id == self.media_pad.entity_id)
+        entity = self.md.find_id(self.media_pad.entity_id)
+        assert isinstance(entity, MediaEntity)
+        self.entity = entity
 
     def __repr__(self) -> str:
         return f"MediaPad({self.id}, '{self.entity.name}':{self.index})"
@@ -206,8 +206,11 @@ class MediaLink(MediaObject):
 
     def _finalize(self):
         super()._finalize()
-        self.source = next(e for e in self.md.objects if e.id == self.media_link.source_id)
-        self.sink = next(e for e in self.md.objects if e.id == self.media_link.sink_id)
+        source = self.md.find_id(self.media_link.source_id)
+        sink = self.md.find_id(self.media_link.sink_id)
+        assert source and sink
+        self.source = source
+        self.sink = sink
 
     def __repr__(self) -> str:
         return f'MediaLink({self.id}, {self.source}->{self.sink})'
@@ -327,34 +330,33 @@ class MediaDevice:
 
         self.topology = MediaTopology(topology, entities, interfaces, pads, links)
 
-        self.objects = (
-            [MediaEntity(self, e) for e in self.topology.entities]
-            + [MediaInterface(self, i) for i in self.topology.interfaces]
-            + [MediaPad(self, p) for p in self.topology.pads]
-            + [MediaLink(self, l) for l in self.topology.links]
-        )
+        self.entities = [MediaEntity(self, e) for e in entities]
+        self.interfaces = [MediaInterface(self, i) for i in interfaces]
+        self.pads = [MediaPad(self, p) for p in pads]
+        self.links = [MediaLink(self, l) for l in links]
+        self.objects: list[MediaObject] = [
+            *self.entities,
+            *self.interfaces,
+            *self.pads,
+            *self.links,
+        ]
+
+        self._objects_by_id = {o.id: o for o in self.objects}
+
+        self._pads_by_entity_id: dict[int, list[MediaPad]] = {}
+        for p in self.pads:
+            self._pads_by_entity_id.setdefault(p.media_pad.entity_id, []).append(p)
+
+        self._links_by_object_id: dict[int, list[MediaLink]] = {}
+        for l in self.links:
+            for id in (l.media_link.source_id, l.media_link.sink_id):
+                self._links_by_object_id.setdefault(id, []).append(l)
 
         for o in self.objects:
             o._finalize()
 
-    @property
-    def entities(self):
-        yield from [o for o in self.objects if isinstance(o, MediaEntity)]
-
-    @property
-    def pads(self):
-        yield from [o for o in self.objects if isinstance(o, MediaPad)]
-
-    @property
-    def links(self):
-        yield from [o for o in self.objects if isinstance(o, MediaLink)]
-
-    @property
-    def interfaces(self):
-        yield from [o for o in self.objects if isinstance(o, MediaInterface)]
-
     def find_id(self, id) -> MediaObject | None:
-        return next((o for o in self.objects if o.id == id), None)
+        return self._objects_by_id.get(id)
 
     def find_entity(self, name=None, regex=None):
         for e in self.entities:
