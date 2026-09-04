@@ -12,6 +12,16 @@ The uAPI is generated with (slighly customized) ctypesgen, with the gen.py scrip
 
 v4l2 namespace contains wrappers to the uAPI to simplify the use of the uAPI. The target is that the user of the v4l2 namespace does not need to use any types from the v4l2.uapi namespace.
 
+### State
+
+The wrappers cache only what the kernel keeps stable, or what only this process changes through its own fd. Everything else is read from the kernel on every access:
+
+- The media graph structure (entities, interfaces, pads, links) and the device capabilities are read when the device is opened. `MediaDevice.refresh()` re-reads the graph; objects from the old graph are not updated.
+- Link flags, formats, selections, routes, frame intervals and controls are never cached. `get_*()` methods do an ioctl, and `set_*()` methods return what the driver applied.
+- A `Streamer` keeps track of what it has done: the format it set, the buffers it allocated, which of them are queued to the driver, and whether streaming is on.
+
+Devices close their fd with `close()`, when used as a context manager, or when garbage collected.
+
 ## utils
 
 utils directory contains miscallaneous more-or-less under-work utilities:
