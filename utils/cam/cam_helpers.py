@@ -323,14 +323,11 @@ def configure_subdevs(sctx: Subcontext, config):
                 sink_pad, sink_stream = r['src']
                 source_pad, source_stream = r['dst']
 
-                route = v4l2.Route()
-                route.sink_pad = sink_pad
-                route.sink_stream = sink_stream
-                route.source_pad = source_pad
-                route.source_stream = source_stream
-                route.flags = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE
-
-                routes.append(route)
+                routes.append(
+                    v4l2.Route(
+                        sink_pad, sink_stream, source_pad, source_stream, v4l2.RouteFlag.ACTIVE
+                    )
+                )
 
             if len(routes) > 0:
                 if ctx.verbose:

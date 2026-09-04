@@ -3,6 +3,7 @@ from __future__ import annotations
 import ctypes
 import errno
 import fcntl
+from dataclasses import dataclass
 from enum import IntFlag
 
 import v4l2.uapi
@@ -17,44 +18,46 @@ class RouteFlag(IntFlag):
     IMMUTABLE = v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_IMMUTABLE
 
 
+_NO_ROUTE_FLAGS = RouteFlag(0)
+
+
+@dataclass
 class Route:
-    def __init__(self) -> None:
-        self.sink_pad = 0
-        self.sink_stream = 0
-        self.source_pad = 0
-        self.source_stream = 0
-        self.flags = 0
+    sink_pad: int = 0
+    sink_stream: int = 0
+    source_pad: int = 0
+    source_stream: int = 0
+    flags: RouteFlag = _NO_ROUTE_FLAGS
 
     @property
     def is_active(self):
-        return (self.flags & v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_ACTIVE) != 0
+        return bool(self.flags & RouteFlag.ACTIVE)
 
     @property
     def is_immutable(self):
-        return (self.flags & v4l2.uapi.V4L2_SUBDEV_ROUTE_FL_IMMUTABLE) != 0
+        return bool(self.flags & RouteFlag.IMMUTABLE)
 
     def __repr__(self) -> str:
         return f'Route({self.sink_pad}/{self.sink_stream}->{self.source_pad}/{self.source_stream} ({self.flags:#x}))'
 
     @classmethod
     def from_v4l2_subdev_route(cls, route: v4l2.uapi.v4l2_subdev_route):
-        r = Route()
-        r.sink_pad = route.sink_pad
-        r.sink_stream = route.sink_stream
-        r.source_pad = route.source_pad
-        r.source_stream = route.source_stream
-        r.flags = route.flags
-        return r
+        return cls(
+            route.sink_pad,
+            route.sink_stream,
+            route.source_pad,
+            route.source_stream,
+            RouteFlag(route.flags),
+        )
 
     def to_v4l2_subdev_route(self):
-        r = v4l2.uapi.v4l2_subdev_route(
+        return v4l2.uapi.v4l2_subdev_route(
             sink_pad=self.sink_pad,
             sink_stream=self.sink_stream,
             source_pad=self.source_pad,
             source_stream=self.source_stream,
-            flags=self.flags,
+            flags=int(self.flags),
         )
-        return r
 
 
 class SubDevice(V4L2Device):
